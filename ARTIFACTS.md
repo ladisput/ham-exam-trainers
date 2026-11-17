@@ -9,4 +9,4 @@ Publish with `publish_files` in `patch` mode, passing the slug and the current v
 | Extra | Extra Class Trainer | 2b21fb82-f2d4-46b4-be2b-52f6ea2966bc | https://claude.ai/artifact/6KvPV3j5FiNQxkDvHqce91 |
 | General | (not built yet) | | |
 
-Files published per artifact: `index.html`, `pool.json`, `hooks.json`, `fig/*.png` (from `exams/<exam>/site/`).
+Files published per artifact: `index.html`, `pool.json`, `hooks.json`, `fig/*.png`, `families/*.json` (from `exams/<exam>/site/`, after `tools/site.py build <exam>`).

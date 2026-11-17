@@ -46,7 +46,11 @@ Each family gets an interactive learning page.
 **Wiring in the app**
 - A question in a family shows a "Still confused?" button under its Elmer's note (in runs and in the debrief).
 - The button opens the family page (hash route `#family-<id>`, back returns to where you were).
-- The page ends with "Drill these N questions": a run of exactly the family's questions, using the normal loop.
+- The page ends with "Drill these N questions": a run of exactly the family's questions, using the normal loop
+  ("Why? Show the note" on misses). Its runs are logged in `P.runs` under the key `family-<id>`.
+- The page opens over the current view and back returns to the exact spot (same answered question, same debrief).
+- Only finished family pages are published: `tools/site.py build` copies each `families/<exam>/<id>.json` into
+  `exams/<exam>/site/families/` and writes a site `_index.json` listing just those. The button appears only for them.
 - Each exam has `families/<exam>/_index.json` listing families and their question IDs. A question may belong to
   at most two families. Questions not in any family get no button.
 
@@ -83,6 +87,10 @@ Build order: all Technician families first, then the General site and its famili
 }
 ```
 `questions` must match `_index.json`. Every `traps[].wrong` must be an actual wrong answer of that question.
+`compare` is optional. `tools/site.py check <exam>` checks ids, `_index.json` agreement, the two-family limit and traps.
+
+**Core types** (`core.type`): `rule-table` (`rows`, first row is the header), `formula` (`text` shown big, optional
+`lines` under it), `list` (`items` as `[term, meaning]` pairs). Add new types to `coreHtml` in `app/template.html`.
 
 **Widget types** (build each once as a reusable component; add new types here when needed)
 - `formula-triangle`: E/I/R or P/I/E triangle; tap the unknown, enter two values, see the working.
@@ -95,6 +103,8 @@ Build order: all Technician families first, then the General site and its famili
 - `figure-explorer`: tap the numbered parts of a pool figure to reveal each name and its job.
 - `circuit-toggle`: small animated circuit that switches between two arrangements.
 Widgets must work by tap on a 360px-wide screen, with 44px targets and no hover-only behavior.
+Each widget is a function in the `WIDGETS` registry in `app/template.html`: `WIDGETS[type](el, config, family)` fills
+the card `el`. A page whose widget type isn't built yet shows no widget card.
 
 ## Look and feel
 
@@ -108,16 +118,20 @@ Radio front panel and logbook. Keep it consistent with the live pages (copy thei
 
 ## Code layout
 
-- `exams/<exam>/site/` = the published files: `index.html`, `pool.json`, `hooks.json` (notes), `fig/*.png`,
-  and later `families/*.json`. The page fetches its JSON by relative path.
+- `app/template.html` = the one page shared by every exam. Edit this, never a site's `index.html`.
+- `exams/<exam>/exam.json` = that exam's settings: `title`, `heading`, `element` line, `source` line, band `letter`,
+  exam size `ex`, `pass` line, storage key `ls`, and call sign box `callSize`/`callWidth`.
+- `exams/<exam>/site/` = the published files: `index.html` (generated), `pool.json`, `hooks.json` (notes), `fig/*.png`,
+  and `families/*.json` (generated). The page fetches its JSON by relative path.
+- `tools/site.py build <exam>` writes the site's `index.html` and `families/` from the template, `exam.json` and
+  `families/<exam>/`. Run it after any change to those, before testing and publishing.
 - `exams/<exam>/raw/` = upstream question JSON (github.com/russolsen/ham_radio_question_pool).
 - `exams/<exam>/notes/` = Elmer's note sources, merged into `site/hooks.json` by `tools/pool.py merge`.
 - `sources/` = official NCVEC pool PDFs (public domain). The PDF is the authority; the JSON is checked against it.
 - `tools/pool.py` = build/verify pool, list questions, merge and check notes.
-- `tools/test_app.py` = headless walk-through of an exam site (first run, debrief, repeat run with note, mock exam).
-- The Technician and Extra `index.html` differ only in exam settings (title, element line, `EX`, `PASS`,
-  storage key `LS`, band regex, source line). Planned: one shared template with an exam config.
-  Never change a live site's `LS` key or the db path, or saved progress is lost.
+- `tools/test_app.py` = headless walk-through of an exam site (first run, debrief, repeat run with note, mock exam,
+  and the family page flow using a test family). Set `CHROME=` to a Chromium binary if not at /usr/bin/google-chrome.
+- Never change a live exam's `ls` key or the db path, or saved progress is lost.
 
 ## Saved progress
 
@@ -129,9 +143,9 @@ Declared rules: root read/write `owner`; `data/users/{self}` read/write `interac
 
 1. `python3 tools/pool.py build <exam>`: zero mismatches against the PDF.
 2. `python3 tools/pool.py merge <exam>` and `check <exam>`: every question has a note; review each flag by hand.
-3. For family pages: every question ID exists; every trap's `wrong` is a real wrong answer for that question;
+3. For family pages: `python3 tools/site.py check <exam>` passes (every question ID exists; every trap's `wrong` is a real wrong answer for that question);
    every formula result recomputed in code; scope rule re-read against the family's questions.
-4. `python3 tools/test_app.py <exam>`: no page errors; look at the screenshots at 390px wide.
+4. `python3 tools/site.py build <exam>`, then `python3 tools/test_app.py <exam>`: no page errors; look at the screenshots at 390px wide.
 5. Publish with `publish_files` (mode `patch`) to the slug in `ARTIFACTS.md`, then update `TRACKER.md`.
 
 ## Session workflow
