@@ -9,7 +9,7 @@
 <style>
 /* VOICE: a focused workbench, encouraging but exact.
    IDEA: the rig's front panel and a ham's logbook: bands on a dial, an S-meter for readiness, signal reports after each run.
-   PICTURE: an analog S-meter whose needle is your projected exam score; S9 sits on the pass line (26/35).
+   PICTURE: an analog S-meter whose needle is your projected exam score; S9 sits on the pass line (pass/exam size, set per exam).
    COLOUR and TYPE: panel grey-green ground, white cards, signal red for the needle and pass line, dial blue for actions; Barlow Condensed like front-panel legends, Barlow body.
    LAYOUT: one 720px column; meter on top, bands below; runs take the whole column. */
 :root{color-scheme:light dark;--bg:light-dark(#e6e9e1,#111413);--card:light-dark(#fcfcf9,#1a1e1c);--ink:light-dark(#151918,#e8ebe5);--mute:light-dark(#59615c,#9ba49f);--line:light-dark(#c8cdc3,#2e3532);--red:light-dark(#c4301c,#ff6b52);--blue:light-dark(#1d4e8f,#86b4ff);--ok:light-dark(#257238,#6fd08a);--okbg:light-dark(#e3f1e5,#173222);--badbg:light-dark(#f8e4e0,#3a1d18);--face:light-dark(#f3f0e4,#20251f);--tint:light-dark(#eef1ea,#202523)}
@@ -26,7 +26,7 @@ button.pri{background:var(--blue);border-color:var(--blue);color:light-dark(#fff
 button:focus-visible,.opt:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
 .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
 .top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
-.call{flex:none;font:700 20px/1 "Barlow Condensed",sans-serif;letter-spacing:.04em;background:var(--ink);color:var(--card);border:0;border-radius:8px;padding:8px 12px;min-height:40px;width:8.2em;text-align:center;text-transform:uppercase}
+.call{flex:none;font:700 var(--call-size,20px)/1 "Barlow Condensed",sans-serif;letter-spacing:.04em;background:var(--ink);color:var(--card);border:0;border-radius:8px;padding:8px 12px;min-height:40px;width:var(--call-w,8.2em);text-align:center;text-transform:uppercase}
 .call::placeholder{color:light-dark(#aab,#556)}
 .meter svg{width:100%;height:auto;display:block}
 .needle{transition:transform 1.1s cubic-bezier(.3,1.4,.5,1);transform-origin:160px 168px}
@@ -65,7 +65,7 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
 .sp{height:14px}
 </style>
 </head>
-<body>
+<body style="--call-size:20px;--call-w:8.2em">
 <div class="wrap" id="app"><p class="mute">Loading the question pool…</p></div>
 <script>
 {
@@ -75,7 +75,9 @@ const app=$('#app');
 let POOL,HOOKS={},BY={},GROUPS={},BANDS=[];
 let P={v:1,call:'',h:{},runs:{},exams:[],ts:0};
 let R=null,view='home';
-const LS='tech-trainer-v1';const EX=35,PASS=26;
+/* Exam settings: filled in from exams/<exam>/exam.json by tools/site.py build. */
+const CFG={"title": "Technician Class Trainer", "heading": "Technician class trainer", "element": "Element 2 · 2026–2030 pool", "source": "NCVEC 2026–2030 Element 2 pool, public domain, Feb 19, 2026 revision (in effect July 1, 2026 through June 30, 2030).", "letter": "T", "ex": 35, "pass": 26, "ls": "tech-trainer-v1", "callSize": "20px", "callWidth": "8.2em"};
+const LS=CFG.ls,EX=CFG.ex,PASS=CFG.pass;
 let db=null,docRef=null,saving=false,dirty=false,saveT=null,syncNote='';
 
 try{const s=localStorage.getItem(LS);if(s)P=Object.assign(P,JSON.parse(s))}catch(e){}
@@ -123,7 +125,7 @@ function nextBand(){return BANDS.find(b=>rd(bandQs(b))<.8)}
 function home(){
   view='home';R=null;if(location.hash)history.replaceState(null,'',location.pathname+location.search);
   const o=odds(),nb=nextBand(),hooksN=Object.keys(HOOKS).length,lastEx=P.exams[P.exams.length-1];
-  app.innerHTML=`<div class="top"><div><h1>Technician class trainer</h1><p class="mute small" style="margin:6px 0 0">Element 2 · 2026–2030 pool · ${POOL.qs.length} questions</p></div>
+  app.innerHTML=`<div class="top"><div><h1>${esc(CFG.heading)}</h1><p class="mute small" style="margin:6px 0 0">${esc(CFG.element)} · ${POOL.qs.length} questions</p></div>
   <input class="call" id="call" placeholder="CALLSIGN" maxlength="10" aria-label="Your call sign" value="${esc(P.call)}"></div>
   <div class="card meter">${meter(o.exp)}
   <div class="stats"><div><b>${o.exp.toFixed(1)}</b><span class="small mute">projected / ${EX}</span></div><div><b style="color:var(--red)">${PASS}</b><span class="small mute">to pass</span></div><div><b>${pct(o.pass)}</b><span class="small mute">pass odds</span></div></div>
@@ -141,7 +143,7 @@ function home(){
   <div class="row"><button id="cp">Copy backup code</button><button id="rs">Restore from code</button></div>
   <textarea id="bk" placeholder="Paste a backup code here, then tap Restore" aria-label="Backup code"></textarea>
   <p class="small mute" id="bkmsg"></p>
-  <p class="small mute">Questions: NCVEC 2026–2030 Element 2 pool, public domain, Feb 19, 2026 revision (in effect July 1, 2026 through June 30, 2030). Study notes written for ${hooksN} of ${POOL.qs.length} questions so far.</p>
+  <p class="small mute">Questions: ${esc(CFG.source)} Study notes written for ${hooksN} of ${POOL.qs.length} questions so far.</p>
   <button id="reset" style="color:var(--red)">Reset all progress</button></details>`;
   $('#call').oninput=e=>{P.call=e.target.value.toUpperCase();save()};
   $('#exam').onclick=startExam;
@@ -233,7 +235,7 @@ function debrief(d){
   scrollTo(0,0);
 }
 
-function route(){const m=location.hash.match(/^#band-(T\d)$/);if(m&&BANDS.includes(m[1]))band(m[1]);else home()}
+function route(){const m=location.hash.match(new RegExp('^#band-('+CFG.letter+'\\d)$'));if(m&&BANDS.includes(m[1]))band(m[1]);else home()}
 addEventListener('hashchange',()=>{if(view==='run'&&R&&R.res.length)return;route()});
 
 Promise.all([fetch('pool.json').then(r=>r.json()),fetch('hooks.json').then(r=>r.ok?r.json():{}).catch(()=>({}))]).then(([p,h])=>{
