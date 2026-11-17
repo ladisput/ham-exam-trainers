@@ -182,6 +182,8 @@ function home(){
    const tag=r>=.8?'<span class="tag ok">Cleared</span>':b===nb?'<span class="tag next">Next up</span>':runs?`<span class="tag">${runs} run${runs>1?'s':''}</span>`:'';
    return`<button class="band" data-b="${b}"><span class="code">${b}</span><span class="row" style="justify-content:space-between;gap:6px"><span style="font-weight:500">${esc(POOL.subs[b])}</span>${tag}</span>
    <span><span class="small mute">${n} on the exam · ${ids.length} in pool · ${pct(r)} ready</span><span class="bar ${r>=.8?'done':''}"><i style="width:${r*100}%"></i><s></s></span></span></button>`}).join('')}</div>
+  ${Object.keys(FAM).length?`<div class="sp"></div><div class="card"><div class="row" style="justify-content:space-between;margin-bottom:4px"><h3>Still confused? pages</h3><span class="small mute">one idea, every angle</span></div>
+  ${Object.values(FAM).map(f=>{const r=rd(famQs(f.id));return`<button class="band" data-fam="${esc(f.id)}" style="grid-template-columns:minmax(0,1fr)"><span style="font-weight:500">${esc(f.title)}</span><span><span class="small mute">${famQs(f.id).length} questions · ${pct(r)} ready</span><span class="bar ${r>=.8?'done':''}"><i style="width:${r*100}%"></i><s></s></span></span></button>`}).join('')}</div>`:''}
   <div class="sp"></div>
   <details class="card"><summary class="cond" style="font-size:20px">Backup and notes</summary>
   <p class="small mute">${syncNote||'Progress is saved in this browser.'} To move it or keep a spare, copy the backup code and paste it back here later.</p>
@@ -192,7 +194,7 @@ function home(){
   <button id="reset" style="color:var(--red)">Reset all progress</button></details>`;
   $('#call').oninput=e=>{P.call=e.target.value.toUpperCase();save()};
   $('#exam').onclick=startExam;
-  app.querySelectorAll('.band').forEach(el=>el.onclick=()=>{location.hash='band-'+el.dataset.b});
+  app.querySelectorAll('.band[data-b]').forEach(el=>el.onclick=()=>{location.hash='band-'+el.dataset.b});
   $('#cp').onclick=async()=>{const code=btoa(unescape(encodeURIComponent(JSON.stringify(P))));$('#bk').value=code;try{await navigator.clipboard.writeText(code);$('#bkmsg').textContent='Copied. Keep it somewhere safe.'}catch(e){$('#bkmsg').textContent='Select the code above and copy it.'}};
   $('#rs').onclick=()=>{try{const o=JSON.parse(decodeURIComponent(escape(atob($('#bk').value.trim()))));if(!o.h)throw 0;P=Object.assign({v:1,call:'',h:{},runs:{},exams:[]},o);save();home()}catch(e){$('#bkmsg').textContent="That code didn't work. Paste the whole code and try again."}};
   let armed=false;$('#reset').onclick=e=>{if(!armed){armed=true;e.target.textContent='Tap again to erase everything';return}P={v:1,call:P.call,h:{},runs:{},exams:[]};save();home()};

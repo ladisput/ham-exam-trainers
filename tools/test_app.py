@@ -80,6 +80,13 @@ async def main():
             await pg.unroute("**/families/_index.json"); await pg.unroute("**/families/test-family.json")
             await pg.goto("about:blank"); await pg.goto("http://localhost:8790/index.html#family-test-family"); await pg.wait_for_selector(".band")
             assert await pg.locator(".fambtn").count() == 0 and await pg.is_hidden("#fam")
+            # the home screen lists every published family page, and tapping one opens it
+            fams = json.load(open(os.path.join(site, "families", "_index.json")))["families"]
+            if fams:
+                await pg.goto("about:blank"); await pg.goto("http://localhost:8790/index.html"); await pg.wait_for_selector(".band")
+                assert await pg.locator('#app button[data-fam]').count() == len(fams), "home should list every family page"
+                await pg.locator('#app button[data-fam]').first.click(); await pg.wait_for_selector("#fdrill")
+                await pg.click("#fback"); await pg.wait_for_selector("#app .band")
             # every real family page: loads, its widget card renders (not dropped by an error), every preset chip works
             for f in json.load(open(os.path.join(site, "families", "_index.json")))["families"]:
                 doc = json.load(open(os.path.join(site, "families", f["id"] + ".json")))
