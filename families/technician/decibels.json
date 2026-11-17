@@ -1,0 +1,87 @@
+{
+ "id": "decibels",
+ "exam": "technician",
+ "title": "Decibels",
+ "idea": "Decibels describe a power change. Double the power is +3 dB, ten times is +10 dB, and half is -3 dB.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Power change",
+    "Decibels"
+   ],
+   [
+    "x 2 (double)",
+    "+3 dB"
+   ],
+   [
+    "x 4 (double twice)",
+    "+6 dB"
+   ],
+   [
+    "x 10",
+    "+10 dB"
+   ],
+   [
+    "/ 2 (half)",
+    "-3 dB"
+   ],
+   [
+    "/ 4 (a quarter)",
+    "-6 dB"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "calculator",
+  "config": {
+   "calc": "db",
+   "from": 5,
+   "to": 10,
+   "presets": [
+    {
+     "q": "T5B09",
+     "from": 5,
+     "to": 10
+    },
+    {
+     "q": "T5B10",
+     "from": 12,
+     "to": 3
+    },
+    {
+     "q": "T5B11",
+     "from": 20,
+     "to": 200
+    }
+   ]
+  }
+ },
+ "traps": [
+  {
+   "q": "T5B09",
+   "wrong": "10 dB",
+   "why": "+10 dB is ten times the power. Doubling is only +3 dB."
+  },
+  {
+   "q": "T5B10",
+   "wrong": "-3 dB",
+   "why": "-3 dB is half the power. 12 W to 3 W is a quarter: half (6 W) and half again (3 W), so -6 dB."
+  },
+  {
+   "q": "T5B10",
+   "wrong": "-9 dB",
+   "why": "12 to 6 to 3 is two halvings, not three. Two halvings is -6 dB."
+  },
+  {
+   "q": "T5B11",
+   "wrong": "18 dB",
+   "why": "20 W to 200 W is exactly ten times the power, and ten times is +10 dB."
+  }
+ ],
+ "questions": [
+  "T5B09",
+  "T5B10",
+  "T5B11"
+ ]
+}

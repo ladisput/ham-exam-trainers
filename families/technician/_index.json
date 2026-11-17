@@ -19,7 +19,7 @@
     "T5D11",
     "T5D12"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "power-and-batteries",
@@ -33,7 +33,7 @@
     "T4A01",
     "T4A09"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "metric-prefixes",
@@ -53,7 +53,7 @@
     "T5C06",
     "T5C07"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "decibels",
@@ -64,7 +64,7 @@
     "T5B10",
     "T5B11"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "wavelength-frequency",
@@ -80,7 +80,7 @@
     "T9A05",
     "T9A08"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "series-vs-parallel",

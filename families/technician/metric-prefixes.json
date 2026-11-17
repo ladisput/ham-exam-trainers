@@ -1,0 +1,242 @@
+{
+ "id": "metric-prefixes",
+ "exam": "technician",
+ "title": "Metric prefixes and unit abbreviations",
+ "idea": "A prefix just moves the decimal point. Each step on the ladder is a factor of 1000.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Prefix",
+    "Symbol",
+    "Means"
+   ],
+   [
+    "giga",
+    "G",
+    "1,000,000,000"
+   ],
+   [
+    "mega",
+    "M",
+    "1,000,000"
+   ],
+   [
+    "kilo",
+    "k",
+    "1000"
+   ],
+   [
+    "milli",
+    "m",
+    "1/1000"
+   ],
+   [
+    "micro",
+    "µ",
+    "1/1,000,000"
+   ],
+   [
+    "pico",
+    "p",
+    "1,000,000 pico = 1 micro"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "ladder",
+  "config": {
+   "steps": [
+    {
+     "p": "G",
+     "n": "giga, a billion",
+     "x": 9
+    },
+    {
+     "p": "M",
+     "n": "mega, a million",
+     "x": 6
+    },
+    {
+     "p": "k",
+     "n": "kilo, a thousand",
+     "x": 3
+    },
+    {
+     "p": "",
+     "n": "no prefix, the base unit",
+     "x": 0
+    },
+    {
+     "p": "m",
+     "n": "milli, one-thousandth",
+     "x": -3
+    },
+    {
+     "p": "µ",
+     "n": "micro, one-millionth",
+     "x": -6
+    },
+    {
+     "p": "p",
+     "n": "pico",
+     "x": -12
+    }
+   ],
+   "units": [
+    "Hz",
+    "V",
+    "A",
+    "W",
+    "F"
+   ],
+   "start": {
+    "v": 3.525,
+    "p": "M",
+    "u": "Hz",
+    "to": "k"
+   },
+   "presets": [
+    {
+     "q": "T5B01",
+     "v": 1.5,
+     "p": "",
+     "u": "A",
+     "to": "m"
+    },
+    {
+     "q": "T5B02",
+     "v": 1500000,
+     "p": "",
+     "u": "Hz",
+     "to": "k"
+    },
+    {
+     "q": "T5B03",
+     "v": 1,
+     "p": "k",
+     "u": "V",
+     "to": ""
+    },
+    {
+     "q": "T5B04",
+     "v": 1,
+     "p": "µ",
+     "u": "V",
+     "to": ""
+    },
+    {
+     "q": "T5B05",
+     "v": 500,
+     "p": "m",
+     "u": "W",
+     "to": ""
+    },
+    {
+     "q": "T5B06",
+     "v": 3000,
+     "p": "m",
+     "u": "A",
+     "to": ""
+    },
+    {
+     "q": "T5B07",
+     "v": 3.525,
+     "p": "M",
+     "u": "Hz",
+     "to": "k"
+    },
+    {
+     "q": "T5B08",
+     "v": 1000000,
+     "p": "p",
+     "u": "F",
+     "to": "µ"
+    },
+    {
+     "q": "T5B12",
+     "v": 28400,
+     "p": "k",
+     "u": "Hz",
+     "to": "M"
+    },
+    {
+     "q": "T5B13",
+     "v": 2425,
+     "p": "M",
+     "u": "Hz",
+     "to": "G"
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "k = kilo",
+   "how": "A thousand. Always a lowercase k: kHz."
+  },
+  {
+   "term": "M = mega",
+   "how": "A million. Capital M: MHz."
+  },
+  {
+   "term": "m = milli",
+   "how": "One-thousandth. Lowercase m: mA, mW."
+  },
+  {
+   "term": "µ = micro",
+   "how": "One-millionth: µV, µF."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T5B02",
+   "wrong": "1500 MHz",
+   "why": "Mega is a million, so 1,500,000 Hz is only 1.5 MHz. In kilo it is 1500 kHz."
+  },
+  {
+   "q": "T5B04",
+   "wrong": "One one-thousandth of a volt",
+   "why": "That is a millivolt. Micro is one-millionth."
+  },
+  {
+   "q": "T5B07",
+   "wrong": "0.003525 kHz",
+   "why": "Going to a smaller unit makes the number bigger: 3.525 x 1000 = 3525 kHz."
+  },
+  {
+   "q": "T5B08",
+   "wrong": "1000 microfarads",
+   "why": "Pico is a million times smaller than micro, so a million pF is just 1 µF."
+  },
+  {
+   "q": "T5B12",
+   "wrong": "2.800 MHz",
+   "why": "Dividing by 1000 moves the point three places: 28400 kHz = 28.400 MHz."
+  },
+  {
+   "q": "T5C06",
+   "wrong": "KHz",
+   "why": "Capital K is not the kilo symbol. Kilo is a lowercase k, hertz a capital H: kHz."
+  },
+  {
+   "q": "T5C07",
+   "wrong": "mHz",
+   "why": "Lowercase m means milli, a thousandth. Mega is a capital M: MHz."
+  }
+ ],
+ "questions": [
+  "T5B01",
+  "T5B02",
+  "T5B03",
+  "T5B04",
+  "T5B05",
+  "T5B06",
+  "T5B07",
+  "T5B08",
+  "T5B12",
+  "T5B13",
+  "T5C06",
+  "T5C07"
+ ]
+}

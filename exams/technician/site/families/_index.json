@@ -1,4 +1,76 @@
 {
  "exam": "technician",
- "families": []
+ "families": [
+  {
+   "id": "decibels",
+   "title": "Decibels",
+   "questions": [
+    "T5B09",
+    "T5B10",
+    "T5B11"
+   ]
+  },
+  {
+   "id": "metric-prefixes",
+   "title": "Metric prefixes and unit abbreviations",
+   "questions": [
+    "T5B01",
+    "T5B02",
+    "T5B03",
+    "T5B04",
+    "T5B05",
+    "T5B06",
+    "T5B07",
+    "T5B08",
+    "T5B12",
+    "T5B13",
+    "T5C06",
+    "T5C07"
+   ]
+  },
+  {
+   "id": "ohms-law",
+   "title": "Ohm's law (E = I x R)",
+   "questions": [
+    "T5D01",
+    "T5D02",
+    "T5D03",
+    "T5D04",
+    "T5D05",
+    "T5D06",
+    "T5D07",
+    "T5D08",
+    "T5D09",
+    "T5D10",
+    "T5D11",
+    "T5D12"
+   ]
+  },
+  {
+   "id": "power-and-batteries",
+   "title": "Power and batteries (P = I x E)",
+   "questions": [
+    "T5C08",
+    "T5C09",
+    "T5C10",
+    "T5C11",
+    "T4A01",
+    "T4A09"
+   ]
+  },
+  {
+   "id": "wavelength-frequency",
+   "title": "Wavelength and frequency",
+   "questions": [
+    "T3B04",
+    "T3B05",
+    "T3B06",
+    "T3B07",
+    "T3B11",
+    "T3B12",
+    "T9A05",
+    "T9A08"
+   ]
+  }
+ ]
 }

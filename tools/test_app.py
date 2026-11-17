@@ -80,6 +80,16 @@ async def main():
             await pg.unroute("**/families/_index.json"); await pg.unroute("**/families/test-family.json")
             await pg.goto("about:blank"); await pg.goto("http://localhost:8790/index.html#family-test-family"); await pg.wait_for_selector(".band")
             assert await pg.locator(".fambtn").count() == 0 and await pg.is_hidden("#fam")
+            # every real family page: loads, its widget card renders (not dropped by an error), every preset chip works
+            for f in json.load(open(os.path.join(site, "families", "_index.json")))["families"]:
+                doc = json.load(open(os.path.join(site, "families", f["id"] + ".json")))
+                await pg.goto("about:blank"); await pg.goto(f"http://localhost:8790/index.html#family-{f['id']}"); await pg.wait_for_selector("#fdrill")
+                if doc["widget"]["type"] in ("formula-triangle", "ladder", "calculator"):
+                    assert await pg.locator("#widget").count() == 1, f"{f['id']}: widget card missing"
+                    for i in range(await pg.locator("#widget .chip").count()):
+                        await pg.locator("#widget .chip").nth(i).click(); assert await pg.is_visible("#widget .wres .eq"), f"{f['id']}: no result"
+                assert await pg.locator(".fq").count() == len(f["questions"])
+                await pg.screenshot(path=f"{out}/{exam}-family-{f['id']}.png", full_page=True)
             print("page errors:", errs or "none"); await b.close()
     finally:
         srv.terminate()

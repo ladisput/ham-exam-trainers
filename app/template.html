@@ -81,6 +81,31 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
 .fq summary{gap:10px;padding:8px 0;line-height:1.4;align-items:flex-start}
 .fq summary .cond{flex:none;font-size:15px;color:var(--mute);padding-top:2px}
 .fq[open]{padding-bottom:12px}
+/* Widgets (S3): shared pieces */
+.wg h3{margin-bottom:4px}.wg .lead{margin:0 0 12px}
+.wg input,.wg select{font:500 18px/1 Barlow,sans-serif;min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:0 10px;width:100%}
+.wg label{display:block;font-size:14px;color:var(--mute);margin-bottom:4px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{font:600 16px/1 "Barlow Condensed",sans-serif;letter-spacing:.03em;padding:0 12px}
+.chip.on{background:var(--blue);border-color:var(--blue);color:light-dark(#fff,#0d1420)}
+.wq{font-size:15px;margin:10px 0 0;padding:8px 10px;border-radius:8px;background:var(--tint)}
+.wres{margin-top:12px;background:var(--face);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.wres .eq{font:700 clamp(26px,8vw,38px)/1.1 "Barlow Condensed",sans-serif;overflow-wrap:anywhere}
+.wres .eq em{font-style:normal;color:var(--red)}
+.wres p{margin:6px 0 0}
+.tri{display:block;width:100%;max-width:260px;margin:0 auto}
+.tri .tk{cursor:pointer;outline:none}.tri .tk polygon{fill:transparent}
+.tri .tk.on polygon{fill:var(--badbg)}.tri .tk.on text{fill:var(--red)}
+.tri .tk:focus-visible polygon{stroke:var(--blue);stroke-width:4}
+.tri text{font:700 46px "Barlow Condensed",sans-serif;fill:var(--ink);text-anchor:middle;pointer-events:none}
+.rungs{margin-top:12px}
+.rung{display:grid;grid-template-columns:4.2em minmax(0,1fr);gap:2px 10px;align-items:center;width:100%;text-align:left;padding:8px 12px;min-height:52px;font-weight:400;line-height:1.2}
+.rung b{font:700 24px/1 "Barlow Condensed",sans-serif;grid-row:span 2}.rung .rv{font:600 19px/1.2 "Barlow Condensed",sans-serif;overflow-wrap:anywhere}
+.rung .rn{color:var(--mute);font-size:14px}
+.rung.from{border-color:var(--blue);box-shadow:inset 4px 0 0 var(--blue)}.rung.to{border-color:var(--red);box-shadow:inset 4px 0 0 var(--red)}
+.gap{font:600 14px/1 "Barlow Condensed",sans-serif;color:var(--mute);padding:5px 0 5px 1.6em}
+.wave{display:block;width:100%;height:auto;margin-top:12px}
 </style>
 </head>
 <body style="--call-size:{{callSize}};--call-w:{{callWidth}}">
@@ -267,6 +292,129 @@ function closeFam(){const box=$('#fam');box.hidden=true;box.innerHTML='';app.hid
 function famBack(){if(famPushed)history.back();else{history.replaceState(null,'',location.pathname+location.search);closeFam()}}
 /* Widgets: WIDGETS[type](el, config, family) fills el. Built in S3 as each type is first needed (types in SPEC.md). */
 const WIDGETS={};
+const fmt=(x,s=6)=>isFinite(x)?x.toLocaleString('en-US',{maximumSignificantDigits:s,useGrouping:Math.abs(x)>=1e4}):'?';
+const num=v=>{const x=parseFloat(String(v).replace(/,/g,''));return isFinite(x)?x:NaN};
+/* Preset chips: one per pool question the widget can work. pick(i) loads preset i; the question text shows under the chips. */
+function chips(el,presets,pick){
+  if(!presets||!presets.length)return;
+  const box=document.createElement('div');box.innerHTML=`<p class="small mute" style="margin:14px 0 0">Try a question from the pool:</p><div class="chips">${presets.map((p,i)=>`<button class="chip" data-i="${i}">${esc(p.q)}</button>`).join('')}</div><p class="wq" hidden></p>`;
+  el.appendChild(box);
+  box.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{box.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===b));const p=presets[+b.dataset.i],w=box.querySelector('.wq');w.hidden=!BY[p.q];if(BY[p.q])w.textContent=BY[p.q].q;pick(p)});
+}
+const unchip=el=>{el.querySelectorAll('.chip.on').forEach(x=>x.classList.remove('on'));const w=el.querySelector('.wq');if(w)w.hidden=true};
+
+/* formula-triangle: config {top,left,right: {s,n,u}, start, presets:[{q,find,vals:{s:value}}]}. top = left x right. */
+WIDGETS['formula-triangle']=(el,c)=>{
+  const T=c.top,L=c.left,Rt=c.right,all=[T,L,Rt],by=s=>all.find(v=>v.s===s);
+  let find=c.start||Rt.s;const val={};
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Cover the one you want</h3><p class="small mute lead">Tap the letter you need to find. What's left is the math: one over the other means divide, side by side means multiply.</p>
+  <svg class="tri" viewBox="0 0 240 200" role="group" aria-label="${esc(T.s)} over ${esc(L.s)} and ${esc(Rt.s)}">
+  <path d="M120 8 L232 192 L8 192 Z" fill="var(--face)" stroke="currentColor" stroke-width="3" stroke-linejoin="round" style="color:var(--ink)"/>
+  ${[[T,'120,8 176,100 64,100',120,84],[L,'64,100 120,100 120,192 8,192',84,170],[Rt,'120,100 176,100 232,192 120,192',156,170]].map(([v,pts,x,y])=>`<g class="tk" data-s="${esc(v.s)}" role="button" tabindex="0" aria-label="Find ${esc(v.n)}"><polygon points="${pts}"/><text x="${x}" y="${y}">${esc(v.s)}</text></g>`).join('')}
+  <line x1="64" y1="100" x2="176" y2="100" stroke="var(--ink)" stroke-width="3"/><line x1="120" y1="100" x2="120" y2="192" stroke="var(--ink)" stroke-width="3"/></svg>
+  <div class="fields"></div><div class="wres"></div>`;
+  const fields=el.querySelector('.fields'),res=el.querySelector('.wres');
+  function draw(){
+    el.querySelectorAll('.tk').forEach(g=>{const on=g.dataset.s===find;g.classList.toggle('on',on);g.querySelector('text').textContent=on?'?':g.dataset.s;g.setAttribute('aria-pressed',on)});
+    const known=all.filter(v=>v.s!==find);
+    fields.innerHTML=known.map(v=>`<div><label for="ft-${esc(v.s)}">${esc(v.s)} = ${esc(v.n)} (${esc(v.u)})</label><input id="ft-${esc(v.s)}" data-s="${esc(v.s)}" type="text" inputmode="decimal" value="${val[v.s]??''}" placeholder="${esc(v.u)}"></div>`).join('');
+    fields.querySelectorAll('input').forEach(i=>i.oninput=()=>{val[i.dataset.s]=i.value;unchip(el);calc()});
+    calc();
+  }
+  function calc(){
+    const F=by(find);let rule,op,a,b;
+    if(find===T.s){rule=`${T.s} = ${L.s} x ${Rt.s}`;op='x';a=L;b=Rt}
+    else{rule=`${find} = ${T.s} / ${find===L.s?Rt.s:L.s}`;op='/';a=T;b=find===L.s?Rt:L}
+    const x=num(val[a.s]),y=num(val[b.s]);
+    let out=`<div class="eq">${esc(rule)}</div>`;
+    if(isFinite(x)&&isFinite(y)&&!(op==='/'&&y===0)){const r=op==='x'?x*y:x/y;out+=`<p class="eq" style="font-size:clamp(22px,6.5vw,30px)">${esc(find)} = ${fmt(x)} ${op} ${fmt(y)} = <em>${fmt(r,4)} ${esc(r===1?F.u.replace(/s$/,''):F.u)}</em></p>`}
+    else out+=`<p class="small mute">Fill in ${esc(a.n.toLowerCase())} and ${esc(b.n.toLowerCase())} to see the answer.</p>`;
+    res.innerHTML=out;
+  }
+  el.querySelectorAll('.tk').forEach(g=>{const go=()=>{find=g.dataset.s;unchip(el);draw()};g.onclick=go;g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}}});
+  chips(el,c.presets,p=>{find=p.find;for(const k in val)delete val[k];Object.assign(val,p.vals);draw()});
+  draw();
+};
+
+/* ladder (prefix converter): config {steps:[{p,n,x}] largest first, units:[...], start:{v,p,u}, presets:[{q,v,p,u,to}]}.
+   Every rung shows the same amount in that unit; tap a rung to see the working. */
+WIDGETS.ladder=(el,c)=>{
+  const S=c.steps;let st=Object.assign({v:'1',p:'',u:c.units[0],to:null},c.start);st.v=String(st.v);
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Climb the ladder</h3><p class="small mute lead">Same amount, every rung. Smaller unit = bigger number. Tap a rung to see the working.</p>
+  <div class="fields" style="grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr)"><div><label for="ld-v">Amount</label><input id="ld-v" type="text" inputmode="decimal"></div>
+  <div><label for="ld-p">Prefix</label><select id="ld-p">${S.map(s=>`<option value="${esc(s.p)}">${esc(s.p||'none')}</option>`).join('')}</select></div>
+  <div><label for="ld-u">Unit</label><select id="ld-u">${c.units.map(u=>`<option>${esc(u)}</option>`).join('')}</select></div></div>
+  <div class="rungs"></div><div class="wres"></div>`;
+  const $v=el.querySelector('#ld-v'),$p=el.querySelector('#ld-p'),$u=el.querySelector('#ld-u'),rungs=el.querySelector('.rungs'),res=el.querySelector('.wres');
+  const step=p=>S.find(s=>s.p===p);
+  function draw(){
+    $v.value=st.v;$p.value=st.p;$u.value=st.u;
+    const v=num(st.v),fx=step(st.p).x;
+    rungs.innerHTML=S.map((s,i)=>(i?`<div class="gap">${fmt(10**(S[i-1].x-s.x))} x</div>`:'')+`<button class="rung${s.p===st.p?' from':''}${s.p===st.to?' to':''}" data-p="${esc(s.p)}"><b>${esc(s.p+st.u)}</b><span class="rn">${esc(s.n)}</span><span class="rv">${isFinite(v)?fmt(v*10**(fx-s.x))+' '+esc(s.p+st.u):'?'}</span></button>`).join('');
+    rungs.querySelectorAll('.rung').forEach(b=>b.onclick=()=>{st.to=b.dataset.p;unchip(el);draw()});
+    const t=st.to!=null&&step(st.to);
+    if(!isFinite(v))res.innerHTML='<p class="small mute" style="margin:0">Type an amount.</p>';
+    else if(!t||t.p===st.p)res.innerHTML=`<p class="small mute" style="margin:0">You have ${fmt(v)} ${esc(st.p+st.u)}. Tap another rung to convert.</p>`;
+    else{const d=fx-t.x,f=10**Math.abs(d),r=v*10**d,from=esc(st.p+st.u),to=esc(t.p+st.u);
+      res.innerHTML=`<div class="eq">${fmt(v)} ${from} = <em>${fmt(r)} ${to}</em></div><p>${d>0?`${to} is the smaller unit, so the number gets bigger: multiply by ${fmt(f)}.`:`${to} is the bigger unit, so the number gets smaller: divide by ${fmt(f)}.`}</p><p class="small mute">${fmt(v)} ${d>0?'x':'/'} ${fmt(f)} = ${fmt(r)}</p>`}
+  }
+  $v.oninput=()=>{st.v=$v.value;unchip(el);draw()};$p.onchange=()=>{st.p=$p.value;unchip(el);draw()};$u.onchange=()=>{st.u=$u.value;unchip(el);draw()};
+  chips(el,c.presets,p=>{st={v:String(p.v),p:p.p,u:p.u,to:p.to};draw()});
+  draw();
+};
+
+/* calculator: config {calc:<name>, ...}; each calc fills el with inputs, a live result and the working. */
+const CALCS={
+  /* dB from a power change. config {from, to, presets:[{q,from,to}]}. Breaks the ratio into x2 (3 dB) and x10 (10 dB) steps. */
+  db(el,c){
+    let a=String(c.from??5),b=String(c.to??10);
+    el.innerHTML=`<h3>Power change to decibels</h3><p class="small mute lead">Doubling the power adds 3 dB. Ten times the power adds 10 dB. Halving takes 3 dB away.</p>
+    <div class="fields"><div><label for="db-a">From (watts)</label><input id="db-a" type="text" inputmode="decimal"></div><div><label for="db-b">To (watts)</label><input id="db-b" type="text" inputmode="decimal"></div></div><div class="wres"></div>`;
+    const $a=el.querySelector('#db-a'),$b=el.querySelector('#db-b'),res=el.querySelector('.wres');
+    function steps(r){for(let t=-1;t<=2;t++)for(let h=-4;h<=4;h++){if(Math.abs(10**t*2**h/r-1)<.03)return[t,h]}return null}
+    function draw(){
+      $a.value=a;$b.value=b;const x=num(a),y=num(b);
+      if(!(x>0&&y>0)){res.innerHTML='<p class="small mute" style="margin:0">Type two power levels above zero.</p>';return}
+      const r=y/x,d=10*Math.log10(r),k=steps(r);let how='';
+      if(k){const[t,h]=k,parts=[];
+        if(t)parts.push(`${t>0?'x':'/'}${fmt(10**Math.abs(t))} (${t>0?'+':'-'}${10*Math.abs(t)} dB)`);
+        if(h)parts.push(`${h>0?'doubled':'halved'}${Math.abs(h)>1?' '+Math.abs(h)+' times':''} (${h>0?'+':'-'}${3*Math.abs(h)} dB)`);
+        how=`<p>${parts.length?'Power '+parts.join(', then ')+'.':'No change in power, 0 dB.'}</p>`}
+      const near=k?10*k[0]+3*k[1]:Math.round(d);
+      res.innerHTML=`<div class="eq">${fmt(x)} W to ${fmt(y)} W = <em>${near>0?'+':''}${near} dB</em></div><p class="small mute">${fmt(y)} / ${fmt(x)} = ${fmt(r,4)} times the power</p>${how}<p class="small mute">Exact: 10 x log(${fmt(r,4)}) = ${fmt(d,3)} dB</p>`;
+    }
+    $a.oninput=()=>{a=$a.value;unchip(el);draw()};$b.oninput=()=>{b=$b.value;unchip(el);draw()};
+    chips(el,c.presets,p=>{a=String(p.from);b=String(p.to);draw()});
+    draw();
+  },
+  /* Wavelength from frequency. config {mhz, presets:[{q,mhz}]}. Wavelength m = 300 / MHz; quarter wave inches = 2808 / MHz. */
+  wavelength(el,c){
+    let f=String(c.mhz??146);
+    el.innerHTML=`<h3>Frequency to wavelength</h3><p class="small mute lead">Slide the frequency up and watch the waves get shorter, and the antenna with them.</p>
+    <div class="fields"><div><label for="wl-f">Frequency (MHz)</label><input id="wl-f" type="text" inputmode="decimal"></div></div>
+    <input id="wl-s" type="range" min="0" max="1000" aria-label="Frequency" style="margin-top:10px;padding:0">
+    <svg class="wave" viewBox="0 0 320 70" aria-hidden="true"><path fill="none" stroke="var(--blue)" stroke-width="3"/></svg><div class="wres"></div>`;
+    const $f=el.querySelector('#wl-f'),$s=el.querySelector('#wl-s'),path=el.querySelector('.wave path'),res=el.querySelector('.wres');
+    const lo=Math.log(1),hi=Math.log(3000),toS=m=>Math.round((Math.log(m)-lo)/(hi-lo)*1000),fromS=s=>Math.exp(lo+(hi-lo)*s/1000);
+    function draw(fromSlider){
+      const m=num(f);if(!fromSlider)$f.value=f;
+      if(!(m>0)){res.innerHTML='<p class="small mute" style="margin:0">Type a frequency in MHz.</p>';path.setAttribute('d','');return}
+      if(!fromSlider)$s.value=toS(Math.min(3000,Math.max(1,m)));
+      const cyc=1+(toS(Math.min(3000,Math.max(1,m)))/1000)*11;let d='M0 35';
+      for(let x=1;x<=320;x++)d+=` L${x} ${(35-26*Math.sin(x/320*cyc*2*Math.PI)).toFixed(1)}`;
+      path.setAttribute('d',d);
+      const w=300/m,q=2808/m;
+      res.innerHTML=`<div class="eq">300 / ${fmt(m)} = <em>${fmt(w,3)} m</em></div><p>One wavelength at ${fmt(m)} MHz is about ${fmt(w,3)} meters${w<1?` (${fmt(w*100,3)} cm)`:''}.</p><p class="small mute">Quarter-wave antenna: 2808 / ${fmt(m)} = ${fmt(q,3)} inches</p>`;
+    }
+    $f.oninput=()=>{f=$f.value;unchip(el);draw()};
+    $s.oninput=()=>{f=String(+fromS(+$s.value).toPrecision(3));$f.value=f;unchip(el);draw(true)};
+    chips(el,c.presets,p=>{f=String(p.mhz);draw()});
+    draw();
+  }
+};
+WIDGETS.calculator=(el,c)=>{el.classList.add('wg');if(!CALCS[c.calc])throw 0;CALCS[c.calc](el,c)};
 function coreHtml(c){
   if(!c)return'';
   if(c.type==='rule-table'){const[h,...rows]=c.rows;return`<table><tr>${h.map(x=>`<th>${esc(x)}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(x=>`<td>${esc(x)}</td>`).join('')}</tr>`).join('')}</table>`}

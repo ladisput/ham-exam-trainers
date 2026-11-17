@@ -1,0 +1,81 @@
+{
+ "id": "wavelength-frequency",
+ "exam": "technician",
+ "title": "Wavelength and frequency",
+ "idea": "All radio waves travel at the speed of light, so the higher the frequency, the shorter each wave, and the shorter the antenna.",
+ "core": {
+  "type": "formula",
+  "text": "m = 300 / MHz",
+  "lines": [
+   "Wavelength in meters equals 300 divided by the frequency in megahertz",
+   "Speed of every radio wave in free space: the speed of light, 300,000,000 meters per second",
+   "Higher frequency = shorter wavelength = shorter antenna",
+   "Quarter-wave antenna in inches = 2808 / MHz"
+  ]
+ },
+ "widget": {
+  "type": "calculator",
+  "config": {
+   "calc": "wavelength",
+   "mhz": 146,
+   "presets": [
+    {
+     "q": "T9A08",
+     "mhz": 146
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Higher frequency",
+   "how": "Shorter wavelength. Shorten an antenna and its resonant frequency goes up."
+  },
+  {
+   "term": "Lower frequency",
+   "how": "Longer wavelength. Lengthen an antenna and its resonant frequency goes down."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T3B05",
+   "wrong": "Wavelength gets longer as frequency increases",
+   "why": "Backwards. More waves per second means each wave is shorter."
+  },
+  {
+   "q": "T3B06",
+   "wrong": "Wavelength in meters equals frequency in megahertz divided by 300",
+   "why": "Upside down. 300 goes on top: 300 / 146 MHz = about 2 m."
+  },
+  {
+   "q": "T3B11",
+   "wrong": "300,000,000 miles per hour",
+   "why": "Right number, wrong unit. It is 300,000,000 meters per second."
+  },
+  {
+   "q": "T3B12",
+   "wrong": "Microwaves",
+   "why": "Frequency does not change the speed. All radio frequencies travel at the speed of light."
+  },
+  {
+   "q": "T9A05",
+   "wrong": "Lengthening it",
+   "why": "A longer antenna fits a longer wave, which is a lower frequency. Shortening it raises the frequency."
+  },
+  {
+   "q": "T9A08",
+   "wrong": "It is a resonant half-wave",
+   "why": "A half wave on 2 meters is about 38 inches. 19 inches is a quarter wave."
+  }
+ ],
+ "questions": [
+  "T3B04",
+  "T3B05",
+  "T3B06",
+  "T3B07",
+  "T3B11",
+  "T3B12",
+  "T9A05",
+  "T9A08"
+ ]
+}
