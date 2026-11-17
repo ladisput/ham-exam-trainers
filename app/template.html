@@ -63,10 +63,29 @@ button:focus-visible,.opt:focus-visible,input:focus-visible,textarea:focus-visib
 textarea{width:100%;font:14px/1.4 ui-monospace,monospace;min-height:90px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:10px}
 details summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
 .sp{height:14px}
+/* Family pages ("Still confused?") */
+.fambtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;margin-top:8px;padding:10px 14px;text-align:left;line-height:1.25;border-color:var(--blue);color:var(--blue)}
+.fambtn span{font-size:14px;color:var(--mute)}.fambtn b{font:600 19px/1.15 "Barlow Condensed",sans-serif}
+.idea{font-size:19px;line-height:1.45;margin:8px 0 0}
+.core{margin-top:12px;background:var(--face);border:1px solid var(--line);border-radius:10px;padding:14px;overflow-x:auto}
+.core .formula{font:700 clamp(36px,11vw,60px)/1.05 "Barlow Condensed",sans-serif;text-align:center;letter-spacing:.02em}
+.core .sub{text-align:center;margin:8px 0 0}
+.core table{width:100%;border-collapse:collapse;font:600 20px/1.2 "Barlow Condensed",sans-serif}
+.core th,.core td{padding:8px 6px;border-top:1px solid var(--line);text-align:left;vertical-align:top}
+.core tr:first-child th{border-top:0;color:var(--mute);font-size:16px;font-weight:600}
+.core td:first-child,.core th:first-child{color:var(--mute);font-size:16px}
+.cmp{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:8px}
+.cmp div{background:var(--tint);border-radius:10px;padding:10px 12px}.cmp b{display:block;font:600 20px/1.15 "Barlow Condensed",sans-serif;margin-bottom:2px}
+.trap s{color:var(--red)}.trap .tq{font:600 14px/1 "Barlow Condensed",sans-serif;color:var(--mute);margin-right:6px}
+.fq{border-top:1px solid var(--line)}.fq:first-of-type{border-top:0}
+.fq summary{gap:10px;padding:8px 0;line-height:1.4;align-items:flex-start}
+.fq summary .cond{flex:none;font-size:15px;color:var(--mute);padding-top:2px}
+.fq[open]{padding-bottom:12px}
 </style>
 </head>
 <body style="--call-size:{{callSize}};--call-w:{{callWidth}}">
 <div class="wrap" id="app"><p class="mute">Loading the question pool…</p></div>
+<div class="wrap" id="fam" hidden></div>
 <script>
 {
 const $=s=>document.querySelector(s);
@@ -75,6 +94,7 @@ const app=$('#app');
 let POOL,HOOKS={},BY={},GROUPS={},BANDS=[];
 let P={v:1,call:'',h:{},runs:{},exams:[],ts:0};
 let R=null,view='home';
+let FAM={},FAMDOC={},QFAM={},famOpen=null,famPushed=false,famPrev='',famScroll=0;
 /* Exam settings: filled in from exams/<exam>/exam.json by tools/site.py build. */
 const CFG={{config}};
 const LS=CFG.ls,EX=CFG.ex,PASS=CFG.pass;
@@ -202,45 +222,94 @@ function pick(k){
   app.querySelectorAll('.opt').forEach(el=>{const kk=+el.dataset.k;el.disabled=true;if(kk===q.c)el.classList.add('right');else if(kk===k)el.classList.add('wrong')});
   const h=hookOf(id);
   if(!ok&&R.hooks)$('#after').innerHTML=`<button id="hk" style="margin-top:8px;width:100%">Why? Show the note</button><div id="hkt"></div>`;
-  if($('#hk'))$('#hk').onclick=()=>{$('#hk').remove();$('#hkt').innerHTML=`<div class="note"><b>Elmer's note</b>${h?esc(h):'No note written for this one yet. The correct answer is highlighted above.'}</div>`};
+  if($('#hk'))$('#hk').onclick=()=>{$('#hk').remove();$('#hkt').innerHTML=`<div class="note"><b>Elmer's note</b>${h?esc(h):'No note written for this one yet. The correct answer is highlighted above.'}</div>${famBtns(id,R.fam)}`};
   $('#next').hidden=false;$('#next').focus({preventScroll:true});
 }
 function adv(){R.i++;if(R.i<R.qs.length)ask();else finish()}
-function back(){if(R&&R.band)band(R.band);else home()}
+function back(){if(R&&R.band)band(R.band);else if(R&&R.fam){const f=R.fam;home();openFam(f)}else home()}
 
 function finish(){
   const n=R.res.length,s=R.res.filter(x=>x.ok).length;
   if(R.mode==='exam'){P.exams.push({t:Date.now(),s,n})}
-  else{(P.runs[R.band]=P.runs[R.band]||[]).push({t:Date.now(),k:R.kind,s,n})}
+  else{const key=R.band||'family-'+R.fam;(P.runs[key]=P.runs[key]||[]).push({t:Date.now(),k:R.kind,s,n})}
   save();
-  debrief({band:R.band,exam:R.mode==='exam',s,n,kind:R.kind,miss:R.res.filter(x=>!x.ok)});
+  debrief({band:R.band,fam:R.fam,exam:R.mode==='exam',s,n,kind:R.kind,miss:R.res.filter(x=>!x.ok)});
 }
 
 function debrief(d){
-  view='debrief';const b=d.band,o=odds();
+  view='debrief';const b=d.band,fm=d.fam&&FAM[d.fam],o=odds();
   const head=d.study?`<h2>Missed questions · ${b}</h2><p class="mute">Everything you got wrong the last time you saw it. Read each note, then run the band again.</p>`
   :d.exam?`<p class="cond mute" style="font-size:18px;margin:0">Mock exam result</p><div class="row" style="align-items:baseline;gap:14px"><span class="big" style="color:${d.s>=PASS?'var(--ok)':'var(--red)'}">${d.s}/${d.n}</span><span class="cond" style="font-size:26px">${d.n<EX?'(ended early)':d.s>=PASS?'Pass':'Not yet · need '+PASS}</span></div>`
-  :`<p class="cond mute" style="font-size:18px;margin:0">Signal report · ${esc(d.kind)}</p><div class="row" style="align-items:baseline;gap:14px"><span class="big">${d.s}/${d.n}</span><span class="cond" style="font-size:26px">${pct(d.n?d.s/d.n:0)}</span></div><p class="mute small" style="margin:6px 0 0">${b} is now ${pct(rd(bandQs(b)))} ready · target 80% · pass odds ${pct(o.pass)}</p>`;
+  :`<p class="cond mute" style="font-size:18px;margin:0">Signal report · ${esc(d.kind)}</p><div class="row" style="align-items:baseline;gap:14px"><span class="big">${d.s}/${d.n}</span><span class="cond" style="font-size:26px">${pct(d.n?d.s/d.n:0)}</span></div><p class="mute small" style="margin:6px 0 0">${fm?esc(fm.title):b} is now ${pct(rd(fm?famQs(d.fam):bandQs(b)))} ready · target 80% · pass odds ${pct(o.pass)}</p>`;
   app.innerHTML=`<div class="card">${head}
-  <div class="row" style="margin-top:14px">${b?`<button class="pri" id="again" style="flex:1">Run ${b} again</button>`:'<button class="pri" id="again" style="flex:1">New mock exam</button>'}<button id="done" style="flex:1">${b?'Back to band':'Home'}</button></div></div>
+  <div class="row" style="margin-top:14px">${b?`<button class="pri" id="again" style="flex:1">Run ${b} again</button>`:fm?'<button class="pri" id="again" style="flex:1">Drill these again</button>':'<button class="pri" id="again" style="flex:1">New mock exam</button>'}<button id="done" style="flex:1">${b?'Back to band':fm?'Family page':'Home'}</button></div></div>
   <div class="sp"></div>
   ${d.miss.length?`<div class="card"><h3 style="margin-bottom:4px">${d.miss.length} to learn</h3>
   ${d.miss.map(m=>{const q=BY[m.id],h=hookOf(m.id);return`<div class="miss"><p class="cond mute" style="font-size:15px;margin:0 0 4px">${m.id}</p><p style="margin:0 0 6px;font-weight:500">${esc(q.q)}</p>
   ${q.f?`<div class="fig"><img src="fig/${q.f}" alt="Figure ${esc(q.f.replace('.png','').toUpperCase())}"></div>`:''}
   ${m.pick>=0?`<div class="ans w">${esc(q.a[m.pick])}</div>`:''}<div class="ans r">${esc(q.a[q.c])}</div>
-  <div class="note"><b>Elmer's note</b>${h?esc(h):'No note written for this one yet.'}</div></div>`}).join('')}</div>`
+  <div class="note"><b>Elmer's note</b>${h?esc(h):'No note written for this one yet.'}</div>${famBtns(m.id,d.fam)}</div>`}).join('')}</div>`
   :`<div class="card"><h3>Clean copy</h3><p class="mute">No misses. Nothing to study from this run.</p></div>`}`;
-  $('#again').onclick=()=>b?startRun(b,bandQs(b),'Full run',true):startExam();
-  $('#done').onclick=()=>b?band(b):home();
+  $('#again').onclick=()=>b?startRun(b,bandQs(b),'Full run',true):fm?startFam(d.fam):startExam();
+  $('#done').onclick=()=>b?band(b):fm?openFam(d.fam):home();
   scrollTo(0,0);
 }
 
-function route(){const m=location.hash.match(new RegExp('^#band-('+CFG.letter+'\\d)$'));if(m&&BANDS.includes(m[1]))band(m[1]);else home()}
-addEventListener('hashchange',()=>{if(view==='run'&&R&&R.res.length)return;route()});
 
-Promise.all([fetch('pool.json').then(r=>r.json()),fetch('hooks.json').then(r=>r.ok?r.json():{}).catch(()=>({}))]).then(([p,h])=>{
+/* ---- Family pages ("Still confused?") ----
+   families/_index.json lists the published families; each page is families/<id>.json (format in SPEC.md).
+   The page is shown over the current view (#fam), so closing it returns to the exact run or debrief state. */
+const famQs=id=>(FAM[id]?FAM[id].questions:[]).filter(q=>BY[q]);
+function famBtns(id,skip){return(QFAM[id]||[]).filter(f=>f!==skip).map(f=>`<button class="fambtn" data-fam="${f}"><span>Still confused?</span><b>${esc(FAM[f].title)}</b></button>`).join('')}
+document.addEventListener('click',e=>{const el=e.target.closest('[data-fam]');if(el&&!el.closest('#fam'))openFam(el.dataset.fam)});
+function openFam(id){if(!FAM[id])return;famScroll=scrollY;famPrev=location.hash;famPushed=true;location.hash='family-'+id}
+function closeFam(){const box=$('#fam');box.hidden=true;box.innerHTML='';app.hidden=false;famOpen=null;if(view==='home')home();scrollTo(0,famScroll)}
+function famBack(){if(famPushed)history.back();else{history.replaceState(null,'',location.pathname+location.search);closeFam()}}
+/* Widgets: WIDGETS[type](el, config, family) fills el. Built in S3 as each type is first needed (types in SPEC.md). */
+const WIDGETS={};
+function coreHtml(c){
+  if(!c)return'';
+  if(c.type==='rule-table'){const[h,...rows]=c.rows;return`<table><tr>${h.map(x=>`<th>${esc(x)}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(x=>`<td>${esc(x)}</td>`).join('')}</tr>`).join('')}</table>`}
+  if(c.type==='formula')return`<div class="formula">${esc(c.text)}</div>${(c.lines||[]).map(l=>`<p class="sub mute">${esc(l)}</p>`).join('')}`;
+  if(c.type==='list')return`<table>${c.items.map(([k,v])=>`<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join('')}</table>`;
+  return c.text?`<div class="formula">${esc(c.text)}</div>`:'';
+}
+async function showFam(id){
+  const box=$('#fam');famOpen=id;app.hidden=true;box.hidden=false;
+  box.innerHTML='<p class="mute">Loading…</p>';
+  let f=FAMDOC[id];
+  if(!f){try{f=FAMDOC[id]=await fetch('families/'+id+'.json').then(r=>{if(!r.ok)throw 0;return r.json()})}catch(e){f=null}}
+  if(famOpen!==id)return;
+  if(!f){box.innerHTML=`<button id="fback">← Back</button><div class="sp"></div><div class="card"><p>This page didn't load. Check your connection and try again.</p></div>`;$('#fback').onclick=famBack;return}
+  const ids=famQs(id),r=rd(ids);
+  box.innerHTML=`<button id="fback">← Back</button><div class="sp"></div>
+  <div class="card"><p class="cond mute" style="font-size:18px;margin:0 0 4px">Still confused?</p><h2>${esc(f.title)}</h2><p class="idea">${esc(f.idea)}</p>
+  <div class="core">${coreHtml(f.core)}</div></div>
+  ${f.widget&&WIDGETS[f.widget.type]?`<div class="sp"></div><div class="card" id="widget"></div>`:''}
+  ${f.compare&&f.compare.length?`<div class="sp"></div><div class="card"><h3>Side by side</h3><div class="cmp">${f.compare.map(c=>`<div><b>${esc(c.term)}</b>${esc(c.how)}</div>`).join('')}</div></div>`:''}
+  ${f.traps&&f.traps.length?`<div class="sp"></div><div class="card"><h3>Traps the exam sets</h3>${f.traps.map(t=>`<div class="note trap"><b><span class="tq">${esc(t.q)}</span>Wrong: <s>${esc(t.wrong)}</s></b>${esc(t.why)}</div>`).join('')}</div>`:''}
+  <div class="sp"></div><div class="card"><h3 style="margin-bottom:4px">The ${ids.length} questions</h3><p class="small mute" style="margin:0 0 6px">Tap one to see the answer and its note.</p>
+  ${ids.map(q=>{const Q=BY[q],h=hookOf(q);return`<details class="fq"><summary><span class="cond">${q}</span><span>${esc(Q.q)}</span></summary>
+  ${Q.f?`<div class="fig"><img src="fig/${Q.f}" alt="Figure ${esc(Q.f.replace('.png','').toUpperCase())}"></div>`:''}<div class="ans r">${esc(Q.a[Q.c])}</div>
+  <div class="note"><b>Elmer's note</b>${h?esc(h):'No note written for this one yet.'}</div></details>`}).join('')}</div>
+  <div class="sp"></div><div class="card"><div class="row" style="justify-content:space-between"><span class="small mute">${pct(r)} ready</span></div><div class="bar ${r>=.8?'done':''}" style="margin:6px 0 14px"><i style="width:${r*100}%"></i><s></s></div>
+  <button class="pri" id="fdrill" style="width:100%">Drill these ${ids.length} questions</button></div>`;
+  $('#fback').onclick=famBack;
+  $('#fdrill').onclick=()=>{history.replaceState(null,'',location.pathname+location.search+(famPushed?famPrev:''));const box=$('#fam');box.hidden=true;box.innerHTML='';app.hidden=false;famOpen=null;startFam(id)};
+  if($('#widget'))try{WIDGETS[f.widget.type]($('#widget'),f.widget.config||{},f)}catch(e){$('#widget').remove()}
+  scrollTo(0,0);
+}
+function startFam(id){R={mode:'run',band:null,fam:id,kind:'Drill: '+FAM[id].title,hooks:true,qs:shuffle(famQs(id)),i:0,res:[]};view='run';ask()}
+function famHash(){const m=location.hash.match(/^#family-([a-z0-9-]+)$/);return m&&FAM[m[1]]?m[1]:null}
+
+function route(){const fh=famHash();if(fh){const h=location.hash;home();history.replaceState(null,'',h);famPushed=false;showFam(fh);return}
+  const m=location.hash.match(new RegExp('^#band-('+CFG.letter+'\\d)$'));if(m&&BANDS.includes(m[1]))band(m[1]);else home()}
+addEventListener('hashchange',()=>{const fh=famHash();if(fh){showFam(fh);return}if(famOpen){closeFam();return}if(view==='run'&&R&&R.res.length)return;route()});
+
+Promise.all([fetch('pool.json').then(r=>r.json()),fetch('hooks.json').then(r=>r.ok?r.json():{}).catch(()=>({})),fetch('families/_index.json').then(r=>r.ok?r.json():{families:[]}).catch(()=>({families:[]}))]).then(([p,h,fi])=>{
   POOL=p;HOOKS=h;POOL.qs.forEach(q=>{BY[q.id]=q;(GROUPS[q.id.slice(0,3)]=GROUPS[q.id.slice(0,3)]||[]).push(q.id)});
   BANDS=Object.keys(POOL.subs).sort();
+  (fi.families||[]).forEach(f=>{FAM[f.id]=f;f.questions.forEach(q=>(QFAM[q]=QFAM[q]||[]).push(f.id))});
   route();
 }).catch(()=>{app.innerHTML='<p>The question pool failed to load. Reload the page to try again.</p>'});
 
@@ -252,11 +321,11 @@ Promise.all([fetch('pool.json').then(r=>r.json()),fetch('hooks.json').then(r=>r.
     db=d;docRef=db.doc('data/users/'+id+'/progress');
     const tm=new Promise(r=>setTimeout(()=>r(null),10000));
     const snap=await Promise.race([docRef.get(),tm]);
-    if(snap&&snap.exists){const o=snap.data();if((o.ts||0)>(P.ts||0)){P=Object.assign({v:1,call:'',h:{},runs:{},exams:[]},JSON.parse(JSON.stringify(o)));try{localStorage.setItem(LS,JSON.stringify(P))}catch(e){}if(POOL&&view!=='run')route()}}
+    if(snap&&snap.exists){const o=snap.data();if((o.ts||0)>(P.ts||0)){P=Object.assign({v:1,call:'',h:{},runs:{},exams:[]},JSON.parse(JSON.stringify(o)));try{localStorage.setItem(LS,JSON.stringify(P))}catch(e){}if(POOL&&view!=='run'&&!famOpen)route()}}
     else if(snap&&P.ts)dirty=true;
     syncNote=snap?'Progress syncs to your Claude account, so it follows you across devices.':'';
     if(dirty)flush();
-    if(POOL&&view==='home')home();
+    if(POOL&&view==='home'&&!famOpen)home();
   }catch(e){}
 })();
 }

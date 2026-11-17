@@ -6,8 +6,8 @@ Status: `todo`, `doing`, `done`. Update this file at the end of every session, t
 
 | # | Task | Status |
 |---|---|---|
-| S1 | Merge the Technician and Extra `index.html` into one template plus per-exam config; keep each live `LS` key and db path; retest both and republish | todo |
-| S2 | Add family support to the app: `#family-<id>` route, "Still confused?" button, family page renderer, "Drill these N" | todo |
+| S1 | Merge the Technician and Extra `index.html` into one template plus per-exam config; keep each live `LS` key and db path; retest both and republish | done (republish after merge) |
+| S2 | Add family support to the app: `#family-<id>` route, "Still confused?" button, family page renderer, "Drill these N" | done |
 | S3 | Build the reusable widgets listed in SPEC.md as they're first needed | todo |
 
 ## Technician families (34)
@@ -70,4 +70,5 @@ Status: `todo`, `doing`, `done`. Update this file at the end of every session, t
 
 ## Log
 
+- 2026-11-17 (S1, S2): Both exam pages now come from `app/template.html` plus `exams/<exam>/exam.json`; run `tools/site.py build <exam>` after any change and never hand-edit a site's `index.html`. Storage keys and db path unchanged. Family support is in: "Still confused?" button under notes (runs and debriefs), family page over the current view with back returning to the same spot, deep links `#family-<id>`, "Drill these N". Pages are published only once `families/<exam>/<id>.json` exists; `tools/site.py check <exam>` validates them. No widgets exist yet (S3): the first family session builds its widget into the `WIDGETS` registry. Both sites tested headless with no page errors. Not yet republished: republish both after the PR merges (nothing visible changes until a family page exists).
 - 2026-11-17: Repo created from the first session. Technician and Extra sites live with notes for every question. All three pools verified word for word against the NCVEC PDFs. Technician family list drafted and approved by Brooke (34 families).
