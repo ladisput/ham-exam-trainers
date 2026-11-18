@@ -8,7 +8,7 @@ Status: `todo`, `doing`, `done`. Update this file at the end of every session, t
 |---|---|---|
 | S1 | Merge the Technician and Extra `index.html` into one template plus per-exam config; keep each live `LS` key and db path; retest both and republish | done |
 | S2 | Add family support to the app: `#family-<id>` route, "Still confused?" button, family page renderer, "Drill these N" | done |
-| S3 | Build the reusable widgets listed in SPEC.md as they're first needed | doing (built: `formula-triangle`, `ladder`, `calculator` with `db` and `wavelength`, `circuit-toggle`, `sort-bins`, `match`, `figure-explorer`, `scenario`, calc `multipath`, `band-chart`) |
+| S3 | Build the reusable widgets listed in SPEC.md as they're first needed | doing (built: `formula-triangle`, `ladder`, `calculator` with `db` and `wavelength`, `circuit-toggle`, `sort-bins`, `match`, `figure-explorer`, `scenario`, calc `multipath`, `band-chart`, `power-wheel`, `sine-wave`, `s-meter`, `combiner`, `transformer`) |
 | S4 | Public website: Technician as an installable offline web app (PWA) on Cloudflare Pages, progress saved on each device; General and Extra added later via `WEB_EXAMS` | doing (built and tested; waiting on Brooke to connect Cloudflare) |
 
 ## Technician families (34)
@@ -56,11 +56,73 @@ Status: `todo`, `doing`, `done`. Update this file at the end of every session, t
 
 | # | Task | Status |
 |---|---|---|
-| G1 | Check for newer General pool errata; `tools/pool.py build general` (fix the subelement name capitalization, e.g. "rf" to "RF") | todo |
-| G2 | Write Elmer's notes for all 423 questions; `merge` and `check` | todo |
-| G3 | Build and publish the General site (35 questions, pass 26); add to ARTIFACTS.md | todo |
-| G4 | Map General families into `families/general/_index.json` (reuse Technician family ids where the concept matches) | todo |
-| G5 | Build General family pages | todo |
+| G1 | Check for newer General pool errata; `tools/pool.py build general` (fix the subelement name capitalization, e.g. "rf" to "RF") | done |
+| G2 | Write Elmer's notes for all 423 questions; `merge` and `check` | done |
+| G3 | Build and publish the General site (35 questions, pass 26); add to ARTIFACTS.md | doing (built and tested; publish the real artifact after the first PR merges) |
+| G4 | Map General families into `families/general/_index.json` (reuse Technician family ids where the concept matches) | done |
+| G5 | Build General family pages | doing |
+
+### General families (53)
+
+378 of 423 questions are in a family. Question lists, and a one-line plan for each family's interaction, are in `families/general/_index.json`.
+Brooke's rule for General: every family gets a hands-on interaction (slider, live graph, meter, simulator). A match, sort or
+plain scenario only where nothing can be varied, and the reason is recorded (CW codes, part types, on-air etiquette).
+
+| # | Family | Category | Questions | Interaction | Status |
+|---|---|---|---|---|---|
+| 1 | Power from any two values (P, E, I, R) (`power-formulas`) | Math and formulas | 4 | Power wheel | done |
+| 2 | RMS, peak, peak-to-peak and PEP (`rms-peak-pep`) | Math and formulas | 9 | Live sine wave | done |
+| 3 | Decibels and the S meter (`decibels`) | Math and formulas | 6 | Working S meter | done |
+| 4 | Resistors, capacitors and inductors in series and parallel (`combining-parts`) | Math and formulas | 10 | Parts bench | done |
+| 5 | Transformers and turns ratio (`transformers`) | Math and formulas | 7 | Transformer | done |
+| 6 | Reactance, impedance and resonance (`reactance-resonance`) | Math and formulas | 13 | Frequency slider on a graph | todo |
+| 7 | Antenna length (468 / f) (`antenna-length`) | Math and formulas | 5 | Frequency slider with a drawn dipole or quarter-wave whip that stretches and shrinks, feet shown | todo |
+| 8 | FM deviation and bandwidth (`fm-deviation`) | Math and formulas | 3 | FM spectrum | todo |
+| 9 | Link budget and link margin (`link-budget`) | Math and formulas | 3 | Signal path in dB | todo |
+| 10 | Mixers, IF and image response (`mixers-images`) | Circuits | 7 | Mixer spectrum | todo |
+| 11 | Intermodulation and the two-tone test (`intermod`) | Circuits | 5 | Two tones on a spectrum | todo |
+| 12 | Sun to Earth: flares, CMEs and storms (`solar-weather`) | Propagation | 8 | Sun-to-Earth timeline | todo |
+| 13 | Sunspots, solar flux, K and A (`solar-indices`) | Propagation | 6 | Sunspot slider that opens and closes the high bands, and a K vs. A chart (3-hour bars vs. the daily average) | todo |
+| 14 | MUF, LUF and the usable window (`muf-luf`) | Propagation | 9 | Ionosphere cross-section | todo |
+| 15 | D, E and F regions (`ionosphere-regions`) | Propagation | 8 | Same cross-section with a day/night switch | todo |
+| 16 | Skip zone and scatter (`scatter`) | Propagation | 4 | Cross-section showing the skip zone, then the weak, fluttery scatter that leaks into it | todo |
+| 17 | Short path vs. long path (`long-path`) | Propagation | 3 | Beam heading dial on an azimuthal map | todo |
+| 18 | Which sideband, and where it sits (`sidebands`) | Operating | 13 | Band-edge tuner | todo |
+| 19 | General privileges map (`privileges-map`) | Rules | 12 | Band chart (built for Technician) | todo |
+| 20 | Power limits and 60 meters (`power-limits`) | Rules | 8 | Band chart of the HF bands with each band's power limit, the 30-meter 200 W exception and the 60-meter channel rules | todo |
+| 21 | Beacons (`beacons`) | Rules | 6 | Band chart with the beacon frequencies and the 28.2 to 28.3 MHz automatic beacon window marked | todo |
+| 22 | How wide is each signal (`signal-width`) | Operating | 8 | Spectrum view | todo |
+| 23 | Mic gain, ALC and the speech processor (`speech-alc`) | Operating | 7 | Voice envelope on a scope | todo |
+| 24 | AM, FM and PM: what changes (`modulation`) | Circuits | 7 | Modulation scope | todo |
+| 25 | Receiver tools: notch, blanker, NR, attenuator (`receiver-tools`) | Operating | 6 | Receiver panel with a problem on the band (whistle, ignition pops, a blasting signal); switch on the right control and it clears | todo |
+| 26 | The waterfall and FT8 (`waterfall-ft8`) | Digital modes | 8 | Live waterfall | todo |
+| 27 | RTTY and FSK (`rtty-fsk`) | Digital modes | 6 | Two-tone FSK display | todo |
+| 28 | PSK31, QPSK and Varicode (`psk`) | Digital modes | 4 | Phase wheel | todo |
+| 29 | ARQ, NAK and error correction (`arq-fec`) | Digital modes | 6 | Packet exchange | todo |
+| 30 | Winlink, gateways and mesh networks (`winlink-mesh`) | Digital modes | 7 | Network map | todo |
+| 31 | CW: Q signals and prosigns (`cw-procedures`) | Operating | 12 | Match (pure vocabulary; nothing to calculate or move) | todo |
+| 32 | On-air etiquette (`on-air`) | Operating | 9 | Scenario | todo |
+| 33 | Rectifiers and power supplies (`rectifiers`) | Circuits | 8 | Rectifier scope | todo |
+| 34 | Schematic symbols (Figure G7-1) (`schematic-symbols`) | Circuits | 5 | Figure explorer (built for Technician) on Figure G7-1 | todo |
+| 35 | Amplifier classes and efficiency (`amp-classes`) | Circuits | 8 | Conduction viewer | todo |
+| 36 | Digital logic: gates, counters, shift registers (`logic`) | Circuits | 5 | Logic bench | todo |
+| 37 | Filter words: passband, cutoff, rejection (`filters`) | Circuits | 6 | Filter response curve | todo |
+| 38 | SDR, I/Q and DDS (`sdr-iq`) | Circuits | 4 | Rotating I/Q phasor | todo |
+| 39 | Diodes, transistors and tubes (`semiconductors`) | Components | 7 | Bias slider | todo |
+| 40 | Capacitor, resistor and ferrite types (`parts-types`) | Components | 6 | Sort (these are look-alike part types with one fact each; nothing to slide) | todo |
+| 41 | RF connectors (`connectors`) | Components | 4 | Frequency chart | todo |
+| 42 | RF in the shack: grounds, bonding and chokes (`rfi-grounds`) | Station | 11 | Ground wire slider | todo |
+| 43 | AC wiring, breakers and lightning (`ac-lightning`) | Safety | 9 | Breaker panel | todo |
+| 44 | RF exposure (`rf-exposure`) | Safety | 12 | Time-averaging meter | todo |
+| 45 | SWR, mismatch and line loss (`swr`) | Antennas and feed lines | 10 | Feed line simulator | todo |
+| 46 | Feed line types and loss (`feed-lines`) | Antennas and feed lines | 4 | Line builder | todo |
+| 47 | Feed point impedance: height, feed point, radials (`dipole-feed`) | Antennas and feed lines | 6 | Dipole lab | todo |
+| 48 | Radiation patterns (`patterns`) | Antennas and feed lines | 8 | Pattern viewer | todo |
+| 49 | Yagi design and stacking (`yagi`) | Antennas and feed lines | 8 | Yagi builder | todo |
+| 50 | Short and loaded antennas (`short-antennas`) | Antennas and feed lines | 7 | Mobile whip | todo |
+| 51 | Mobile, battery and solar power (`station-power`) | Station | 9 | Solar builder | todo |
+| 52 | Exams, VEs and upgrades (`ve-licensing`) | Rules | 10 | Upgrade timeline | todo |
+| 53 | Remote operation, third party and ITU regions (`remote-third-party`) | Rules | 10 | Scenario | todo |
 
 ## Extra
 
@@ -71,6 +133,7 @@ Status: `todo`, `doing`, `done`. Update this file at the end of every session, t
 
 ## Log
 
+- 2026-11-18 (General start, PR general-start): G1, G2, G4 done and G3 built. Pool verified 423/423 against the Feb 4, 2026 errata PDF (no newer errata); `pool.py` now upper-cases RF in subelement names. Notes for all 423 questions (`check` flags none). `exams/general/exam.json` added (`ls` = `general-trainer-v1`, 35 questions, pass 26); figure G7-1 copied to `site/fig/`. Family map: 53 families covering 378 questions, each with an interaction plan (readable copy for Brooke: Claude Doc "General trainer: family map"). Batch 1: power formulas, RMS/peak/PEP, decibels and the S meter, series/parallel parts, transformers. New widgets: `power-wheel`, `sine-wave`, `s-meter`, `combiner`, `transformer`, plus `fmtSI` (metric-prefix formatting) in the template; `site.py check` validates their presets. Every preset was clicked headless and its result matched the pool answer. The preview artifact now shows General (Technician files removed from it). The template changed, so after merge: republish Technician and Extra, and publish the real General artifact (new, with `db` + `user`, then add it to ARTIFACTS.md). Next batch: families 6-10 (reactance and resonance, antenna length, FM deviation, link budget, mixers).
 - 2026-11-18 (S4, public website): `tools/web.py build` writes `web/` (hub + `web/technician/` with manifest, service worker, icons, self-hosted fonts). Progress on the website is localStorage only, under the same `ls` key; the backup code moves it. Template gained the `<!--fonts-->`, `<!--web-head-->`, `<!--web-body-->` markers and an install card shown only when `CFG.web`; the artifact pages are unchanged apart from that inert code, so republish both artifacts after this merges. Hosting: Cloudflare Pages, no build step, output dir `web`. Also on record: Technician v10 and Extra v5 were published after PR #9. To put General or Extra on the website: add to `WEB_EXAMS`, add `short` to its exam.json (Extra has it), build, test, commit `web/`.
 - 2026-11-18 (Technician families 31-34, pool questions in every widget): Coax and connectors, antenna length, grounding and lightning, RF exposure. All 34 Technician families are now written. Brooke noticed only the first pages had "Try a question from the pool" chips, so every widget type now takes `presets` (see SPEC.md), every family has them, and `match` can be started from either side. Questions left out of a widget are ones it doesn't work (for example a definition question whose answer is the term itself, or instrument questions on the units page). Families 26-30 were republished to Technician on 2026-11-18 (v9). The template changed, so republish Extra too after this merges. Next: X1, map the Extra families.
 - 2026-11-18 (Technician families 26-30): Repeater alphabet soup, internet linking, "you sound bad" fixes, SWR, interference: whose fix is it? No new widgets: `match` (repeater terms, bad-audio reports), `scenario` (internet linking, SWR) and `sort-bins` (where the interference fix goes). Families 21-25 were republished to Technician on 2026-11-18 (v8). Next batch: families 31-34 (coax and connectors, antenna length, grounding and lightning, RF exposure).

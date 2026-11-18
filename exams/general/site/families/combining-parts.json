@@ -1,0 +1,292 @@
+{
+ "id": "combining-parts",
+ "exam": "general",
+ "title": "Resistors, capacitors and inductors in series and parallel",
+ "idea": "Resistors and inductors add in series. Capacitors are the odd one out: they add in parallel.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "",
+    "Series",
+    "Parallel"
+   ],
+   [
+    "Resistors",
+    "Add",
+    "Reciprocals: total shrinks"
+   ],
+   [
+    "Inductors",
+    "Add",
+    "Reciprocals: total shrinks"
+   ],
+   [
+    "Capacitors",
+    "Reciprocals: total shrinks",
+    "Add"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "combiner",
+  "config": {
+   "kind": "R",
+   "mode": "series",
+   "parts": [
+    [
+     100,
+     ""
+    ],
+    [
+     200,
+     ""
+    ]
+   ],
+   "presets": [
+    {
+     "q": "G5C03",
+     "kind": "R",
+     "mode": "parallel",
+     "parts": [
+      [
+       10,
+       ""
+      ],
+      [
+       20,
+       ""
+      ],
+      [
+       50,
+       ""
+      ]
+     ]
+    },
+    {
+     "q": "G5C04",
+     "kind": "R",
+     "mode": "parallel",
+     "parts": [
+      [
+       100,
+       ""
+      ],
+      [
+       200,
+       ""
+      ]
+     ]
+    },
+    {
+     "q": "G5B02",
+     "kind": "R",
+     "mode": "parallel",
+     "parts": [
+      [
+       100,
+       ""
+      ],
+      [
+       200,
+       ""
+      ],
+      [
+       300,
+       ""
+      ]
+     ]
+    },
+    {
+     "q": "G5C08",
+     "kind": "C",
+     "mode": "parallel",
+     "parts": [
+      [
+       "5.0",
+       "n"
+      ],
+      [
+       "5.0",
+       "n"
+      ],
+      [
+       750,
+       "p"
+      ]
+     ]
+    },
+    {
+     "q": "G5C09",
+     "kind": "C",
+     "mode": "series",
+     "parts": [
+      [
+       100,
+       "µ"
+      ],
+      [
+       100,
+       "µ"
+      ],
+      [
+       100,
+       "µ"
+      ]
+     ]
+    },
+    {
+     "q": "G5C12",
+     "kind": "C",
+     "mode": "series",
+     "parts": [
+      [
+       20,
+       "µ"
+      ],
+      [
+       50,
+       "µ"
+      ]
+     ]
+    },
+    {
+     "q": "G5C13",
+     "kind": "C",
+     "mode": "parallel",
+     "parts": [
+      [
+       10,
+       "µ"
+      ],
+      [
+       10,
+       "µ"
+      ]
+     ]
+    },
+    {
+     "q": "G5C10",
+     "kind": "L",
+     "mode": "parallel",
+     "parts": [
+      [
+       10,
+       "m"
+      ],
+      [
+       10,
+       "m"
+      ],
+      [
+       10,
+       "m"
+      ]
+     ]
+    },
+    {
+     "q": "G5C11",
+     "kind": "L",
+     "mode": "series",
+     "parts": [
+      [
+       20,
+       "m"
+      ],
+      [
+       50,
+       "m"
+      ]
+     ]
+    },
+    {
+     "q": "G5C14",
+     "kind": "L",
+     "mode": "series",
+     "parts": [
+      [
+       10,
+       "m"
+      ],
+      [
+       10,
+       "m"
+      ]
+     ]
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Resistors and inductors",
+   "how": "Series adds. Parallel gives less than the smallest part."
+  },
+  {
+   "term": "Capacitors",
+   "how": "Parallel adds. Series gives less than the smallest part."
+  },
+  {
+   "term": "Shortcuts",
+   "how": "Two parts: product over sum. Equal parts: one value divided by how many."
+  },
+  {
+   "term": "Reciprocals",
+   "how": "1 / total = 1/A + 1/B + 1/C. The total always ends up smaller than the smallest part."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G5C09",
+   "wrong": "300 microfarads",
+   "why": "Adding is for capacitors in parallel. In series, equal capacitors divide: 100 / 3 = 33.3."
+  },
+  {
+   "q": "G5C12",
+   "wrong": "70 microfarads",
+   "why": "In series, capacitors combine like parallel resistors: 1000 / 70 = 14.3."
+  },
+  {
+   "q": "G5C10",
+   "wrong": "30 millihenries",
+   "why": "Inductors add in series, not parallel. In parallel: 10 / 3 = 3.3 mH."
+  },
+  {
+   "q": "G5C13",
+   "wrong": "A capacitor in series",
+   "why": "A capacitor in series lowers the total. Parallel adds."
+  },
+  {
+   "q": "G5C14",
+   "wrong": "An inductor in parallel",
+   "why": "An inductor in parallel lowers the total. Series adds."
+  },
+  {
+   "q": "G5C03",
+   "wrong": "80 ohms",
+   "why": "80 is the series total. In parallel the total is smaller than the smallest resistor."
+  },
+  {
+   "q": "G5C08",
+   "wrong": "576.9 nanofarads",
+   "why": "That's the series formula. Capacitors in parallel just add: 5 + 5 + 0.75 = 10.75 nF."
+  },
+  {
+   "q": "G5B02",
+   "wrong": "It decreases as more parallel branches are added to the circuit",
+   "why": "Each new branch adds its own current, so the total goes up."
+  }
+ ],
+ "questions": [
+  "G5B02",
+  "G5C03",
+  "G5C04",
+  "G5C08",
+  "G5C09",
+  "G5C10",
+  "G5C11",
+  "G5C12",
+  "G5C13",
+  "G5C14"
+ ]
+}

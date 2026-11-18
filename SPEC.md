@@ -13,7 +13,7 @@ website (anyone with the link, installable to the home screen, works offline, pr
 | Exam | Element | Pool in force | Exam size | Pass | Status |
 |---|---|---|---|---|---|
 | Technician | 2 | 2026-2030, Feb 19 2026 revision (July 1 2026 - June 30 2030), 409 questions | 35 | 26 | Live, notes done |
-| General | 3 | 2023-2027, 6th errata Feb 4 2026 (through June 30 2027), 423 questions | 35 | 26 | Not built; data verified |
+| General | 3 | 2023-2027, 6th errata Feb 4 2026 (through June 30 2027), 423 questions | 35 | 26 | Built, notes done, families in progress |
 | Extra | 4 | 2024-2028, 4th errata Feb 4 2026 (through June 30 2028), 599 questions | 50 | 37 | Live, notes done |
 
 Each exam draws exactly one question from every group (35 or 50 groups). Before building or republishing an
@@ -106,7 +106,13 @@ Build order: all Technician families first, then the General site and its famili
 - `band-chart`: interactive band/segment map with privileges, power, and modes.
 - `figure-explorer`: tap the numbered parts of a pool figure to reveal each name and its job.
 - `circuit-toggle`: small animated circuit that switches between two arrangements.
-Widgets must work by tap on a 360px-wide screen, with 44px targets and no hover-only behavior.
+- `power-wheel`: P, E, I, R wheel; type any two, the formula for each of the others lights up (presets: `vals` with two of P/E/I/R).
+- `sine-wave`: a sine wave sized by slider or by typing peak, peak-to-peak, RMS or watts; shows all three voltages and PEP into a load (presets: `kind` pk/pp/rms/w, `v`, optional `ohms`, `carrier`).
+- `s-meter`: an S meter with two needles; first reading plus a dB change gives the power ratio (presets: `from` in dB relative to S9, `d`).
+- `combiner`: resistors, inductors or capacitors drawn in series or parallel with the total worked out (presets: `kind` R/L/C, `mode`, `parts` as [value, prefix]).
+- `transformer`: two windings with turns sliders; voltage, current (wire thickness) and impedance ratios, feed from either side, impedance matching (presets: `np`, `ns`, `vp`, optional `flip`, `zp`/`zs`).
+Brooke prefers hands-on widgets (sliders, live graphs, meters, simulators) to match, sort or text quizzes: use those only when nothing in
+the idea can be varied, and say why. Widgets must work by tap on a 360px-wide screen, with 44px targets and no hover-only behavior.
 Every widget ties in the pool: `config.presets` lists the family's questions the widget can work, shown as "Try a
 question from the pool" chips. A chip shows the question and sets the widget up for it: formula and calculator
 values, a scenario situation (and its settings), a band and item, a circuit arrangement, a figure part (presets

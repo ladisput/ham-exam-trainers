@@ -136,6 +136,22 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
 .bc .sel{stroke:var(--ink);stroke-width:3}.bc .mk{stroke:var(--ink);stroke-width:2}.bc .bct{fill:var(--ink);font-weight:700}
 .bclist{display:flex;flex-direction:column;gap:6px;margin-top:10px}.bclist button{text-align:left;line-height:1.25;padding:8px 12px;display:flex;gap:10px;align-items:center}
 .bclist i{flex:none;width:14px;height:14px;border-radius:3px;border:1px solid var(--line)}.bclist button.on{border-color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
+.pw{display:block;width:100%;max-width:320px;margin:0 auto;font-family:"Barlow Condensed",sans-serif}
+.pw .pq{stroke:var(--card);stroke-width:3}.pw .pq.kn{fill:var(--blue)}.pw .pq.un{fill:var(--badbg)}
+.pw .pl{font:700 40px "Barlow Condensed",sans-serif;text-anchor:middle;fill:var(--ink);pointer-events:none}
+.pw .pq.kn+.pl{fill:light-dark(#fff,#0d1420)}
+.pw .pf{fill:var(--tint);stroke:var(--line)}.pw .pf.on{fill:var(--red);stroke:var(--red)}
+.pw .pft{font:600 12.5px "Barlow Condensed",sans-serif;text-anchor:middle;fill:var(--mute)}.pw .pft.on{fill:light-dark(#fff,#1a0d0a)}
+.pw .pd{stroke:var(--card);stroke-width:3}
+.pwk .seg{flex-wrap:wrap}.pwk .seg button{flex:1 1 40%;font-weight:600}
+.sw .swl{stroke-width:2;stroke-dasharray:6 5}.sw .swl.pk{stroke:var(--red)}.sw .swl.rm{stroke:var(--blue)}
+.sw .swt{font:600 13px Barlow,sans-serif;fill:var(--mute)}
+.swr{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.swr div{background:var(--tint);border-radius:8px;padding:8px}
+.swr span{display:block;font-size:13px;color:var(--mute)}.swr b{font:700 22px/1.1 "Barlow Condensed",sans-serif}
+.sm{display:block;width:100%;height:auto}.sm .smn1{stroke:var(--mute);stroke-width:2.5;stroke-dasharray:5 4}.sm .smn2{stroke:var(--red);stroke-width:3}
+.smf .chips{margin-top:0}.smb{min-width:48px;min-height:44px;padding:0 10px;font:600 16px/1 "Barlow Condensed",sans-serif}.smb.on{background:var(--ink);border-color:var(--ink);color:var(--card)}
+.cbrow{display:grid;grid-template-columns:4.2em minmax(0,1fr) 5.2em auto;gap:8px;align-items:center;margin-top:8px}.cbrow label{margin:0}.cbrow button{min-width:44px;padding:0}
+.wg input[type=range]{min-height:36px;border:0;background:none}
 </style>
 </head>
 <body style="--call-size:20px;--call-w:8.2em">
@@ -652,6 +668,239 @@ WIDGETS.match=(el,c)=>{
     });
   }
   deal();
+};
+/* fmtSI: a value with the metric prefix that keeps the number readable (0.06125 W -> 61.25 mW). */
+const SIP=[[1e9,'G'],[1e6,'M'],[1e3,'k'],[1,''],[1e-3,'m'],[1e-6,'µ'],[1e-9,'n'],[1e-12,'p']];
+function fmtSI(x,u,s=4){if(!isFinite(x))return'?';if(x===0)return'0 '+u;const a=Math.abs(x);for(const[m,p]of SIP)if(a>=m*.9995)return fmt(x/m,s)+' '+p+u;return fmt(x/1e-12,s)+' p'+u}
+const SIX={G:1e9,M:1e6,k:1e3,'':1,m:1e-3,'µ':1e-6,n:1e-9,p:1e-12};
+
+/* power-wheel: the 12 formulas linking P, E, I and R. Type any two; the wheel lights the formula that finds each of the others.
+   config {start:{E,I}, presets:[{q, vals:{E:400,R:800}}]}. Values are in base units (watts, volts, amperes, ohms). */
+WIDGETS['power-wheel']=(el,c)=>{
+  const Q={P:{n:'Power',u:'W'},E:{n:'Voltage',u:'V'},I:{n:'Current',u:'A'},R:{n:'Resistance',u:'Ω'}},K=['P','E','I','R'];
+  /* F[unknown][pair of knowns] = [formula text, working text fn, value fn] */
+  const sq=x=>x*x,F={
+    P:{EI:['P = E x I',v=>`${v.E} x ${v.I}`,v=>v.E*v.I],IR:['P = I² x R',v=>`${v.I}² x ${v.R}`,v=>sq(v.I)*v.R],ER:['P = E² / R',v=>`${v.E}² / ${v.R}`,v=>sq(v.E)/v.R]},
+    E:{IR:['E = I x R',v=>`${v.I} x ${v.R}`,v=>v.I*v.R],IP:['E = P / I',v=>`${v.P} / ${v.I}`,v=>v.P/v.I],PR:['E = √(P x R)',v=>`√(${v.P} x ${v.R})`,v=>Math.sqrt(v.P*v.R)]},
+    I:{ER:['I = E / R',v=>`${v.E} / ${v.R}`,v=>v.E/v.R],EP:['I = P / E',v=>`${v.P} / ${v.E}`,v=>v.P/v.E],PR:['I = √(P / R)',v=>`√(${v.P} / ${v.R})`,v=>Math.sqrt(v.P/v.R)]},
+    R:{EI:['R = E / I',v=>`${v.E} / ${v.I}`,v=>v.E/v.I],IP:['R = P / I²',v=>`${v.P} / ${v.I}²`,v=>v.P/sq(v.I)],EP:['R = E² / P',v=>`${v.E}² / ${v.P}`,v=>sq(v.E)/v.P]}};
+  const pk=(u,a,b)=>{const ks=Object.keys(F[u]);return ks.find(k=>k.includes(a)&&k.includes(b))};
+  let known=Object.keys(c.start||{E:1,I:1}).slice(0,2);const val=Object.assign({E:'12',I:'2'},c.start?Object.fromEntries(Object.entries(c.start).map(([k,v])=>[k,String(v)])):{});
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Any two give you the rest</h3><p class="small mute lead">Tap the two you know and type them in. The wheel lights the formula for each of the other two.</p>
+  <svg class="pw" viewBox="0 0 320 320" role="img" aria-label="Power wheel: P, E, I, R in the middle, 12 formulas around it"></svg>
+  <div class="pwk"></div><div class="fields"></div><div class="wres"></div>`;
+  const svg=el.querySelector('.pw'),kb=el.querySelector('.pwk'),fields=el.querySelector('.fields'),res=el.querySelector('.wres');
+  const ang0={P:-135,E:-45,R:45,I:135};/* each quadrant spans 90 degrees starting here (screen degrees, 0 = right) */
+  const pt=(a,r)=>[160+r*Math.cos(a*Math.PI/180),160+r*Math.sin(a*Math.PI/180)];
+  const sector=(a0,a1,r0,r1)=>{const[x0,y0]=pt(a0,r1),[x1,y1]=pt(a1,r1),[x2,y2]=pt(a1,r0),[x3,y3]=pt(a0,r0);return`M${x0} ${y0}A${r1} ${r1} 0 0 1 ${x1} ${y1}L${x2} ${y2}A${r0} ${r0} 0 0 0 ${x3} ${y3}Z`};
+  function draw(){
+    const unk=K.filter(k=>!known.includes(k)),v={};known.forEach(k=>v[k]=num(val[k]));
+    const ok=known.every(k=>isFinite(v[k])&&v[k]>0),used=unk.map(u=>[u,pk(u,known[0],known[1])]);
+    let g='';
+    K.forEach(k=>{const a=ang0[k];g+=`<path d="${sector(a,a+90,0,78)}" class="pq ${known.includes(k)?'kn':'un'}"/>`;
+      const[tx,ty]=pt(a+45,44);g+=`<text x="${tx}" y="${ty+15}" class="pl">${k}</text>`;
+      Object.keys(F[k]).forEach((pr,i)=>{const b=a+i*30,on=used.some(([u,p])=>u===k&&p===pr);g+=`<path d="${sector(b+1,b+29,84,156)}" class="pf${on?' on':''}"/>`;
+        const[fx,fy]=pt(b+15,121);g+=`<text x="${fx}" y="${fy+5}" class="pft${on?' on':''}">${esc(F[k][pr][0].split(' = ')[1])}</text>`})});
+    svg.innerHTML=g+`<line x1="105" y1="105" x2="215" y2="215" class="pd"/><line x1="215" y1="105" x2="105" y2="215" class="pd"/>`;
+    kb.innerHTML=`<p class="small mute" style="margin:12px 0 4px">I know:</p><div class="seg">${K.map(k=>`<button data-k="${k}" class="${known.includes(k)?'pri':''}" aria-pressed="${known.includes(k)}">${k} <span class="small">${Q[k].n.toLowerCase()}</span></button>`).join('')}</div>`;
+    kb.querySelectorAll('[data-k]').forEach(b=>b.onclick=()=>{const k=b.dataset.k;if(known.includes(k))return;known=[known[1],k];unchip(el);draw()});
+    fields.innerHTML=known.map(k=>`<div><label for="pw-${k}">${k} = ${Q[k].n.toLowerCase()} (${Q[k].u==='Ω'?'ohms':Q[k].u==='W'?'watts':Q[k].u==='V'?'volts':'amperes'})</label><input id="pw-${k}" data-k="${k}" type="text" inputmode="decimal" value="${esc(val[k]??'')}"></div>`).join('');
+    fields.querySelectorAll('input').forEach(i=>i.oninput=()=>{val[i.dataset.k]=i.value;unchip(el);calc()});
+    calc();
+  }
+  function calc(){
+    const v={};known.forEach(k=>v[k]=num(val[k]));
+    if(!known.every(k=>isFinite(v[k])&&v[k]>0)){res.innerHTML=`<p class="small mute" style="margin:0">Type ${Q[known[0]].n.toLowerCase()} and ${Q[known[1]].n.toLowerCase()} (above zero).</p>`;return}
+    const unk=K.filter(k=>!known.includes(k)),sh={};known.forEach(k=>sh[k]=fmt(v[k]));
+    res.innerHTML=unk.map((u,i)=>{const f=F[u][pk(u,known[0],known[1])],r=f[2](v);return`<div class="eq"${i?' style="font-size:clamp(22px,6.5vw,30px);margin-top:10px"':''}>${u} = <em>${fmtSI(r,Q[u].u)}</em></div><p class="small mute">${esc(f[0])} = ${esc(f[1](sh))} = ${fmt(r,4)} ${Q[u].u}</p>`}).join('');
+  }
+  chips(el,c.presets,p=>{known=Object.keys(p.vals);Object.entries(p.vals).forEach(([k,x])=>val[k]=String(x));draw()});
+  draw();
+};
+
+/* sine-wave: one sine wave you size with a slider or by typing any one value. Shows peak, peak-to-peak and RMS on the wave,
+   and the power into a load (PEP for a steady sine). config {start:{kind,v}, ohms, presets:[{q, kind:'pk'|'pp'|'rms'|'w', v, ohms?, carrier?}]}. */
+WIDGETS['sine-wave']=(el,c)=>{
+  const KINDS={pk:'Peak volts',pp:'Peak-to-peak volts',rms:'RMS volts',w:'Power (watts)'};
+  let st={kind:'pk',v:'100',ohms:String(c.ohms??50),carrier:false,...(c.start||{})};st.v=String(st.v);
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Size the wave</h3><p class="small mute lead">Slide the wave taller or shorter, or type any one value. Every other number is read off the same wave.</p>
+  <svg class="wave sw" viewBox="0 0 340 176" role="img"></svg>
+  <input class="swsl" type="range" min="0" max="1000" aria-label="Wave height" style="padding:0;margin-top:6px">
+  <div class="fields"><div><label for="sw-k">I know the</label><select id="sw-k">${Object.entries(KINDS).map(([k,n])=>`<option value="${k}">${n}</option>`).join('')}</select></div>
+  <div><label for="sw-v">Value</label><input id="sw-v" type="text" inputmode="decimal"></div><div><label for="sw-r">Load (ohms)</label><input id="sw-r" type="text" inputmode="decimal"></div></div><div class="wres"></div>`;
+  const svg=el.querySelector('svg'),sl=el.querySelector('.swsl'),$k=el.querySelector('#sw-k'),$v=el.querySelector('#sw-v'),$r=el.querySelector('#sw-r'),res=el.querySelector('.wres');
+  const R2=Math.SQRT2,lo=Math.log(1),hi=Math.log(1000);
+  function peak(){const v=num(st.v),r=num(st.ohms);return st.kind==='pk'?v:st.kind==='pp'?v/2:st.kind==='rms'?v*R2:Math.sqrt(v*r)*R2}
+  function draw(fromSlider){
+    $k.value=st.kind;if(!fromSlider)$v.value=st.v;$r.value=st.ohms;
+    const p=peak(),r=num(st.ohms);
+    if(!(p>0)||!(r>0)){res.innerHTML='<p class="small mute" style="margin:0">Type a value and a load above zero.</p>';svg.innerHTML='';return}
+    if(!fromSlider)sl.value=Math.round((Math.log(Math.min(1000,Math.max(1,p)))-lo)/(hi-lo)*1000);
+    const A=30+40*Math.min(1,Math.max(0,Math.log10(p)/3)),y0=88,Y=f=>y0-f*A,rm=p/R2;/* drawn height grows with the value (log), not to scale */
+    let d='';for(let x=0;x<=230;x+=2)d+=(x?' L':'M')+(10+x)+' '+(y0+A*Math.sin(x/230*3*Math.PI)).toFixed(1);
+    svg.innerHTML=`<line x1="10" y1="${y0}" x2="240" y2="${y0}" stroke="var(--line)" stroke-width="2"/>
+    <line x1="10" y1="${Y(1)}" x2="240" y2="${Y(1)}" class="swl pk"/><line x1="10" y1="${Y(.7071)}" x2="240" y2="${Y(.7071)}" class="swl rm"/><line x1="10" y1="${Y(-1)}" x2="240" y2="${Y(-1)}" class="swl pk"/>
+    <path d="${d}" fill="none" stroke="var(--ink)" stroke-width="3"/>
+    <path d="M252 ${Y(1)} H260 V${Y(-1)} H252" fill="none" stroke="var(--red)" stroke-width="2"/><text x="266" y="${y0+5}" class="swt" style="fill:var(--red)">p-p ${fmt(2*p,4)} V</text>
+    <text x="12" y="${Y(1)-6}" class="swt" style="fill:var(--red)">peak ${fmt(p,4)} V</text><text x="12" y="${Y(.7071)+15}" class="swt" style="fill:var(--blue)">RMS ${fmt(rm,4)} V</text>`;
+    svg.setAttribute('aria-label',`Sine wave, ${fmt(p,4)} volts peak`);
+    const P=rm*rm/r,wk=st.kind;
+    const how=wk==='pk'?`RMS = peak x 0.707 = ${fmt(p,4)} x 0.707 = ${fmt(rm,4)} V`:wk==='pp'?`Peak = half of peak-to-peak = ${fmt(2*p,4)} / 2 = ${fmt(p,4)} V. RMS = ${fmt(p,4)} x 0.707 = ${fmt(rm,4)} V`
+      :wk==='rms'?`Peak = RMS x 1.414 = ${fmt(rm,4)} x 1.414 = ${fmt(p,4)} V. Peak-to-peak = 2 x peak = ${fmt(2*p,4)} V`:`RMS volts = √(P x R) = √(${fmt(num(st.v))} x ${fmt(r)}) = ${fmt(rm,4)} V`;
+    res.innerHTML=`<div class="swr"><div><span>Peak</span><b>${fmt(p,4)} V</b></div><div><span>Peak-to-peak</span><b>${fmt(2*p,4)} V</b></div><div><span>RMS</span><b>${fmt(rm,4)} V</b></div></div>
+    <div class="eq" style="margin-top:12px">PEP = <em>${fmt(P,4)} W</em></div><p class="small mute">${esc(how)}</p><p class="small mute">Power = RMS² / R = ${fmt(rm,4)}² / ${fmt(r)} = ${fmt(P,4)} W into ${fmt(r)} ohms</p>
+    <p class="small">${st.carrier?`A steady, unmodulated carrier never changes height, so its peak envelope power equals its average power: PEP / average = 1.00.`:`RMS is the DC voltage that would heat the load the same. The blue line sits at 0.707 of the peak.`}</p>`;
+  }
+  sl.oninput=()=>{const p=Math.exp(lo+(hi-lo)*sl.value/1000),r=num(st.ohms),f={pk:p,pp:2*p,rms:p/R2,w:p*p/2/r}[st.kind];st.v=String(+f.toPrecision(3));$v.value=st.v;unchip(el);draw(true)};
+  $k.onchange=()=>{const p=peak(),r=num(st.ohms);st.kind=$k.value;const f={pk:p,pp:2*p,rms:p/R2,w:p*p/2/r}[st.kind];st.v=isFinite(f)?String(+f.toPrecision(4)):st.v;unchip(el);draw()};
+  $v.oninput=()=>{st.v=$v.value;unchip(el);draw(true)};$r.oninput=()=>{st.ohms=$r.value;unchip(el);draw(true)};
+  chips(el,c.presets,p=>{st={kind:p.kind,v:String(p.v),ohms:String(p.ohms??c.ohms??50),carrier:!!p.carrier};draw()});
+  draw();
+};
+
+/* s-meter: an S meter you read two signals on. S units are 6 dB apart; above S9 the scale is marked in dB.
+   config {from (dB relative to S9, e.g. -6 = S8), d (change in dB), presets:[{q, from, d}]}. */
+WIDGETS['s-meter']=(el,c)=>{
+  let from=c.from??-6,d=c.d??6;
+  const MARKS=[...Array.from({length:9},(_,i)=>[(i-8)*6,'S'+(i+1)]),[10,'+10'],[20,'+20'],[30,'+30'],[40,'+40']];
+  const ang=x=>x<=0?-60+84*(Math.max(-48,x)+48)/48:24+36*Math.min(40,x)/40;
+  const pt=(a,r)=>{const t=(a-90)*Math.PI/180;return[160+r*Math.cos(t),168+r*Math.sin(t)]};
+  const lab=x=>{if(x>0)return'S9 +'+x+' dB';if(x<-48)return'below S1';const u=Math.floor(x/6),r=x-6*u;return'S'+(9+u)+(r?' +'+r+' dB':'')};
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Read two signals</h3><p class="small mute lead">Pick where the first signal reads, then slide how much stronger or weaker the second one is.</p>
+  <svg class="sm" viewBox="0 0 320 190" role="img"></svg>
+  <p class="small mute" style="margin:10px 0 4px">First signal reads</p><div class="smf"></div>
+  <label for="sm-d" style="margin-top:12px">Change: <b class="smd"></b></label><input id="sm-d" type="range" min="-20" max="40" step="1" style="padding:0"><div class="wres"></div>`;
+  const svg=el.querySelector('svg'),fb=el.querySelector('.smf'),sl=el.querySelector('#sm-d'),dl=el.querySelector('.smd'),res=el.querySelector('.wres');
+  fb.innerHTML=`<div class="chips">${MARKS.filter(m=>m[0]<=20).map(([x,l])=>`<button class="smb" data-x="${x}">${l}</button>`).join('')}</div>`;
+  fb.querySelectorAll('.smb').forEach(b=>b.onclick=()=>{from=+b.dataset.x;unchip(el);draw()});
+  sl.oninput=()=>{d=+sl.value;unchip(el);draw()};
+  function draw(){
+    sl.value=d;dl.textContent=(d>0?'+':'')+d+' dB';
+    fb.querySelectorAll('.smb').forEach(b=>b.classList.toggle('on',+b.dataset.x===from));
+    const to=from+d;let t='';
+    MARKS.forEach(([x,l])=>{const a=ang(x),[x1,y1]=pt(a,118),[x2,y2]=pt(a,130),[tx,ty]=pt(a,146),r=x>0;t+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${r?'var(--red)':'currentColor'}" stroke-width="2"/>`+((x===20||x===40||(x<=0&&(x/6)%2===0))?`<text x="${tx}" y="${ty+5}" text-anchor="middle" font-size="${r?13:15}" fill="${r?'var(--red)':'currentColor'}">${l.replace('S','')}</text>`:'')});
+    const arc=(a0,a1,r)=>{const[x0,y0]=pt(a0,r),[x1,y1]=pt(a1,r);return`M${x0} ${y0}A${r} ${r} 0 0 ${a1>a0?1:0} ${x1} ${y1}`};
+    const nd=(x,cls)=>{const[x1,y1]=pt(ang(x),116);return`<line x1="160" y1="168" x2="${x1}" y2="${y1}" class="${cls}" stroke-linecap="round"/>`};
+    svg.innerHTML=`<rect x="2" y="2" width="316" height="186" rx="14" fill="var(--face)" stroke="var(--line)"/><g style="color:var(--ink);font-family:'Barlow Condensed',sans-serif;font-weight:600">
+    <path d="${arc(-60,24,118)}" stroke="currentColor" stroke-width="3" fill="none"/><path d="${arc(24,60,118)}" stroke="var(--red)" stroke-width="3" fill="none"/>${t}
+    <path d="${arc(ang(from),ang(to),100)}" stroke="var(--blue)" stroke-width="8" fill="none" opacity=".35"/>
+    <text x="24" y="34" font-size="20" fill="currentColor">S</text><text x="296" y="34" font-size="13" text-anchor="end" fill="var(--red)">dB OVER S9</text></g>
+    ${nd(from,'smn1')}${nd(to,'smn2')}<circle cx="160" cy="168" r="10" fill="var(--ink)"/></svg>`;
+    svg.setAttribute('aria-label',`S meter: first signal ${lab(from)}, second signal ${lab(to)}`);
+    const r=10**(d/10);
+    let how='';
+    if(d===0)how='Same reading, same power.';
+    else{const tens=Math.trunc(d/10),rest=d-10*tens,parts=[];
+      if(tens)parts.push(`${Math.abs(tens)*10} dB = ${tens>0?'x':'/'} ${fmt(10**Math.abs(tens))}`);
+      if(rest&&rest%3===0)parts.push(`${Math.abs(rest)} dB = ${rest>0?'x':'/'} ${fmt(2**(Math.abs(rest)/3))} (3 dB doubles)`);
+      if(parts.length&&(rest%3===0))how=`${parts.join(', then ')}.`}
+    const units=d%6===0&&from+d<=0&&from<=0?` That's ${Math.abs(d/6)} S unit${Math.abs(d)===6?'':'s'} (6 dB each).`:'';
+    res.innerHTML=`<div class="eq">${lab(from)} to ${lab(to)}: <em>${d>0?'+':''}${d} dB</em></div>
+    <p>${d>=0?`The second signal has <b>${fmt(r,3)} times</b> the power of the first.`:`The second signal has ${fmt(r*100,3)}% of the power: a loss of <b>${fmt(100-r*100,3)} percent</b>.`}${units}</p>
+    ${how?`<p class="small mute">${esc(how)}</p>`:''}<p class="small mute">Power ratio = 10 to the power (${d} / 10) = ${fmt(r,4)}</p>`;
+  }
+  chips(el,c.presets,p=>{from=p.from;d=p.d;draw()});
+  draw();
+};
+
+/* combiner: two to four resistors, inductors or capacitors, in series or in parallel, drawn as a circuit with the total worked out.
+   Resistors and inductors add in series; capacitors add in parallel (the rule flips).
+   config {kind:'R'|'L'|'C', mode:'series'|'parallel', parts:[[value, prefix]], presets:[{q, kind, mode, parts}]}. */
+WIDGETS.combiner=(el,c)=>{
+  const KD={R:{n:'Resistors',u:'Ω',w:'ohms',pre:['','k']},L:{n:'Inductors',u:'H',w:'henries',pre:['','m','µ']},C:{n:'Capacitors',u:'F',w:'farads',pre:['µ','n','p']}};
+  let st={kind:c.kind||'R',mode:c.mode||'series',parts:(c.parts||[[100,''],[200,'']]).map(([v,p])=>[String(v),p])};
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Build it and total it</h3><p class="small mute lead">Pick the part, set the values, then flip between series and parallel. Watch which way the total moves.</p>
+  <div class="seg cbk" role="group" aria-label="Part">${Object.entries(KD).map(([k,v])=>`<button data-k="${k}">${v.n}</button>`).join('')}</div>
+  <div class="seg cbm" role="group" aria-label="Arrangement" style="margin-top:8px"><button data-m="series">Series</button><button data-m="parallel">Parallel</button></div>
+  <svg class="circ cbs" viewBox="0 0 300 170" role="img"></svg><div class="cbp"></div><div class="wres"></div>`;
+  const svg=el.querySelector('.cbs'),pb=el.querySelector('.cbp'),res=el.querySelector('.wres');
+  const sym=(k,x,y,v)=>k==='R'?(v?`<path class="w" d="M${x} ${y} l-9 5 l18 7 l-18 7 l18 7 l-18 7 l9 5"/>`:`<path class="w" d="M${x} ${y} l5 -9 l7 18 l7 -18 l7 18 l7 -18 l5 9"/>`)
+    :k==='L'?(v?`<path class="w" d="M${x} ${y} c12 0 12 10 0 10 c12 0 12 10 0 10 c12 0 12 10 0 10 c12 0 12 8 0 8"/>`:`<path class="w" d="M${x} ${y} c0 -12 10 -12 10 0 c0 -12 10 -12 10 0 c0 -12 10 -12 10 0 c0 -12 8 -12 8 0"/>`)
+    :(v?`<path class="w" d="M${x} ${y} v15 M${x-14} ${y+15} h28 M${x-14} ${y+23} h28 M${x} ${y+23} v15"/>`:`<path class="w" d="M${x} ${y} h15 M${x+15} ${y-14} v28 M${x+23} ${y-14} v28 M${x+23} ${y} h15"/>`);
+  function vals(){return st.parts.map(([v,p])=>num(v)*SIX[p])}
+  function total(xs){const inv=st.kind==='C'?st.mode==='series':st.mode==='parallel';return inv?1/xs.reduce((a,x)=>a+1/x,0):xs.reduce((a,x)=>a+x,0)}
+  function draw(){
+    el.querySelectorAll('.cbk button').forEach(b=>{const on=b.dataset.k===st.kind;b.classList.toggle('pri',on);b.setAttribute('aria-pressed',on)});
+    el.querySelectorAll('.cbm button').forEach(b=>{const on=b.dataset.m===st.mode;b.classList.toggle('pri',on);b.setAttribute('aria-pressed',on)});
+    const n=st.parts.length,K=KD[st.kind],L=38,bat=(x,y)=>`<line x1="${x-10}" y1="${y}" x2="${x+10}" y2="${y}" class="w"/><line x1="${x-6}" y1="${y+10}" x2="${x+6}" y2="${y+10}" class="w" style="stroke-width:5"/>`;let g='';
+    if(st.mode==='series'){const w=230/n;svg.setAttribute('viewBox','0 0 300 100');
+      g+=bat(30,40)+`<path class="w" d="M30 40 V15 H35 M265 15 H270 V85 H30 V50"/>`;
+      st.parts.forEach(([v,p],i)=>{const x0=35+i*w,s=x0+(w-L)/2;g+=`<path class="w" d="M${x0} 15 H${s} M${s+L} 15 H${x0+w}"/>${sym(st.kind,s,15,false)}<text class="lbl" x="${x0+w/2}" y="${st.kind==='C'?46:42}" style="text-anchor:middle">${esc(v+' '+p+K.u)}</text>`});
+      g+=`<path class="flow" d="M30 40 V15 H270 V85 H30 V50"/>`}
+    else{const w=n>1?175/(n-1):0,xl=105+w*(n-1);svg.setAttribute('viewBox','0 0 300 160');
+      g+=bat(30,70)+`<path class="w" d="M30 70 V20 H${xl} M30 80 V140 H${xl}"/>`;
+      st.parts.forEach(([v,p],i)=>{const x=105+i*w;g+=`<path class="w" d="M${x} 20 V${80-L/2} M${x} ${80+L/2} V140"/>${sym(st.kind,x,80-L/2,true)}<text class="lbl" x="${x-(st.kind==='C'?17:12)}" y="${st.kind==='C'?74:84}" style="text-anchor:end">${esc(v+' '+p+K.u)}</text><path class="flow" d="M30 70 V20 H${x} V${80-L/2} M${x} ${80+L/2} V140 H30 V80"/>`})}
+    svg.innerHTML=g;svg.setAttribute('aria-label',`${n} ${K.n.toLowerCase()} in ${st.mode}`);
+    pb.innerHTML=st.parts.map(([v,p],i)=>`<div class="cbrow"><label for="cb-${i}">Part ${i+1}</label><input id="cb-${i}" data-i="${i}" type="text" inputmode="decimal" value="${esc(v)}"><select data-i="${i}" aria-label="Unit for part ${i+1}">${[...new Set([...K.pre,p])].map(x=>`<option value="${x}"${x===p?' selected':''}>${x}${K.u}</option>`).join('')}</select>${n>2?`<button data-x="${i}" aria-label="Remove part ${i+1}">−</button>`:''}</div>`).join('')+(n<4?`<button class="cbadd" style="margin-top:8px;width:100%">+ Add a part</button>`:'');
+    pb.querySelectorAll('input').forEach(x=>x.oninput=()=>{st.parts[+x.dataset.i][0]=x.value;unchip(el);calc()});
+    pb.querySelectorAll('select').forEach(x=>x.onchange=()=>{st.parts[+x.dataset.i][1]=x.value;unchip(el);draw()});
+    pb.querySelectorAll('[data-x]').forEach(b=>b.onclick=()=>{st.parts.splice(+b.dataset.x,1);unchip(el);draw()});
+    const ad=pb.querySelector('.cbadd');if(ad)ad.onclick=()=>{st.parts.push([...st.parts[st.parts.length-1]]);unchip(el);draw()};
+    calc();
+  }
+  function calc(){
+    const K=KD[st.kind],xs=vals();
+    if(!xs.every(x=>x>0)){res.innerHTML='<p class="small mute" style="margin:0">Give every part a value above zero.</p>';return}
+    const T=total(xs),inv=st.kind==='C'?st.mode==='series':st.mode==='parallel',sh=xs.map(x=>fmtSI(x,K.u)),eq=xs.every(x=>Math.abs(x/xs[0]-1)<1e-9);
+    let how=inv?(eq?`Equal parts: one value divided by how many = ${sh[0]} / ${xs.length}`:xs.length===2?`Two parts: product over sum = (${sh.join(' x ')}) / (${sh.join(' + ')})`:`1 / (${sh.map(s=>'1/'+s).join(' + ')})`):`Add them: ${sh.join(' + ')}`;
+    const up=T>xs[0];
+    let ex='';
+    if(st.kind==='R'&&st.mode==='parallel'){const V=12,I=xs.map(x=>V/x);ex=`<p class="small mute">With ${V} V across them, the branch currents ${I.map(i=>fmtSI(i,'A',3)).join(' + ')} add up to ${fmtSI(V/T,'A',3)} total.</p>`}
+    res.innerHTML=`<div class="eq">Total = <em>${fmtSI(T,K.u)}</em></div><p class="small mute">${esc(how)} = ${fmtSI(T,K.u)}</p>
+    <p>${inv?`${st.kind==='C'?'Capacitors in series':K.n+' in parallel'} combine like this, so the total is <b>smaller than the smallest part</b>.`:`${st.kind==='C'?'Capacitors in parallel':K.n+' in series'} simply add, so the total is <b>bigger than any one part</b>.`}</p>
+    <p class="small">${st.kind==='C'?'Capacitors flip the rule: add in parallel, combine like parallel resistors in series.':'Resistors and inductors follow the same rule: add in series, combine in parallel.'} Adding one more ${K.n.toLowerCase().slice(0,-1)} in ${st.mode} makes the total go ${up?'up':'down'}.</p>${ex}`;
+  }
+  el.querySelectorAll('.cbk button').forEach(b=>b.onclick=()=>{if(st.kind===b.dataset.k)return;st.kind=b.dataset.k;const p=KD[st.kind].pre[0];st.parts=st.parts.map(([v])=>[v,p]);unchip(el);draw()});
+  el.querySelectorAll('.cbm button').forEach(b=>b.onclick=()=>{st.mode=b.dataset.m;unchip(el);draw()});
+  chips(el,c.presets,p=>{st={kind:p.kind,mode:p.mode,parts:p.parts.map(([v,x])=>[String(v),x])};draw()},el.querySelector('.lead').nextElementSibling);
+  draw();
+};
+
+/* transformer: two windings on one core. Turns set the voltage ratio; current goes the other way; impedance goes as the square.
+   config {np, ns, vp, presets:[{q, np, ns, vp, flip?, zp?, zs?}]}. With zp and zs the widget finds the turns ratio that matches them. */
+WIDGETS.transformer=(el,c)=>{
+  let st={np:c.np??500,ns:c.ns??1500,vp:String(c.vp??120),flip:false,match:null};
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Wind the transformer</h3><p class="small mute lead">Drag the turns on each side. More turns on the output side steps the voltage up and the current down. The thicker wire carries more current.</p>
+  <svg class="circ tf" viewBox="0 0 300 172" role="img" style="margin-bottom:14px"></svg>
+  <label for="tf-p">Input (primary) turns: <b class="tfpn"></b></label><input id="tf-p" type="range" min="1" max="200" style="padding:0">
+  <label for="tf-s" style="margin-top:10px">Output (secondary) turns: <b class="tfsn"></b></label><input id="tf-s" type="range" min="1" max="200" style="padding:0">
+  <div class="fields"><div><label for="tf-v">Input volts AC</label><input id="tf-v" type="text" inputmode="decimal"></div></div>
+  <button class="tfflip" style="width:100%;margin-top:10px">Feed it from the other side</button><div class="wres"></div>`;
+  const svg=el.querySelector('svg'),sp=el.querySelector('#tf-p'),ss=el.querySelector('#tf-s'),$v=el.querySelector('#tf-v'),res=el.querySelector('.wres');
+  const T=x=>Math.round(10*Math.exp(Math.log(300)*x/200)),Ti=t=>Math.round(200*Math.log(t/10)/Math.log(300));/* slider 1..200 -> about 10..3000 turns */
+  function coil(x,n,w,left){const k=Math.max(3,Math.min(12,Math.round(3+Math.log2(n/10)*1.6)));let d=`M${x} 35`;const h=100/k;for(let i=0;i<k;i++)d+=left?` c-22 0 -22 ${h} 0 ${h}`:` c22 0 22 ${h} 0 ${h}`;return`<path d="${d}" fill="none" stroke="var(--ink)" stroke-width="${w}" stroke-linecap="round"/>`}
+  function draw(){
+    const np=st.flip?st.ns:st.np,ns=st.flip?st.np:st.ns,vp=num(st.vp),ratio=ns/np,vs=vp*ratio,ip=ratio,is=1;/* currents relative: input current = ratio x output current */
+    sp.value=Ti(st.np);ss.value=Ti(st.ns);el.querySelector('.tfpn').textContent=fmt(st.np);el.querySelector('.tfsn').textContent=fmt(st.ns);$v.value=st.vp;
+    const wP=Math.max(1.5,Math.min(9,3*Math.sqrt(ip))),wS=Math.max(1.5,Math.min(9,3*Math.sqrt(is)));
+    const lw=st.flip?wS:wP,rw=st.flip?wP:wS;
+    svg.innerHTML=`<rect x="120" y="22" width="60" height="126" rx="6" fill="none" stroke="var(--mute)" stroke-width="10" opacity=".55"/>
+    <path d="M125 85 H175" stroke="var(--mute)" stroke-width="10" opacity=".55"/>
+    <path class="flow" d="M150 27 H125 V143 H175 V27 Z" style="stroke:var(--blue);opacity:.8"/>
+    ${coil(118,st.np,lw,true)}${coil(182,st.ns,rw,false)}
+    <path d="M118 35 H40 M118 135 H40" fill="none" stroke="var(--ink)" stroke-width="${lw}"/><path d="M182 35 H260 M182 135 H260" fill="none" stroke="var(--ink)" stroke-width="${rw}"/>
+    <text class="lbl" x="20" y="90">${st.flip?'out':'in'}</text><text class="lbl" x="262" y="90">${st.flip?'in':'out'}</text>
+    <text class="lbl" x="70" y="25" style="text-anchor:middle">${fmt(st.np)} turns</text><text class="lbl" x="230" y="25" style="text-anchor:middle">${fmt(st.ns)} turns</text>
+    <text class="lbl" x="150" y="166" style="text-anchor:middle">shared core: the field links both windings</text>`;
+    svg.setAttribute('aria-label',`Transformer, ${st.np} turns and ${st.ns} turns${st.flip?', fed from the second side':''}`);
+    if(!(vp>=0)){res.innerHTML='<p class="small mute" style="margin:0">Type the input voltage.</p>';return}
+    const up=ratio>1,zr=1/(ratio*ratio);
+    res.innerHTML=`<div class="eq">${fmt(vp)} V in → <em>${fmt(vs,4)} V out</em></div>
+    <p class="small mute">Turns ratio ${fmt(np)} : ${fmt(ns)}. Out = in x ${fmt(ns)} / ${fmt(np)} = ${fmt(vp)} x ${fmt(ratio,4)} = ${fmt(vs,4)} V</p>
+    <p>${ratio===1?'Same turns, same voltage.':up?`Step-up: voltage goes up ${fmt(ratio,3)} times, so current goes <b>down</b> ${fmt(ratio,3)} times. The input winding carries the bigger current, so it gets the thicker wire.`:`Step-down: voltage goes down ${fmt(1/ratio,3)} times, so current goes <b>up</b> ${fmt(1/ratio,3)} times on the output side, and that winding gets the thicker wire.`}</p>
+    <p class="small">Impedance goes as the square of the turns ratio: the input side sees ${fmt(zr,3)} times the impedance on the output side.${st.flip?' Fed backward, a step-down transformer becomes a step-up by the same ratio.':''}</p>
+    ${st.match?`<div class="note" style="margin-top:10px"><b>Matching ${fmt(st.match[0])} ohms to ${fmt(st.match[1])} ohms</b>Turns ratio = √(${fmt(st.match[0])} / ${fmt(st.match[1])}) = √${fmt(st.match[0]/st.match[1],4)} = ${fmt(Math.sqrt(st.match[0]/st.match[1]),3)}, about ${fmt(Math.sqrt(st.match[0]/st.match[1]),2)} to 1. The impedance ratio is the square of the turns ratio, so take the square root.</div>`:''}`;
+  }
+  sp.oninput=()=>{st.np=T(+sp.value);st.match=null;unchip(el);draw()};ss.oninput=()=>{st.ns=T(+ss.value);st.match=null;unchip(el);draw()};
+  $v.oninput=()=>{st.vp=$v.value;unchip(el);draw()};
+  el.querySelector('.tfflip').onclick=()=>{st.flip=!st.flip;unchip(el);draw()};
+  chips(el,c.presets,p=>{st={np:p.np,ns:p.ns,vp:String(p.vp??120),flip:!!p.flip,match:p.zp?[p.zp,p.zs]:null};draw()});
+  draw();
 };
 function coreHtml(c){
   if(!c)return'';
