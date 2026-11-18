@@ -1,0 +1,85 @@
+{
+ "id": "weather-terrain",
+ "exam": "technician",
+ "title": "What weather and terrain do",
+ "idea": "Rain and leaves soak up the highest frequencies. Down on 10 and 6 meters, fog and rain barely matter.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Thing in the way",
+    "Effect"
+   ],
+   [
+    "Rain and other precipitation, at microwave",
+    "Can decrease range"
+   ],
+   [
+    "Trees and leaves, at UHF and microwave",
+    "Absorb signals: weak signals get lost"
+   ],
+   [
+    "Fog or rain, on 10 and 6 meters",
+    "Little effect"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "sort-bins",
+  "config": {
+   "bins": [
+    "Absorbs it",
+    "Little effect"
+   ],
+   "cards": [
+    {
+     "t": "Rain on a microwave signal",
+     "bin": "Absorbs it",
+     "why": "Precipitation can decrease range at microwave frequencies."
+    },
+    {
+     "t": "Trees and leaves on a UHF signal",
+     "bin": "Absorbs it",
+     "why": "Vegetation absorbs UHF and microwave signals."
+    },
+    {
+     "t": "Fog on a 10 meter signal",
+     "bin": "Little effect",
+     "why": "Fog and rain have little effect on 10 and 6 meters."
+    },
+    {
+     "t": "Rain on a 6 meter signal",
+     "bin": "Little effect",
+     "why": "Fog and rain have little effect on 10 and 6 meters."
+    }
+   ]
+  }
+ },
+ "traps": [
+  {
+   "q": "T3A02",
+   "wrong": "Causes knife-edge diffraction, distorting voice peaks",
+   "why": "Knife-edge diffraction is about sharp edges like ridges. Leaves absorb UHF and microwave signals."
+  },
+  {
+   "q": "T3A02",
+   "wrong": "Has no effect",
+   "why": "At UHF and microwave, vegetation absorbs signals."
+  },
+  {
+   "q": "T3A07",
+   "wrong": "High winds",
+   "why": "Wind doesn't absorb signals. Precipitation can cut microwave range."
+  },
+  {
+   "q": "T3A12",
+   "wrong": "Absorption",
+   "why": "Absorption by rain is a microwave problem. On 10 and 6 meters there's little effect."
+  }
+ ],
+ "questions": [
+  "T3A02",
+  "T3A07",
+  "T3A12"
+ ]
+}

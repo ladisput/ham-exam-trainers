@@ -247,7 +247,7 @@
     "T3B03",
     "T9A03"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "weather-terrain",
@@ -258,7 +258,7 @@
     "T3A07",
     "T3A12"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "hf-vhf-uhf",
@@ -273,7 +273,7 @@
     "T3C02",
     "T3C11"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "privileges-map",
@@ -293,7 +293,7 @@
     "T2A02",
     "T2A03"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "the-numbers",
@@ -310,7 +310,7 @@
     "T1A07",
     "T1F11"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "whos-responsible",

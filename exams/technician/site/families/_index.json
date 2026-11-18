@@ -38,6 +38,19 @@
    ]
   },
   {
+   "id": "hf-vhf-uhf",
+   "title": "HF vs. VHF vs. UHF",
+   "questions": [
+    "T3B08",
+    "T3B09",
+    "T3B10",
+    "T3A11",
+    "T3C01",
+    "T3C02",
+    "T3C11"
+   ]
+  },
+  {
    "id": "lead-names",
    "title": "Transistor and diode lead names",
    "questions": [
@@ -95,6 +108,19 @@
    ]
   },
   {
+   "id": "polarization",
+   "title": "Polarization",
+   "questions": [
+    "T3A03",
+    "T3A04",
+    "T3A09",
+    "T3B01",
+    "T3B02",
+    "T3B03",
+    "T9A03"
+   ]
+  },
+  {
    "id": "power-and-batteries",
    "title": "Power and batteries (P = I x E)",
    "questions": [
@@ -104,6 +130,24 @@
     "T5C11",
     "T4A01",
     "T4A09"
+   ]
+  },
+  {
+   "id": "privileges-map",
+   "title": "Technician privileges map",
+   "questions": [
+    "T1B01",
+    "T1B03",
+    "T1B04",
+    "T1B06",
+    "T1B07",
+    "T1B10",
+    "T1B11",
+    "T1B12",
+    "T1A06",
+    "T2A01",
+    "T2A02",
+    "T2A03"
    ]
   },
   {
@@ -159,6 +203,21 @@
    ]
   },
   {
+   "id": "the-numbers",
+   "title": "The numbers to memorize",
+   "questions": [
+    "T1C07",
+    "T1C08",
+    "T1C09",
+    "T1C10",
+    "T1C11",
+    "T1F02",
+    "T1F03",
+    "T1A07",
+    "T1F11"
+   ]
+  },
+  {
    "id": "units",
    "title": "Units and what they measure",
    "questions": [
@@ -188,6 +247,15 @@
     "T3B12",
     "T9A05",
     "T9A08"
+   ]
+  },
+  {
+   "id": "weather-terrain",
+   "title": "What weather and terrain do",
+   "questions": [
+    "T3A02",
+    "T3A07",
+    "T3A12"
    ]
   },
   {
