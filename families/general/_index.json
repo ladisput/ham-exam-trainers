@@ -102,7 +102,7 @@
     "G6A11",
     "G7B09"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "antenna-length",
@@ -116,7 +116,7 @@
     "G9C02",
     "G9C03"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "fm-deviation",
@@ -128,7 +128,7 @@
     "G8B06",
     "G8B07"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "link-budget",
@@ -140,7 +140,7 @@
     "G8A14",
     "G7C08"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "mixers-images",
@@ -156,7 +156,7 @@
     "G7C02",
     "G7C04"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "intermod",

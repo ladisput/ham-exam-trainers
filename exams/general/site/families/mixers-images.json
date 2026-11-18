@@ -1,0 +1,134 @@
+{
+ "id": "mixers-images",
+ "exam": "general",
+ "title": "Mixers, IF and image response",
+ "idea": "A mixer puts out the sum and difference of its two inputs. That tunes receivers, makes SSB and turns it back into audio.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Circuit",
+    "Goes in",
+    "Comes out"
+   ],
+   [
+    "Receiver mixer",
+    "RF + local oscillator",
+    "Sum and difference; the IF filter keeps one"
+   ],
+   [
+    "Balanced modulator",
+    "Audio + carrier oscillator",
+    "Double sideband, carrier cancelled"
+   ],
+   [
+    "Sideband filter",
+    "Double sideband",
+    "One sideband: SSB"
+   ],
+   [
+    "Product detector",
+    "SSB + BFO",
+    "Audio"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "mixer",
+  "config": {
+   "mode": "rx",
+   "rf": 14.2,
+   "lo": 20,
+   "presets": [
+    {
+     "q": "G8B01",
+     "mode": "rx",
+     "rf": 14.2,
+     "lo": 20
+    },
+    {
+     "q": "G8B11",
+     "mode": "rx",
+     "rf": 14.2,
+     "lo": 23.2
+    },
+    {
+     "q": "G8B03",
+     "mode": "rx",
+     "rf": 7.1,
+     "lo": 16.1
+    },
+    {
+     "q": "G8B02",
+     "mode": "rx",
+     "rf": 14.2,
+     "lo": 23.2,
+     "img": true
+    },
+    {
+     "q": "G7C02",
+     "mode": "mod",
+     "af": 1,
+     "filt": "none"
+    },
+    {
+     "q": "G7C01",
+     "mode": "mod",
+     "af": 1,
+     "filt": "usb"
+    },
+    {
+     "q": "G7C04",
+     "mode": "det",
+     "af": 1,
+     "bfo": 0
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Heterodyning",
+   "how": "Mixing two RF signals to get their sum and difference."
+  },
+  {
+   "term": "IF",
+   "how": "The one fixed frequency the receiver's filters work at. Tuning the LO brings each station to it."
+  },
+  {
+   "term": "Image",
+   "how": "A signal twice the IF away from the one you want. It mixes to the IF too."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G8B01",
+   "wrong": "RF input",
+   "why": "You can't change the station's frequency. You tune the local oscillator."
+  },
+  {
+   "q": "G8B11",
+   "wrong": "The ratio",
+   "why": "Mixers add and subtract frequencies: sum and difference."
+  },
+  {
+   "q": "G7C01",
+   "wrong": "Carrier oscillator",
+   "why": "The oscillator feeds the modulator. Picking one sideband is a filter's job."
+  },
+  {
+   "q": "G7C04",
+   "wrong": "Used in an FM receiver to filter out unwanted sidebands",
+   "why": "Product detectors are for single sideband: they recover the audio."
+  }
+ ],
+ "questions": [
+  "G8B01",
+  "G8B02",
+  "G8B03",
+  "G8B11",
+  "G7C01",
+  "G7C02",
+  "G7C04"
+ ]
+}

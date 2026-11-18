@@ -1,0 +1,154 @@
+{
+ "id": "reactance-resonance",
+ "exam": "general",
+ "title": "Reactance, impedance and resonance",
+ "idea": "Coils resist AC more as the frequency rises, capacitors less. Where the two are equal they cancel: resonance.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "",
+    "Coil (inductor)",
+    "Capacitor"
+   ],
+   [
+    "Reactance",
+    "XL = 2π f L",
+    "XC = 1 / (2π f C)"
+   ],
+   [
+    "Frequency goes up",
+    "Reactance goes up",
+    "Reactance goes down"
+   ],
+   [
+    "Unit and letter",
+    "ohms, written X",
+    "ohms, written X"
+   ],
+   [
+    "At resonance",
+    "XL = XC, they cancel",
+    "Series: very low Z. Parallel: very high Z"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "reactance-graph",
+  "config": {
+   "L": 10,
+   "C": 100,
+   "f": 2,
+   "mode": "series",
+   "presets": [
+    {
+     "q": "G5A01",
+     "L": 10,
+     "C": 100,
+     "at": true,
+     "mode": "series"
+    },
+    {
+     "q": "G5A12",
+     "L": 10,
+     "C": 100,
+     "at": true,
+     "mode": "parallel"
+    },
+    {
+     "q": "G5A05",
+     "L": 10,
+     "C": 100,
+     "f": 20,
+     "show": "L"
+    },
+    {
+     "q": "G5A06",
+     "L": 10,
+     "C": 100,
+     "f": 0.5,
+     "show": "C"
+    },
+    {
+     "q": "G7B09",
+     "L": 2.5,
+     "C": 100,
+     "at": true,
+     "mode": "parallel"
+    },
+    {
+     "q": "G6A11",
+     "L": 10,
+     "C": 100,
+     "f": 50,
+     "srf": true
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Reactance (X)",
+   "how": "Opposition to AC from a coil or a capacitor. Measured in ohms."
+  },
+  {
+   "term": "Impedance (Z)",
+   "how": "All the opposition together: voltage divided by current."
+  },
+  {
+   "term": "Admittance",
+   "how": "The inverse of impedance (1 / Z): how easily AC flows."
+  },
+  {
+   "term": "Resonance",
+   "how": "XL equals XC and they cancel. Set only by L and C, which is how an LC oscillator picks its frequency."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G5A01",
+   "wrong": "Resonance causes impedance to be very high",
+   "why": "That's a parallel tank. In series, XL and XC cancel and leave only the resistance: very low."
+  },
+  {
+   "q": "G5A05",
+   "wrong": "As the amplitude of the applied AC increases, the reactance increases",
+   "why": "Reactance depends on frequency, not on how strong the AC is."
+  },
+  {
+   "q": "G5A07",
+   "wrong": "Conductance",
+   "why": "Conductance is the inverse of resistance. The inverse of impedance is admittance."
+  },
+  {
+   "q": "G5A08",
+   "wrong": "The ratio of current to voltage",
+   "why": "Upside down. Like Ohm's law, Z = E / I: voltage over current."
+  },
+  {
+   "q": "G5A11",
+   "wrong": "Z",
+   "why": "Z is impedance. Reactance is X."
+  },
+  {
+   "q": "G6A11",
+   "wrong": "Its reactance increases",
+   "why": "Below self-resonance it does. Above it, the capacitance between the turns wins and the coil acts like a capacitor."
+  }
+ ],
+ "questions": [
+  "G5A01",
+  "G5A02",
+  "G5A03",
+  "G5A04",
+  "G5A05",
+  "G5A06",
+  "G5A07",
+  "G5A08",
+  "G5A09",
+  "G5A11",
+  "G5A12",
+  "G6A11",
+  "G7B09"
+ ]
+}

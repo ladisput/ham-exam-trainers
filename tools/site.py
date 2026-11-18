@@ -86,6 +86,16 @@ def check(exam):
                 bad.append(f"{fid}: preset {pr.get('q')}: needs kind R/L/C, mode series/parallel and 2 to 4 parts")
             if t == "transformer" and not (pr.get("np", 0) > 0 and pr.get("ns", 0) > 0):
                 bad.append(f"{fid}: preset {pr.get('q')}: needs np and ns above zero")
+            if t == "reactance-graph" and not ((pr.get("at") or isinstance(pr.get("f"), (int, float))) and pr.get("mode", "series") in ("series", "parallel")):
+                bad.append(f"{fid}: preset {pr.get('q')}: needs f (MHz) or at: true, and mode series/parallel")
+            if t == "antenna-ruler" and not (pr.get("f", 0) > 0 and pr.get("kind") in ("dipole", "quarter", "yagi")):
+                bad.append(f"{fid}: preset {pr.get('q')}: needs f (MHz) and kind dipole/quarter/yagi")
+            if t == "fm-spectrum" and not (pr.get("dev", 0) > 0 and pr.get("af", 0) > 0):
+                bad.append(f"{fid}: preset {pr.get('q')}: needs dev and af (kHz) above zero")
+            if t == "link-budget" and not set(pr) <= {"q", "w", "tl", "ta", "path", "ra", "rl", "bw", "nf", "g", "focus"}:
+                bad.append(f"{fid}: preset {pr.get('q')}: unknown key")
+            if t == "mixer" and pr.get("mode") not in ("rx", "mod", "det"):
+                bad.append(f"{fid}: preset {pr.get('q')}: mode must be rx, mod or det")
             if w.get("type") == "band-chart":
                 B = c["bands"][pr.get("b", 0)] if pr.get("b", 0) < len(c["bands"]) else None
                 if B is None or ("i" in pr and not 0 <= pr["i"] < len(B.get("segs", [])) + len(B.get("marks", []))):

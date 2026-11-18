@@ -1,0 +1,72 @@
+{
+ "id": "link-budget",
+ "exam": "general",
+ "title": "Link budget and link margin",
+ "idea": "Add up the power, gains and losses in dB to see what arrives. Margin is how far that is above what the receiver needs.",
+ "core": {
+  "type": "formula",
+  "text": "Received = power + antenna gains − losses",
+  "lines": [
+   "That sum, seen at the receiver, is the link budget",
+   "Link margin = received − the minimum the receiver needs",
+   "Receiver sensitivity depends on front-end gain, noise figure and bandwidth"
+  ]
+ },
+ "widget": {
+  "type": "link-budget",
+  "config": {
+   "presets": [
+    {
+     "q": "G8A13"
+    },
+    {
+     "q": "G8A14",
+     "path": 170
+    },
+    {
+     "q": "G7C08",
+     "focus": "rx",
+     "g": 10,
+     "nf": 6,
+     "bw": 2400
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Link budget",
+   "how": "Transmit power plus antenna gains minus all losses, as seen at the receiver."
+  },
+  {
+   "term": "Link margin",
+   "how": "What arrives minus the weakest signal the receiver can use."
+  },
+  {
+   "term": "Sensitivity",
+   "how": "The weakest signal a receiver can copy. Set by gain, noise figure and bandwidth."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G8A13",
+   "wrong": "The sum of antenna gains minus system losses",
+   "why": "It starts with the transmitter's power too."
+  },
+  {
+   "q": "G8A14",
+   "wrong": "Transmit power minus receiver sensitivity",
+   "why": "Margin uses what actually arrives, after all the gains and losses, not the transmit power."
+  },
+  {
+   "q": "G7C08",
+   "wrong": "Input amplifier noise figure",
+   "why": "It matters, but so do the gain and the bandwidth: all these choices."
+  }
+ ],
+ "questions": [
+  "G8A13",
+  "G8A14",
+  "G7C08"
+ ]
+}

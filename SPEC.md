@@ -111,6 +111,11 @@ Build order: all Technician families first, then the General site and its famili
 - `s-meter`: an S meter with two needles; first reading plus a dB change gives the power ratio (presets: `from` in dB relative to S9, `d`).
 - `combiner`: resistors, inductors or capacitors drawn in series or parallel with the total worked out (presets: `kind` R/L/C, `mode`, `parts` as [value, prefix]).
 - `transformer`: two windings with turns sliders; voltage, current (wire thickness) and impedance ratios, feed from either side, impedance matching (presets: `np`, `ns`, `vp`, optional `flip`, `zp`/`zs`).
+- `reactance-graph`: log-log graph of XL and XC against frequency with sliders for f, L, C; series or parallel net impedance; resonance marker; "real coil" mode shows self-resonance (presets: `f` in MHz or `at: true` to snap to resonance, `L` µH, `C` pF, `mode`, optional `srf`, `show` L/C).
+- `antenna-ruler`: dipole, quarter-wave vertical or 3-element Yagi drawn to scale beside a 6 ft person, band buttons and a frequency slider (presets: `f` MHz, `kind` dipole/quarter/yagi).
+- `fm-spectrum`: FM sidebands (Bessel) with Carson's bandwidth box, deviation and audio sliders, and an oscillator → multiplier → transmitter chain (presets: `dev`, `af` kHz, optional `osc`, `out` MHz, `hi`).
+- `link-budget`: dBm staircase from transmitter to receiver with the sensitivity line and margin; receiver sensitivity from front-end gain, noise figure and bandwidth (presets: any of `w`, `tl`, `ta`, `path`, `ra`, `rl`, `bw`, `nf`, `g`, `focus: "rx"`).
+- `mixer`: three modes on a spectrum: receiver mixer (RF, LO, IF filter, image), balanced modulator (sideband filter), product detector (BFO error) (presets: `mode` rx/mod/det, `rf`, `lo`, `img`, `af`, `filt`, `bfo`).
 Brooke prefers hands-on widgets (sliders, live graphs, meters, simulators) to match, sort or text quizzes: use those only when nothing in
 the idea can be varied, and say why. Widgets must work by tap on a 360px-wide screen, with 44px targets and no hover-only behavior.
 Every widget ties in the pool: `config.presets` lists the family's questions the widget can work, shown as "Try a

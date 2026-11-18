@@ -1,0 +1,93 @@
+{
+ "id": "antenna-length",
+ "exam": "general",
+ "title": "Antenna length (468 / f)",
+ "idea": "Lower frequency means a longer antenna. A half-wave dipole in feet is 468 divided by the frequency in MHz.",
+ "core": {
+  "type": "formula",
+  "text": "Half wave (feet) = 468 / MHz",
+  "lines": [
+   "Quarter wave (feet) = 234 / MHz, half of that",
+   "Yagi driven element ≈ a half wave",
+   "Reflector a bit longer, director a bit shorter",
+   "The whole dipole is the half wave; each side is half of it"
+  ]
+ },
+ "widget": {
+  "type": "antenna-ruler",
+  "config": {
+   "f": 14.25,
+   "kind": "dipole",
+   "presets": [
+    {
+     "q": "G9B10",
+     "f": 14.25,
+     "kind": "dipole"
+    },
+    {
+     "q": "G9B11",
+     "f": 3.55,
+     "kind": "dipole"
+    },
+    {
+     "q": "G9B12",
+     "f": 28.5,
+     "kind": "quarter"
+    },
+    {
+     "q": "G9C02",
+     "f": 14.25,
+     "kind": "yagi"
+    },
+    {
+     "q": "G9C03",
+     "f": 21.2,
+     "kind": "yagi"
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Half-wave dipole",
+   "how": "468 / MHz feet end to end, fed in the middle."
+  },
+  {
+   "term": "Quarter-wave vertical",
+   "how": "234 / MHz feet tall. The ground or radials act as the other half."
+  },
+  {
+   "term": "Yagi",
+   "how": "Driven element about a half wave. Reflector behind is longer, director in front is shorter."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G9B10",
+   "wrong": "16 feet",
+   "why": "16 feet is one side. The whole dipole is 468 / 14.25 = 33 feet."
+  },
+  {
+   "q": "G9B11",
+   "wrong": "263 feet",
+   "why": "That's a full wave. A half wave is 468 / 3.55 = 132 feet."
+  },
+  {
+   "q": "G9B12",
+   "wrong": "16 feet",
+   "why": "That's a half wave (468 / 28.5). A quarter wave uses 234: 8 feet."
+  },
+  {
+   "q": "G9C03",
+   "wrong": "The reflector is shorter, and the director is longer",
+   "why": "Backward. The reflector sits behind and is longer; the director points the way and is shorter."
+  }
+ ],
+ "questions": [
+  "G9B10",
+  "G9B11",
+  "G9B12",
+  "G9C02",
+  "G9C03"
+ ]
+}

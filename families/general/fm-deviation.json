@@ -1,0 +1,84 @@
+{
+ "id": "fm-deviation",
+ "exam": "general",
+ "title": "FM deviation and bandwidth",
+ "idea": "FM's width comes from how far it swings plus how fast. Multiplier stages multiply the deviation along with the frequency.",
+ "core": {
+  "type": "formula",
+  "text": "Bandwidth = 2 x (deviation + audio)",
+  "lines": [
+   "That's Carson's rule",
+   "A multiplier stage makes a harmonic to reach the final frequency",
+   "It multiplies the deviation by the same number",
+   "So oscillator deviation = final deviation / multiplier"
+  ]
+ },
+ "widget": {
+  "type": "fm-spectrum",
+  "config": {
+   "dev": 5,
+   "af": 3,
+   "osc": 12.21,
+   "out": 146.52,
+   "presets": [
+    {
+     "q": "G8B06",
+     "dev": 5,
+     "af": 3
+    },
+    {
+     "q": "G8B07",
+     "dev": 5,
+     "af": 3,
+     "osc": 12.21,
+     "out": 146.52,
+     "hi": "1"
+    },
+    {
+     "q": "G8B04",
+     "dev": 5,
+     "af": 3,
+     "osc": 12.21,
+     "out": 146.52,
+     "hi": "1"
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Deviation",
+   "how": "How far the carrier swings from center. Sets most of the width."
+  },
+  {
+   "term": "Audio tone",
+   "how": "How fast it swings. Sidebands appear that far apart."
+  },
+  {
+   "term": "Multiplier",
+   "how": "Multiplies frequency and deviation by the same whole number."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G8B06",
+   "wrong": "8 kHz",
+   "why": "That's deviation + audio once. Carson doubles it: 2 x 8 = 16 kHz."
+  },
+  {
+   "q": "G8B07",
+   "wrong": "60 kHz",
+   "why": "That multiplies by 12. The oscillator comes before the multiplier, so divide: 5 kHz / 12 = 416.7 Hz."
+  },
+  {
+   "q": "G8B04",
+   "wrong": "Mixer",
+   "why": "A mixer makes sums and differences. Making a harmonic is a multiplier's job."
+  }
+ ],
+ "questions": [
+  "G8B04",
+  "G8B06",
+  "G8B07"
+ ]
+}
