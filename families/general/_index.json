@@ -250,7 +250,7 @@
     "G3C08",
     "G3C09"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "long-path",
@@ -262,7 +262,7 @@
     "G2D04",
     "G2D06"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "sidebands",
@@ -284,7 +284,7 @@
     "G2E01",
     "G2E05"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "privileges-map",
@@ -305,7 +305,7 @@
     "G2E08",
     "G2E15"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "power-limits",
@@ -322,7 +322,7 @@
     "G1C11",
     "G1E08"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "beacons",

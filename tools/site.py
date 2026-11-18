@@ -104,11 +104,27 @@ def check(exam):
                 bad.append(f"{fid}: preset {pr.get('q')}: needs ssn or k quiet/storm")
             if t == "ionosphere" and not (pr.get("tod", "day") in ("day", "night", "flare") and (pr.get("f") or pr.get("snap") in ("muf", "fc", "ca"))):
                 bad.append(f"{fid}: preset {pr.get('q')}: needs f or snap, and tod day/night/flare")
+            if t == "skip-zone" and not (pr.get("band", "20") in ("40", "20", "10") and pr.get("d", 0) > 0):
+                bad.append(f"{fid}: preset {pr.get('q')}: needs band 40/20/10 and d (miles)")
+            if t == "great-circle" and not (pr.get("to") in ("London", "Tokyo", "Sydney", "Cape Town", "Rio", "Mumbai") and pr.get("path", "short") in ("short", "long")):
+                bad.append(f"{fid}: preset {pr.get('q')}: needs a known city 'to' and path short/long")
+            if t == "band-tuner":
+                bands = c.get("bands") or list(USPLAN)
+                lo, hi = USPLAN.get(pr.get("b"), (0, 0))
+                if pr.get("b") not in bands or not lo <= pr.get("f", 0) <= hi or pr.get("m") not in c.get("modes", ["cw", "voice", "image", "rtty", "ft8"]):
+                    bad.append(f"{fid}: preset {pr.get('q')}: needs a listed band b, f (kHz) inside it and a listed mode m")
+            if t == "power-limit" and not (pr.get("b") in ("160", "80", "60", "40", "30", "20", "17", "15", "12", "10", "6") and pr.get("w", 0) > 0):
+                bad.append(f"{fid}: preset {pr.get('q')}: needs band b and w (watts)")
             if w.get("type") == "band-chart":
                 B = c["bands"][pr.get("b", 0)] if pr.get("b", 0) < len(c["bands"]) else None
                 if B is None or ("i" in pr and not 0 <= pr["i"] < len(B.get("segs", [])) + len(B.get("marks", []))):
                     bad.append(f"{fid}: preset {pr.get('q')}: band or item out of range")
     return bad
+
+
+# band edges in kHz for band-tuner presets (the full plan is USPLAN in app/template.html)
+USPLAN = {"160": (1800, 2000), "80": (3500, 4000), "40": (7000, 7300), "30": (10100, 10150), "20": (14000, 14350), "17": (18068, 18168),
+          "15": (21000, 21450), "12": (24890, 24990), "10": (28000, 29700), "6": (50000, 54000), "2": (144000, 148000)}
 
 
 def render(exam, extra=None):

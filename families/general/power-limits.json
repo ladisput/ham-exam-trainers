@@ -1,0 +1,136 @@
+{
+ "id": "power-limits",
+ "exam": "general",
+ "title": "Power limits and 60 meters",
+ "idea": "1500 watts PEP output almost everywhere. 30 meters is 200 watts. 60 meters counts radiated power against a dipole, with a 2.8 kHz limit. Spread spectrum is 10 watts.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Where",
+    "Limit"
+   ],
+   [
+    "160, 80, 40, 20, 17, 15, 12, 10 m",
+    "1500 W PEP output"
+   ],
+   [
+    "30 m (10.100 to 10.150 MHz)",
+    "200 W PEP output"
+   ],
+   [
+    "60 m",
+    "100 W ERP over a dipole; USB; 2.8 kHz; record gain if not a dipole"
+   ],
+   [
+    "Spread spectrum",
+    "10 W PEP output"
+   ],
+   [
+    "Measured as",
+    "PEP output from the transmitter"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "power-limit",
+  "config": {
+   "b": "20",
+   "w": 100,
+   "presets": [
+    {
+     "q": "G1C01",
+     "b": "30",
+     "w": 200
+    },
+    {
+     "q": "G1C02",
+     "b": "12",
+     "w": 1500
+    },
+    {
+     "q": "G1C05",
+     "b": "10",
+     "w": 1500
+    },
+    {
+     "q": "G1C06",
+     "b": "160",
+     "w": 1500
+    },
+    {
+     "q": "G1C03",
+     "b": "60",
+     "w": 100,
+     "focus": "bw"
+    },
+    {
+     "q": "G1C04",
+     "b": "60",
+     "w": 50,
+     "g": 3,
+     "focus": "gain"
+    },
+    {
+     "q": "G1C11",
+     "b": "20",
+     "w": 1500,
+     "focus": "pep"
+    },
+    {
+     "q": "G1E08",
+     "b": "20",
+     "w": 10,
+     "ss": true
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "PEP",
+   "how": "Peak envelope power: the measurement for every power limit, at the transmitter output."
+  },
+  {
+   "term": "ERP",
+   "how": "Effective radiated power: used only on 60 meters, compared to a dipole."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G1C01",
+   "wrong": "1500 watts PEP output",
+   "why": "10.140 MHz is 30 meters: 200 watts."
+  },
+  {
+   "q": "G1C03",
+   "wrong": "3 kHz",
+   "why": "60 meters is tighter: 2.8 kHz."
+  },
+  {
+   "q": "G1C04",
+   "wrong": "You must keep a record of the date, time, frequency, power level, and stations worked",
+   "why": "No log is required. Only the antenna's gain, if it isn't a dipole."
+  },
+  {
+   "q": "G1C11",
+   "wrong": "PEP input to the antenna",
+   "why": "It's PEP output from the transmitter."
+  },
+  {
+   "q": "G1E08",
+   "wrong": "100 watts",
+   "why": "Spread spectrum is limited to 10 watts."
+  }
+ ],
+ "questions": [
+  "G1C01",
+  "G1C02",
+  "G1C03",
+  "G1C04",
+  "G1C05",
+  "G1C06",
+  "G1C11",
+  "G1E08"
+ ]
+}
