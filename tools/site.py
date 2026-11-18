@@ -66,6 +66,19 @@ def check(exam):
                 bad.append(f"{fid}: trap question {t['q']} is not one of the family's questions")
             elif t.get("wrong") not in [a for i, a in enumerate(q["a"]) if i != q["c"]]:
                 bad.append(f"{fid}: trap for {t['q']}: '{t.get('wrong')}' is not a wrong answer of that question")
+        # widget presets ("Try a question from the pool"): a family question, pointing at something that exists
+        w = fam.get("widget", {}); c = w.get("config", {})
+        size = {"match": len(c.get("pairs", [])), "sort-bins": len(c.get("cards", [])), "scenario": len(c.get("situations", []))}
+        for pr in c.get("presets", []):
+            if pr.get("q") not in fam.get("questions", []):
+                bad.append(f"{fid}: preset {pr.get('q')} is not one of the family's questions")
+            k = {"match": "i", "sort-bins": "t", "scenario": "s"}.get(w.get("type"))
+            if k and not (isinstance(pr.get(k), int) and 0 <= pr[k] < size[w["type"]]):
+                bad.append(f"{fid}: preset {pr.get('q')}: '{k}' is out of range")
+            if w.get("type") == "band-chart":
+                B = c["bands"][pr.get("b", 0)] if pr.get("b", 0) < len(c["bands"]) else None
+                if B is None or ("i" in pr and not 0 <= pr["i"] < len(B.get("segs", [])) + len(B.get("marks", []))):
+                    bad.append(f"{fid}: preset {pr.get('q')}: band or item out of range")
     return bad
 
 

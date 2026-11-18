@@ -40,7 +40,7 @@
   "type": "match",
   "config": {
    "left": "Number",
-   "right": "What it is",
+   "right": "Meaning",
    "pairs": [
     [
      "10 years",
@@ -66,6 +66,43 @@
      "4 members",
      "Smallest club for a license"
     ]
+   ],
+   "presets": [
+    {
+     "q": "T1C07",
+     "i": 1,
+     "from": "r"
+    },
+    {
+     "q": "T1C08",
+     "i": 0,
+     "from": "r"
+    },
+    {
+     "q": "T1C09",
+     "i": 2,
+     "from": "r"
+    },
+    {
+     "q": "T1F02",
+     "i": 3,
+     "from": "r"
+    },
+    {
+     "q": "T1F03",
+     "i": 3,
+     "from": "r"
+    },
+    {
+     "q": "T1A07",
+     "i": 4,
+     "from": "r"
+    },
+    {
+     "q": "T1F11",
+     "i": 5,
+     "from": "r"
+    }
    ]
   }
  },

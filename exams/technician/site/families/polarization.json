@@ -116,6 +116,24 @@
      "title": "Use horizontal",
      "text": "Horizontal polarization is normal for long-distance CW and SSB contacts on VHF and UHF."
     }
+   ],
+   "presets": [
+    {
+     "q": "T3A04",
+     "s": 0,
+     "dims": {
+      "mine": "Vertical",
+      "theirs": "Horizontal"
+     }
+    },
+    {
+     "q": "T3A03",
+     "s": 2
+    },
+    {
+     "q": "T3A09",
+     "s": 1
+    }
    ]
   }
  },

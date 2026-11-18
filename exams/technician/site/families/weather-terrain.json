@@ -52,6 +52,20 @@
      "bin": "Little effect",
      "why": "Fog and rain have little effect on 10 and 6 meters."
     }
+   ],
+   "presets": [
+    {
+     "q": "T3A02",
+     "t": 1
+    },
+    {
+     "q": "T3A07",
+     "t": 0
+    },
+    {
+     "q": "T3A12",
+     "t": 2
+    }
    ]
   }
  },

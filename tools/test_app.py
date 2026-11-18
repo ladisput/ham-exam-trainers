@@ -94,8 +94,16 @@ async def main():
                 wt = doc["widget"]["type"]
                 if wt in ("formula-triangle", "ladder", "calculator", "circuit-toggle", "sort-bins", "match", "figure-explorer", "scenario", "band-chart"):
                     assert await pg.locator("#widget").count() == 1, f"{f['id']}: widget card missing"
+                    # "Try a question from the pool": every chip shows its question and sets the widget up for it
+                    pres = doc["widget"]["config"].get("presets", [])
                     for i in range(await pg.locator("#widget .chip").count()):
-                        await pg.locator("#widget .chip").nth(i).click(); assert await pg.is_visible("#widget .wres .eq"), f"{f['id']}: no result"
+                        await pg.locator("#widget .chip").nth(i).click(); assert await pg.is_visible("#widget .wq"), f"{f['id']}: chip {i} shows no question"
+                        if wt == "match": assert await pg.locator("#widget .mt .sel").count() == 1, f"{f['id']}: chip {i} selects nothing"
+                        elif wt == "sort-bins": assert (await pg.text_content("#widget .sbcard")).strip() == doc["widget"]["config"]["cards"][pres[i]["t"]]["t"], f"{f['id']}: chip {i} deals the wrong card"
+                        else: assert await pg.is_visible("#widget .wres .eq"), f"{f['id']}: chip {i} gives no result"
+                    if wt not in ("formula-triangle", "ladder", "calculator"):
+                        assert await pg.locator("#widget .chip").count() > 0, f"{f['id']}: no pool questions in the widget"
+                    await pg.goto("about:blank"); await pg.goto(f"http://localhost:8790/index.html#family-{f['id']}"); await pg.wait_for_selector("#widget")
                     if wt == "circuit-toggle":
                         for m in ("parallel", "series"):
                             await pg.click(f'#widget .seg [data-m="{m}"]'); assert await pg.locator("#widget .circ .mtr").count() == 1

@@ -1,0 +1,193 @@
+{
+ "id": "coax-connectors",
+ "exam": "technician",
+ "title": "Coax and connectors",
+ "idea": "Loss in coax turns into heat. It goes up with frequency and down with better cable: foam, then RG-213, then hardline. Keep water out, and use Type N above 400 MHz.",
+ "core": {
+  "type": "list",
+  "items": [
+   [
+    "Most common coax impedance",
+    "50 ohms"
+   ],
+   [
+    "Power lost in a feed line",
+    "Turns into heat"
+   ],
+   [
+    "Higher frequency",
+    "More loss"
+   ],
+   [
+    "Foam dielectric vs. solid",
+    "Foam has less loss per foot"
+   ],
+   [
+    "RG-213 vs. RG-58",
+    "RG-213 has less loss at a given frequency"
+   ],
+   [
+    "Lowest-loss feed line",
+    "Air-insulated hardline"
+   ],
+   [
+    "What ruins coax",
+    "Moisture. A UV-resistant jacket keeps sunlight from cracking it and letting water in"
+   ],
+   [
+    "PL-259",
+    "Common at HF and VHF"
+   ],
+   [
+    "Type N",
+    "Best above 400 MHz"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "sort-bins",
+  "config": {
+   "bins": [
+    "More loss",
+    "Less loss"
+   ],
+   "cards": [
+    {
+     "t": "Raising the frequency in the same cable",
+     "bin": "More loss",
+     "why": "Loss in coax increases as frequency goes up. The impedance doesn't change."
+    },
+    {
+     "t": "Foam dielectric instead of solid",
+     "bin": "Less loss",
+     "why": "Foam-dielectric coax has less loss per foot."
+    },
+    {
+     "t": "RG-213 instead of RG-58",
+     "bin": "Less loss",
+     "why": "RG-213 has less loss at a given frequency."
+    },
+    {
+     "t": "Air-insulated hardline instead of flexible coax",
+     "bin": "Less loss",
+     "why": "Air-insulated hardline has the lowest loss of all."
+    },
+    {
+     "t": "RG-58 instead of RG-213",
+     "bin": "More loss",
+     "why": "RG-58 is the lossier of the two."
+    },
+    {
+     "t": "Solid dielectric instead of foam",
+     "bin": "More loss",
+     "why": "Foam is the low-loss one, so solid loses more per foot."
+    },
+    {
+     "t": "Lowering the frequency in the same cable",
+     "bin": "Less loss",
+     "why": "Loss goes down as frequency goes down."
+    }
+   ],
+   "presets": [
+    {
+     "q": "T9B05",
+     "t": 0
+    },
+    {
+     "q": "T7C11",
+     "t": 1
+    },
+    {
+     "q": "T9B10",
+     "t": 2
+    },
+    {
+     "q": "T9B11",
+     "t": 3
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "PL-259",
+   "how": "Common at HF and VHF. Not watertight, not bayonet, not for microwaves."
+  },
+  {
+   "term": "Type N",
+   "how": "The pick above 400 MHz."
+  },
+  {
+   "term": "RG-58",
+   "how": "Thinner, more loss."
+  },
+  {
+   "term": "RG-213",
+   "how": "Less loss at a given frequency."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T7C07",
+   "wrong": "It increases the SWR",
+   "why": "Feed line loss doesn't raise SWR. The lost power turns into heat."
+  },
+  {
+   "q": "T7C09",
+   "wrong": "Operation at 100% duty cycle for an extended period",
+   "why": "Long transmissions don't wear out coax. Moisture getting in does."
+  },
+  {
+   "q": "T7C10",
+   "wrong": "Ultraviolet light can increase losses in the cable’s jacket",
+   "why": "UV light cracks the jacket so water gets in. That's the problem, not jacket loss."
+  },
+  {
+   "q": "T7C11",
+   "wrong": "It is more resistant to moisture contamination",
+   "why": "Foam's advantage is less loss per foot, not moisture resistance."
+  },
+  {
+   "q": "T9B02",
+   "wrong": "12 ohms",
+   "why": "Amateur coax is most commonly 50 ohms."
+  },
+  {
+   "q": "T9B05",
+   "wrong": "The characteristic impedance increases",
+   "why": "The impedance stays the same. It's the loss that rises with frequency."
+  },
+  {
+   "q": "T9B06",
+   "wrong": "PL-259",
+   "why": "PL-259 is for HF and VHF. Above 400 MHz, use Type N."
+  },
+  {
+   "q": "T9B07",
+   "wrong": "They are watertight",
+   "why": "PL-259 connectors aren't watertight. They're common at HF and VHF."
+  },
+  {
+   "q": "T9B10",
+   "wrong": "RG-58 cable can handle higher power levels",
+   "why": "The difference is loss: RG-213 has less at a given frequency."
+  },
+  {
+   "q": "T9B11",
+   "wrong": "75-ohm flexible coax",
+   "why": "Any flexible coax loses more than air-insulated hardline."
+  }
+ ],
+ "questions": [
+  "T7C07",
+  "T7C09",
+  "T7C10",
+  "T7C11",
+  "T9B02",
+  "T9B05",
+  "T9B06",
+  "T9B07",
+  "T9B10",
+  "T9B11"
+ ]
+}

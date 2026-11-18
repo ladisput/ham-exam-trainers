@@ -52,6 +52,20 @@
      "bin": "Resistance",
      "why": "A resistor opposes current flow in a DC circuit."
     }
+   ],
+   "presets": [
+    {
+     "q": "T5C12",
+     "t": 0
+    },
+    {
+     "q": "T5A11",
+     "t": 1
+    },
+    {
+     "q": "T6A01",
+     "t": 3
+    }
    ]
   }
  },

@@ -72,6 +72,36 @@
      "title": "A directional wattmeter",
      "text": "A directional wattmeter can be used to determine SWR. A voltmeter or ohmmeter can't."
     }
+   ],
+   "presets": [
+    {
+     "q": "T7B04",
+     "s": 2
+    },
+    {
+     "q": "T7C04",
+     "s": 0
+    },
+    {
+     "q": "T7C05",
+     "s": 2
+    },
+    {
+     "q": "T7C06",
+     "s": 1
+    },
+    {
+     "q": "T7C08",
+     "s": 5
+    },
+    {
+     "q": "T9B04",
+     "s": 4
+    },
+    {
+     "q": "T9B09",
+     "s": 3
+    }
    ]
   }
  },

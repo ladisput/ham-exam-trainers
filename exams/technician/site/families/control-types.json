@@ -55,6 +55,28 @@
      "title": "Not remote control of a station",
      "text": "Part 97's remote control example is operating your station over the internet. Controlling a model craft is something else."
     }
+   ],
+   "presets": [
+    {
+     "q": "T1E05",
+     "s": 0
+    },
+    {
+     "q": "T1E08",
+     "s": 1
+    },
+    {
+     "q": "T1E09",
+     "s": 0
+    },
+    {
+     "q": "T1E10",
+     "s": 0
+    },
+    {
+     "q": "T1D07",
+     "s": 3
+    }
    ]
   }
  },

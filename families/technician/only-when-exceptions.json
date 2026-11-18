@@ -118,6 +118,40 @@
      "bin": "Not allowed",
      "why": "A plan doesn't do it. Only an immediate threat to life or property."
     }
+   ],
+   "presets": [
+    {
+     "q": "T1D02",
+     "t": 4
+    },
+    {
+     "q": "T1D03",
+     "t": 3
+    },
+    {
+     "q": "T1D04",
+     "t": 1
+    },
+    {
+     "q": "T1D05",
+     "t": 6
+    },
+    {
+     "q": "T1D08",
+     "t": 8
+    },
+    {
+     "q": "T1D09",
+     "t": 9
+    },
+    {
+     "q": "T1D11",
+     "t": 10
+    },
+    {
+     "q": "T2C09",
+     "t": 13
+    }
    ]
   }
  },

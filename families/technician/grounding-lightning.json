@@ -1,0 +1,206 @@
+{
+ "id": "grounding-lightning",
+ "exam": "technician",
+ "title": "Grounding and lightning",
+ "idea": "Lightning takes the straightest path, so ground connections are short and direct with no sharp bends. Every ground rod is bonded together, and local electrical codes set the rules.",
+ "core": {
+  "type": "list",
+  "items": [
+   [
+    "Ground wires",
+    "Short and direct. Avoid sharp bends"
+   ],
+   [
+    "Ground rods",
+    "Bond them all together with heavy wire or conductive strap"
+   ],
+   [
+    "Tower",
+    "Separate 8-foot ground rods for each leg, bonded to the tower and each other"
+   ],
+   [
+    "Lightning arrester",
+    "On a grounded panel near where the feed lines enter the building"
+   ],
+   [
+    "Bonding at RF",
+    "Flat copper strap"
+   ],
+   [
+    "Fuse or circuit breaker",
+    "In series with the hot conductor only"
+   ],
+   [
+    "Who sets grounding requirements",
+    "Local electrical codes"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "sort-bins",
+  "config": {
+   "bins": [
+    "Do it",
+    "Don't"
+   ],
+   "cards": [
+    {
+     "t": "Keep ground connections short and direct",
+     "bin": "Do it",
+     "why": "That's good practice for lightning protection."
+    },
+    {
+     "t": "Make every ground wire bend a right angle",
+     "bin": "Don't",
+     "why": "Sharp bends must be avoided, right angles included."
+    },
+    {
+     "t": "Avoid sharp bends in grounding conductors",
+     "bin": "Do it",
+     "why": "Right. Sharp bends must be avoided."
+    },
+    {
+     "t": "Bond all ground rods together with heavy wire or strap",
+     "bin": "Do it",
+     "why": "All external ground rods and earth connections get bonded together."
+    },
+    {
+     "t": "Keep ground rods as far apart as possible, unbonded",
+     "bin": "Don't",
+     "why": "They should be bonded together, not kept separate."
+    },
+    {
+     "t": "Separate 8-foot ground rods for each tower leg, bonded together",
+     "bin": "Do it",
+     "why": "That's the proper grounding method for a tower."
+    },
+    {
+     "t": "Ground the tower to a cold-water pipe",
+     "bin": "Don't",
+     "why": "Use separate 8-foot ground rods for each leg, bonded to the tower and each other."
+    },
+    {
+     "t": "Put the lightning arrester on a grounded panel where feed lines enter the building",
+     "bin": "Do it",
+     "why": "That's where the arrester goes."
+    },
+    {
+     "t": "Put the lightning arrester at the transceiver's output connector",
+     "bin": "Don't",
+     "why": "It goes on a grounded panel near where the feed lines enter the building."
+    },
+    {
+     "t": "Bond at RF with flat copper strap",
+     "bin": "Do it",
+     "why": "Flat copper strap is the preferred conductor for RF bonding."
+    },
+    {
+     "t": "Bond at RF with braid removed from coax",
+     "bin": "Don't",
+     "why": "Flat copper strap is preferred."
+    },
+    {
+     "t": "Fuse in series with the hot conductor only",
+     "bin": "Do it",
+     "why": "That's where a fuse or circuit breaker goes in a 120 V AC circuit."
+    },
+    {
+     "t": "Fuse in the hot and the neutral conductors",
+     "bin": "Don't",
+     "why": "Only the hot conductor gets the fuse."
+    },
+    {
+     "t": "Follow local electrical codes for tower grounding",
+     "bin": "Do it",
+     "why": "Local electrical codes set the grounding requirements, not FCC Part 97."
+    }
+   ],
+   "presets": [
+    {
+     "q": "T0B01",
+     "t": 0
+    },
+    {
+     "q": "T0B10",
+     "t": 1
+    },
+    {
+     "q": "T0A09",
+     "t": 3
+    },
+    {
+     "q": "T0B08",
+     "t": 6
+    },
+    {
+     "q": "T0A07",
+     "t": 8
+    },
+    {
+     "q": "T4A08",
+     "t": 10
+    },
+    {
+     "q": "T0A08",
+     "t": 12
+    },
+    {
+     "q": "T0B11",
+     "t": 13
+    }
+   ]
+  }
+ },
+ "traps": [
+  {
+   "q": "T0A07",
+   "wrong": "At the output connector of a transceiver",
+   "why": "Not at the radio. On a grounded panel near where the feed lines come into the building."
+  },
+  {
+   "q": "T0A08",
+   "wrong": "In series with the hot and neutral conductors",
+   "why": "Only the hot conductor gets the fuse, and it goes in series."
+  },
+  {
+   "q": "T0A09",
+   "wrong": "Keep them as far apart as possible",
+   "why": "Ground rods get bonded together, not kept apart."
+  },
+  {
+   "q": "T0B01",
+   "wrong": "Make sure all ground wire bends are right angles",
+   "why": "Right-angle bends are sharp bends. Keep connections short and direct."
+  },
+  {
+   "q": "T0B08",
+   "wrong": "A connection between the tower base and a cold-water pipe",
+   "why": "A cold-water pipe isn't a tower ground. Use bonded 8-foot rods, one per leg."
+  },
+  {
+   "q": "T0B10",
+   "wrong": "Wires must be carefully routed with precise right-angle bends",
+   "why": "Precise right-angle bends are exactly what to avoid."
+  },
+  {
+   "q": "T0B11",
+   "wrong": "FCC Part 97 rules",
+   "why": "FCC Part 97 doesn't set grounding rules. Local electrical codes do."
+  },
+  {
+   "q": "T4A08",
+   "wrong": "Copper braid removed from coaxial cable",
+   "why": "Coax braid isn't the preferred RF bonding conductor. Flat copper strap is."
+  }
+ ],
+ "questions": [
+  "T0A07",
+  "T0A08",
+  "T0A09",
+  "T0B01",
+  "T0B08",
+  "T0B10",
+  "T0B11",
+  "T4A08"
+ ]
+}

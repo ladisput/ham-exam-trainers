@@ -70,6 +70,47 @@
      "Integrated circuit",
      "Many parts in one package"
     ]
+   ],
+   "presets": [
+    {
+     "q": "T6B02",
+     "i": 0,
+     "from": "r"
+    },
+    {
+     "q": "T6B03",
+     "i": 1,
+     "from": "r"
+    },
+    {
+     "q": "T6B10",
+     "i": 1,
+     "from": "r"
+    },
+    {
+     "q": "T6D01",
+     "i": 2,
+     "from": "r"
+    },
+    {
+     "q": "T6D02",
+     "i": 3
+    },
+    {
+     "q": "T6D05",
+     "i": 4,
+     "from": "r"
+    },
+    {
+     "q": "T6D06",
+     "i": 5,
+     "from": "r"
+    },
+    {
+     "q": "T6D09",
+     "i": 6,
+     "from": "r"
+    }
    ]
   }
  },

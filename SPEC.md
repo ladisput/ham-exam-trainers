@@ -105,6 +105,12 @@ Build order: all Technician families first, then the General site and its famili
 - `figure-explorer`: tap the numbered parts of a pool figure to reveal each name and its job.
 - `circuit-toggle`: small animated circuit that switches between two arrangements.
 Widgets must work by tap on a 360px-wide screen, with 44px targets and no hover-only behavior.
+Every widget ties in the pool: `config.presets` lists the family's questions the widget can work, shown as "Try a
+question from the pool" chips. A chip shows the question and sets the widget up for it: formula and calculator
+values, a scenario situation (and its settings), a band and item, a circuit arrangement, a figure part (presets
+come from each part's `q`), a sort card dealt next, or one side of a match pair selected (`from: "r"` selects the
+answer side, for questions that give the description and ask for the term). Use a question only when the widget
+actually works it; `tools/site.py check` checks that every preset is a family question and points at something.
 Each widget is a function in the `WIDGETS` registry in `app/template.html`: `WIDGETS[type](el, config, family)` fills
 the card `el`. A page whose widget type isn't built yet shows no widget card.
 
