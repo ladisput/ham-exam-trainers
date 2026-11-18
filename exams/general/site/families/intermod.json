@@ -1,0 +1,120 @@
+{
+ "id": "intermod",
+ "exam": "general",
+ "title": "Intermodulation and the two-tone test",
+ "idea": "Overdrive an amplifier and two signals mix inside it. The odd-order products land right beside them, where no filter can help.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Product",
+    "Example",
+    "Where it lands"
+   ],
+   [
+    "Odd order (3rd, 5th)",
+    "2F1 − F2, 3F1 − 2F2",
+    "Right next to F1 and F2"
+   ],
+   [
+    "Even order (2nd, 4th)",
+    "F1 + F2, F2 − F1, 2F1",
+    "Far away, easy to filter"
+   ],
+   [
+    "Order",
+    "Add the multipliers",
+    "2F1 − F2: 2 + 1 = 3, odd"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "two-tone",
+  "config": {
+   "a1": 700,
+   "a2": 1900,
+   "drive": 90,
+   "presets": [
+    {
+     "q": "G8B05",
+     "a1": 700,
+     "a2": 1900,
+     "drive": 90,
+     "hi": "even"
+    },
+    {
+     "q": "G8B13",
+     "a1": 700,
+     "a2": 1900,
+     "drive": 90
+    },
+    {
+     "q": "G8B12",
+     "a1": 1000,
+     "a2": 1600,
+     "drive": 95
+    },
+    {
+     "q": "G4B07",
+     "a1": 700,
+     "a2": 1900,
+     "drive": 40
+    },
+    {
+     "q": "G4B08",
+     "a1": 700,
+     "a2": 1900,
+     "drive": 40
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Intermodulation",
+   "how": "Two signals mixing in a non-linear circuit, making unwanted outputs."
+  },
+  {
+   "term": "Heterodyning",
+   "how": "Mixing on purpose, in a mixer, to change frequency."
+  },
+  {
+   "term": "Two-tone test",
+   "how": "Two audio tones that aren't harmonically related, fed in to check the transmitter's linearity."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G8B05",
+   "wrong": "Even-order",
+   "why": "Even-order products land far from the signals. The odd-order ones sit right beside them."
+  },
+  {
+   "q": "G8B13",
+   "wrong": "3F1-F2",
+   "why": "Add the multipliers: 3 + 1 = 4, even. 2F1 − F2 is 2 + 1 = 3, odd."
+  },
+  {
+   "q": "G8B12",
+   "wrong": "Heterodyning",
+   "why": "Heterodyning is mixing on purpose. Unwanted mixing in a non-linear stage is intermodulation."
+  },
+  {
+   "q": "G4B07",
+   "wrong": "Two audio signals of the same frequency shifted 90 degrees",
+   "why": "Same frequency would be one tone. The test needs two different tones that aren't harmonically related."
+  },
+  {
+   "q": "G4B08",
+   "wrong": "Percentage of frequency modulation",
+   "why": "It checks linearity: does a clean pair of tones come out as just a clean pair?"
+  }
+ ],
+ "questions": [
+  "G8B05",
+  "G8B12",
+  "G8B13",
+  "G4B07",
+  "G4B08"
+ ]
+}

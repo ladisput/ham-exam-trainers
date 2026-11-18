@@ -1,0 +1,141 @@
+{
+ "id": "solar-weather",
+ "exam": "general",
+ "title": "Sun to Earth: flares, CMEs and storms",
+ "idea": "Light from a flare arrives in 8 minutes. Charged particles take hours to days, and they shake Earth's magnetic field.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Event",
+    "Arrives in",
+    "What it does to HF"
+   ],
+   [
+    "Solar flare (X-rays, UV)",
+    "8 minutes",
+    "Sudden disturbance: low frequencies hit hardest"
+   ],
+   [
+    "Coronal mass ejection",
+    "15 hours to several days",
+    "Geomagnetic storm: high-latitude paths degraded"
+   ],
+   [
+    "Coronal hole stream",
+    "A few days",
+    "HF disturbed"
+   ],
+   [
+    "Sun's rotation",
+    "Every 26 to 28 days",
+    "Conditions repeat"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "sun-timeline",
+  "config": {
+   "ev": "flare",
+   "t": 10,
+   "presets": [
+    {
+     "q": "G3A03",
+     "ev": "flare",
+     "t": 8.4
+    },
+    {
+     "q": "G3A02",
+     "ev": "flare",
+     "t": 20
+    },
+    {
+     "q": "G3A11",
+     "ev": "cme",
+     "t": 2400
+    },
+    {
+     "q": "G3A06",
+     "ev": "cme",
+     "t": 2700
+    },
+    {
+     "q": "G3A08",
+     "ev": "cme",
+     "t": 2700
+    },
+    {
+     "q": "G3A09",
+     "ev": "cme",
+     "t": 3000
+    },
+    {
+     "q": "G3A14",
+     "ev": "hole",
+     "t": 4800
+    },
+    {
+     "q": "G3A10",
+     "ev": "rot",
+     "t": 38880
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Sudden ionospheric disturbance",
+   "how": "A flare's X-rays thicken the D layer on the daylit side. Lower frequencies fade first."
+  },
+  {
+   "term": "Geomagnetic storm",
+   "how": "A temporary disturbance in Earth's magnetic field from arriving particles."
+  },
+  {
+   "term": "Aurora",
+   "how": "A storm's one bonus: it can reflect VHF signals."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G3A03",
+   "wrong": "20 to 40 hours",
+   "why": "That's particle speed. A flare's X-rays travel at light speed: 8 minutes."
+  },
+  {
+   "q": "G3A11",
+   "wrong": "4 to 8 minutes",
+   "why": "That's the flare's light. A CME is a cloud of particles: 15 hours to several days."
+  },
+  {
+   "q": "G3A02",
+   "wrong": "It enhances propagation on all HF frequencies",
+   "why": "It disrupts, and the lower frequencies more than the higher."
+  },
+  {
+   "q": "G3A08",
+   "wrong": "Improve high-latitude HF propagation",
+   "why": "A storm degrades the paths over the poles."
+  },
+  {
+   "q": "G3A10",
+   "wrong": "The position of the Moon in its orbit",
+   "why": "It's the Sun turning on its axis: about 27 days."
+  },
+  {
+   "q": "G3A14",
+   "wrong": "HF communication is improved",
+   "why": "Charged particles from coronal holes disturb HF."
+  }
+ ],
+ "questions": [
+  "G3A02",
+  "G3A03",
+  "G3A06",
+  "G3A08",
+  "G3A09",
+  "G3A10",
+  "G3A11",
+  "G3A14"
+ ]
+}

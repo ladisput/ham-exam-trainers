@@ -96,6 +96,14 @@ def check(exam):
                 bad.append(f"{fid}: preset {pr.get('q')}: unknown key")
             if t == "mixer" and pr.get("mode") not in ("rx", "mod", "det"):
                 bad.append(f"{fid}: preset {pr.get('q')}: mode must be rx, mod or det")
+            if t == "two-tone" and not (pr.get("a1", 0) > 0 and pr.get("a2", 0) > 0):
+                bad.append(f"{fid}: preset {pr.get('q')}: needs a1 and a2 (Hz)")
+            if t == "sun-timeline" and not (pr.get("ev") in ("flare", "cme", "hole", "rot") and pr.get("t", 0) > 0):
+                bad.append(f"{fid}: preset {pr.get('q')}: needs ev flare/cme/hole/rot and t (minutes)")
+            if t == "sun-indices" and not ("ssn" in pr or pr.get("k") in ("quiet", "storm")):
+                bad.append(f"{fid}: preset {pr.get('q')}: needs ssn or k quiet/storm")
+            if t == "ionosphere" and not (pr.get("tod", "day") in ("day", "night", "flare") and (pr.get("f") or pr.get("snap") in ("muf", "fc", "ca"))):
+                bad.append(f"{fid}: preset {pr.get('q')}: needs f or snap, and tod day/night/flare")
             if w.get("type") == "band-chart":
                 B = c["bands"][pr.get("b", 0)] if pr.get("b", 0) < len(c["bands"]) else None
                 if B is None or ("i" in pr and not 0 <= pr["i"] < len(B.get("segs", [])) + len(B.get("marks", []))):

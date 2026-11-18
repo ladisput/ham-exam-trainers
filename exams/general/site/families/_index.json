@@ -50,6 +50,31 @@
    ]
   },
   {
+   "id": "intermod",
+   "title": "Intermodulation and the two-tone test",
+   "questions": [
+    "G8B05",
+    "G8B12",
+    "G8B13",
+    "G4B07",
+    "G4B08"
+   ]
+  },
+  {
+   "id": "ionosphere-regions",
+   "title": "D, E and F regions",
+   "questions": [
+    "G3B09",
+    "G3B10",
+    "G3C01",
+    "G3C03",
+    "G3C05",
+    "G3C10",
+    "G3C11",
+    "G9D01"
+   ]
+  },
+  {
    "id": "link-budget",
    "title": "Link budget and link margin",
    "questions": [
@@ -69,6 +94,21 @@
     "G7C01",
     "G7C02",
     "G7C04"
+   ]
+  },
+  {
+   "id": "muf-luf",
+   "title": "MUF, LUF and the usable window",
+   "questions": [
+    "G3B02",
+    "G3B03",
+    "G3B05",
+    "G3B06",
+    "G3B07",
+    "G3B08",
+    "G3B11",
+    "G3C02",
+    "G3C04"
    ]
   },
   {
@@ -113,6 +153,32 @@
     "G5B13",
     "G5B14",
     "G1C11"
+   ]
+  },
+  {
+   "id": "solar-indices",
+   "title": "Sunspots, solar flux, K and A",
+   "questions": [
+    "G3A01",
+    "G3A04",
+    "G3A05",
+    "G3A07",
+    "G3A12",
+    "G3A13"
+   ]
+  },
+  {
+   "id": "solar-weather",
+   "title": "Sun to Earth: flares, CMEs and storms",
+   "questions": [
+    "G3A02",
+    "G3A03",
+    "G3A06",
+    "G3A08",
+    "G3A09",
+    "G3A10",
+    "G3A11",
+    "G3A14"
    ]
   },
   {

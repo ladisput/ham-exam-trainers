@@ -1,0 +1,126 @@
+{
+ "id": "solar-indices",
+ "exam": "general",
+ "title": "Sunspots, solar flux, K and A",
+ "idea": "Sunspots and solar flux tell you how high the bands go. K and A tell you how stormy Earth's magnetic field is.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Index",
+    "Measures",
+    "Good for HF when"
+   ],
+   [
+    "Sunspot number",
+    "Solar activity",
+    "High: the higher bands open"
+   ],
+   [
+    "Solar flux",
+    "Radio noise at 10.7 cm",
+    "High"
+   ],
+   [
+    "K index",
+    "Earth's field, short term (3 hours)",
+    "Low"
+   ],
+   [
+    "A index",
+    "Earth's field, long term (a day)",
+    "Low"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "sun-indices",
+  "config": {
+   "ssn": 100,
+   "presets": [
+    {
+     "q": "G3A01",
+     "ssn": 180
+    },
+    {
+     "q": "G3A04",
+     "ssn": 10
+    },
+    {
+     "q": "G3A07",
+     "ssn": 10,
+     "focus": "20"
+    },
+    {
+     "q": "G3A05",
+     "ssn": 100,
+     "focus": "sfi"
+    },
+    {
+     "q": "G3A12",
+     "k": "storm",
+     "focus": "k"
+    },
+    {
+     "q": "G3A13",
+     "k": "storm",
+     "focus": "a"
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Sun side",
+   "how": "Sunspots and solar flux: higher means the higher frequencies work better."
+  },
+  {
+   "term": "Earth side",
+   "how": "K and A: how disturbed Earth's magnetic field is. Higher is worse."
+  },
+  {
+   "term": "20 meters",
+   "how": "The workhorse: open by day at any point in the solar cycle."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G3A01",
+   "wrong": "A zero sunspot number indicates that radio propagation is not possible on any band",
+   "why": "Low bands and 20 meters still work. It's the higher bands that close."
+  },
+  {
+   "q": "G3A04",
+   "wrong": "80 meters and 160 meters",
+   "why": "Low solar activity closes the high bands: 15, 12 and 10 meters."
+  },
+  {
+   "q": "G3A05",
+   "wrong": "A count of sunspots that is adjusted for solar emissions",
+   "why": "It's radio noise at a wavelength of 10.7 centimeters, not a count."
+  },
+  {
+   "q": "G3A07",
+   "wrong": "Only at the maximum point",
+   "why": "20 meters works by day at any point in the cycle."
+  },
+  {
+   "q": "G3A12",
+   "wrong": "The short-term stability of the Sun’s magnetic field",
+   "why": "K is about Earth's magnetic field, not the Sun's."
+  },
+  {
+   "q": "G3A13",
+   "wrong": "The solar radio flux at Boulder, Colorado",
+   "why": "A is the long-term stability of Earth's magnetic field."
+  }
+ ],
+ "questions": [
+  "G3A01",
+  "G3A04",
+  "G3A05",
+  "G3A07",
+  "G3A12",
+  "G3A13"
+ ]
+}
