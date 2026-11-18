@@ -1,0 +1,175 @@
+{
+ "id": "ohms-law",
+ "exam": "technician",
+ "title": "Ohm's law (E = I x R)",
+ "idea": "Voltage, current and resistance are locked together: know any two and you can find the third.",
+ "core": {
+  "type": "formula",
+  "text": "E = I x R",
+  "lines": [
+   "I = E / R",
+   "R = E / I",
+   "E is volts, I is amperes, R is ohms"
+  ]
+ },
+ "widget": {
+  "type": "formula-triangle",
+  "config": {
+   "top": {
+    "s": "E",
+    "n": "Voltage",
+    "u": "volts"
+   },
+   "left": {
+    "s": "I",
+    "n": "Current",
+    "u": "amperes"
+   },
+   "right": {
+    "s": "R",
+    "n": "Resistance",
+    "u": "ohms"
+   },
+   "start": "R",
+   "presets": [
+    {
+     "q": "T5D04",
+     "find": "R",
+     "vals": {
+      "E": 90,
+      "I": 3
+     }
+    },
+    {
+     "q": "T5D05",
+     "find": "R",
+     "vals": {
+      "E": 12,
+      "I": 1.5
+     }
+    },
+    {
+     "q": "T5D06",
+     "find": "R",
+     "vals": {
+      "E": 12,
+      "I": 4
+     }
+    },
+    {
+     "q": "T5D07",
+     "find": "I",
+     "vals": {
+      "E": 120,
+      "R": 80
+     }
+    },
+    {
+     "q": "T5D08",
+     "find": "I",
+     "vals": {
+      "E": 200,
+      "R": 100
+     }
+    },
+    {
+     "q": "T5D09",
+     "find": "I",
+     "vals": {
+      "E": 240,
+      "R": 24
+     }
+    },
+    {
+     "q": "T5D10",
+     "find": "E",
+     "vals": {
+      "I": 0.5,
+      "R": 2
+     }
+    },
+    {
+     "q": "T5D11",
+     "find": "E",
+     "vals": {
+      "I": 1,
+      "R": 10
+     }
+    },
+    {
+     "q": "T5D12",
+     "find": "E",
+     "vals": {
+      "I": 2,
+      "R": 10
+     }
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "E = voltage",
+   "how": "Measured in volts. The push."
+  },
+  {
+   "term": "I = current",
+   "how": "Measured in amperes. The flow."
+  },
+  {
+   "term": "R = resistance",
+   "how": "Measured in ohms. What holds the flow back."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T5D01",
+   "wrong": "I = E x R",
+   "why": "More resistance means less current, so current must be E divided by R."
+  },
+  {
+   "q": "T5D02",
+   "wrong": "E = I2 x R",
+   "why": "There are no squares in Ohm's law. It is just E = I x R."
+  },
+  {
+   "q": "T5D04",
+   "wrong": "270 ohms",
+   "why": "That is 90 x 3. Resistance is volts divided by amps: 90 / 3 = 30 ohms."
+  },
+  {
+   "q": "T5D07",
+   "wrong": "0.667 amperes",
+   "why": "That is 80 / 120, upside down. Volts go on top: 120 / 80 = 1.5 A."
+  },
+  {
+   "q": "T5D07",
+   "wrong": "9600 amperes",
+   "why": "That is 120 x 80. Current is volts divided by ohms."
+  },
+  {
+   "q": "T5D10",
+   "wrong": "0.25 volts",
+   "why": "That is 0.5 / 2. Voltage is amps times ohms: 0.5 x 2 = 1 V."
+  },
+  {
+   "q": "T5D11",
+   "wrong": "11 volts",
+   "why": "That is 10 + 1. Ohm's law multiplies or divides, it never adds."
+  }
+ ],
+ "questions": [
+  "T5D01",
+  "T5D02",
+  "T5D03",
+  "T5D04",
+  "T5D05",
+  "T5D06",
+  "T5D07",
+  "T5D08",
+  "T5D09",
+  "T5D10",
+  "T5D11",
+  "T5D12"
+ ]
+}

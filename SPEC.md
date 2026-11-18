@@ -49,6 +49,8 @@ Each family gets an interactive learning page.
 - The page ends with "Drill these N questions": a run of exactly the family's questions, using the normal loop
   ("Why? Show the note" on misses). Its runs are logged in `P.runs` under the key `family-<id>`.
 - The page opens over the current view and back returns to the exact spot (same answered question, same debrief).
+- The home screen lists every published family page under "Still confused? pages" (deep links don't reach the page
+  inside the Claude artifact frame, so this is the way in outside a run).
 - Only finished family pages are published: `tools/site.py build` copies each `families/<exam>/<id>.json` into
   `exams/<exam>/site/families/` and writes a site `_index.json` listing just those. The button appears only for them.
 - Each exam has `families/<exam>/_index.json` listing families and their question IDs. A question may belong to
