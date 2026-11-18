@@ -124,6 +124,12 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
 .mt button.sel{border-color:var(--blue);box-shadow:inset 0 0 0 2px var(--blue)}
 .mt button.ok{background:var(--okbg);border-color:var(--ok);color:var(--ok)}
 .mt button.no{background:var(--badbg);border-color:var(--red);color:var(--red)}
+.fx{position:relative;margin-top:12px}.fx .fig{margin:0}
+.fx .ring{position:absolute;width:13%;aspect-ratio:1;border:3px solid var(--red);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;box-shadow:0 0 0 3px rgba(255,255,255,.7)}
+.nums{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.nums button{font:700 20px/1 "Barlow Condensed",sans-serif;min-width:52px}
+.nums button.on{background:var(--red);border-color:var(--red);color:light-dark(#fff,#1a0d0a)}
+.sc .seg{flex-wrap:wrap}.sc .seg button{flex:1 1 auto;line-height:1.2;padding:8px 12px;text-align:left}
+.meterbar{height:16px;border-radius:8px;background:var(--tint);margin-top:10px;overflow:hidden}.meterbar i{display:block;height:100%;background:var(--blue);transition:width .15s}
 </style>
 </head>
 <body style="--call-size:20px;--call-w:8.2em">
@@ -385,6 +391,52 @@ WIDGETS.ladder=(el,c)=>{
   draw();
 };
 
+/* figure-explorer: tap a part number to see what it is. config {figs:[{f, title, parts:[{n, x, y, name, look, job, q}]}]}.
+   x and y place a ring on the figure, as percent of its width and height. */
+WIDGETS['figure-explorer']=(el,c)=>{
+  let fi=0,pi=null;
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Read the figure</h3><p class="small mute lead">Tap a number to see that part, what it looks like, and what it is.</p>
+  ${c.figs.length>1?`<div class="seg" role="group" aria-label="Figure">${c.figs.map((f,i)=>`<button data-f="${i}">${esc(f.title)}</button>`).join('')}</div>`:''}
+  <div class="fx"><div class="fig"><img alt=""></div><span class="ring" hidden></span></div><div class="nums"></div><div class="wres"></div>`;
+  const img=el.querySelector('.fx img'),ring=el.querySelector('.ring'),nums=el.querySelector('.nums'),res=el.querySelector('.wres');
+  function draw(){
+    const F=c.figs[fi];
+    el.querySelectorAll('[data-f]').forEach(b=>{const on=+b.dataset.f===fi;b.classList.toggle('pri',on);b.setAttribute('aria-pressed',on)});
+    if(img.getAttribute('src')!=='fig/'+F.f){img.src='fig/'+F.f;img.alt=F.title}
+    nums.innerHTML=F.parts.map((p,i)=>`<button data-p="${i}" class="${i===pi?'on':''}" aria-label="Part ${p.n}">${p.n}</button>`).join('');
+    nums.querySelectorAll('button').forEach(b=>b.onclick=()=>{pi=+b.dataset.p;draw()});
+    const P=pi!=null&&F.parts[pi];ring.hidden=!P;
+    if(P){ring.style.left=P.x+'%';ring.style.top=P.y+'%';
+      res.innerHTML=`<div class="eq">${esc(F.title)}, part ${P.n}: <em>${esc(P.name)}</em></div><p>${esc(P.look)}</p>${P.job?`<p class="small mute">${esc(P.job)}</p>`:''}${P.q?`<p class="small mute">Asked in ${esc(P.q)}.</p>`:''}`}
+    else res.innerHTML=`<p class="small mute" style="margin:0">The exam asks about parts ${F.parts.map(p=>p.n).join(', ')} of ${esc(F.title)}.</p>`;
+  }
+  el.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{fi=+b.dataset.f;pi=null;draw()});
+  draw();
+};
+
+/* scenario: pick a situation, see what applies. config {situations:[{label, title, text, dims?:[{id,label,options}], rules?:[{when:{id:[options]}, title, text}]}]}.
+   When a situation has dims, the first rule whose every listed dim matches gives the result. */
+WIDGETS.scenario=(el,c)=>{
+  let si=0;const pick={};
+  el.classList.add('wg','sc');
+  el.innerHTML=`<h3>${esc(c.heading||'What is going on?')}</h3><p class="small mute lead">${esc(c.lead||'Pick what you are hearing to see what is causing it.')}</p>
+  <div class="seg" role="group" aria-label="Situation">${c.situations.map((x,i)=>`<button data-s="${i}">${esc(x.label)}</button>`).join('')}</div><div class="dims"></div><div class="wres"></div>`;
+  const dims=el.querySelector('.dims'),res=el.querySelector('.wres');
+  function draw(){
+    const S=c.situations[si];
+    el.querySelectorAll('[data-s]').forEach(b=>{const on=+b.dataset.s===si;b.classList.toggle('pri',on);b.setAttribute('aria-pressed',on)});
+    dims.innerHTML=(S.dims||[]).map(d=>{if(!(d.id in pick)||!d.options.includes(pick[d.id]))pick[d.id]=d.options[0];
+      return`<p class="small mute" style="margin:12px 0 0">${esc(d.label)}</p><div class="seg">${d.options.map(o=>`<button data-d="${esc(d.id)}" data-o="${esc(o)}" class="${pick[d.id]===o?'pri':''}" aria-pressed="${pick[d.id]===o}">${esc(o)}</button>`).join('')}</div>`}).join('');
+    dims.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{pick[b.dataset.d]=b.dataset.o;draw()});
+    let r=S;
+    if(S.rules)r=S.rules.find(x=>Object.entries(x.when).every(([k,v])=>v.includes(pick[k])))||S;
+    res.innerHTML=`<div class="eq">${esc(r.title||S.title)}</div><p>${esc(r.text||S.text||'')}</p>`;
+  }
+  el.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{si=+b.dataset.s;draw()});
+  draw();
+};
+
 /* calculator: config {calc:<name>, ...}; each calc fills el with inputs, a live result and the working. */
 const CALCS={
   /* dB from a power change. config {from, to, presets:[{q,from,to}]}. Breaks the ratio into x2 (3 dB) and x10 (10 dB) steps. */
@@ -407,6 +459,29 @@ const CALCS={
     }
     $a.oninput=()=>{a=$a.value;unchip(el);draw()};$b.oninput=()=>{b=$b.value;unchip(el);draw()};
     chips(el,c.presets,p=>{a=String(p.from);b=String(p.to);draw()});
+    draw();
+  },
+  /* Multipath: a direct and a reflected copy of a signal. Moving the antenna changes how they line up.
+     config {feet}. Purely an illustration: no real distances are claimed. */
+  multipath(el,c){
+    let x=c.feet??0;
+    el.innerHTML=`<h3>Move the antenna</h3><p class="small mute lead">Two copies of the same signal arrive: one direct, one bounced off something. Slide the antenna a few feet and watch them add up or cancel.</p>
+    <label for="mp-s">Antenna position</label><input id="mp-s" type="range" min="0" max="100" style="padding:0">
+    <svg class="wave" viewBox="0 0 320 150" aria-hidden="true"><path class="d" fill="none" stroke="var(--mute)" stroke-width="2"/><path class="r" fill="none" stroke="var(--mute)" stroke-width="2" stroke-dasharray="5 4"/><path class="s" fill="none" stroke="var(--blue)" stroke-width="3.5"/></svg>
+    <p class="small mute" style="margin:2px 0 0">Thin lines: direct and bounced copies. Thick line: what your receiver gets.</p>
+    <div class="meterbar"><i></i></div><div class="wres"></div>`;
+    const sl=el.querySelector('#mp-s'),res=el.querySelector('.wres'),bar=el.querySelector('.meterbar i');
+    const P=k=>el.querySelector('path.'+k);
+    function draw(){
+      sl.value=x;const ph=x/100*4*Math.PI,amp=Math.hypot(1+.85*Math.cos(ph),.85*Math.sin(ph))/1.85;
+      const line=(f,y0,a)=>{let d='';for(let i=0;i<=320;i+=2)d+=(i?' L':'M')+i+' '+(y0-a*f(i/320*4*Math.PI)).toFixed(1);return d};
+      P('d').setAttribute('d',line(t=>Math.sin(t),30,14));P('r').setAttribute('d',line(t=>.85*Math.sin(t+ph),30,14));
+      P('s').setAttribute('d',line(t=>Math.sin(t)+.85*Math.sin(t+ph),100,22));
+      bar.style.width=Math.round(amp*100)+'%';
+      const t=amp>.75?['Reinforcing','The copies line up and add together: a strong signal.']:amp<.25?['Cancelling','The copies are out of step and cancel: the signal nearly disappears.']:['Partly cancelling','The copies are partly out of step: a weaker signal.'];
+      res.innerHTML=`<div class="eq"><em>${t[0]}</em></div><p>${t[1]}</p><p class="small mute">Drive through this and it flickers fast: picket fencing. Send data through it and errors go up.</p>`;
+    }
+    sl.oninput=()=>{x=+sl.value;draw()};
     draw();
   },
   /* Wavelength from frequency. config {mhz, presets:[{q,mhz}]}. Wavelength m = 300 / MHz; quarter wave inches = 2808 / MHz. */

@@ -1,0 +1,51 @@
+{
+ "id": "multipath-fading",
+ "exam": "technician",
+ "title": "Multipath and fading",
+ "idea": "When copies of a signal arrive by different paths, they add up or cancel. That's why signals flutter and fade.",
+ "core": {
+  "type": "formula",
+  "text": "Copies add up or cancel",
+  "lines": [
+   "Move the antenna a few feet: the signal can swing from strong to weak",
+   "Driving: rapid flutter called picket fencing",
+   "HF: irregular fading as copies combine at random",
+   "Data: error rates go up"
+  ]
+ },
+ "widget": {
+  "type": "calculator",
+  "config": {
+   "calc": "multipath",
+   "feet": 0
+  }
+ },
+ "traps": [
+  {
+   "q": "T3A01",
+   "wrong": "The signal path encounters different concentrations of water vapor",
+   "why": "A few feet doesn't change the air. It changes how the reflected copies combine."
+  },
+  {
+   "q": "T3A06",
+   "wrong": "Alternating transmissions during a net operation",
+   "why": "Picket fencing is the rapid flutter on mobile signals from multipath."
+  },
+  {
+   "q": "T3A08",
+   "wrong": "Frequency shift due to Faraday rotation",
+   "why": "Irregular fading comes from signals arriving by different paths and combining at random."
+  },
+  {
+   "q": "T3A10",
+   "wrong": "No significant changes will occur if the signals are transmitted using FM",
+   "why": "FM doesn't escape it. Multipath makes data error rates go up."
+  }
+ ],
+ "questions": [
+  "T3A01",
+  "T3A06",
+  "T3A08",
+  "T3A10"
+ ]
+}

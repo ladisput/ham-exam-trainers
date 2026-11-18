@@ -1,0 +1,132 @@
+{
+ "id": "lead-names",
+ "exam": "technician",
+ "title": "Transistor and diode lead names",
+ "idea": "Each part has its own set of lead names. Learn the three sets and the wrong answers mix them up.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Part",
+    "Leads"
+   ],
+   [
+    "Diode",
+    "Anode and cathode. A stripe marks the cathode."
+   ],
+   [
+    "Bipolar junction transistor",
+    "Emitter, base, collector"
+   ],
+   [
+    "Field-effect transistor (FET)",
+    "Gate, drain, source"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "sort-bins",
+  "config": {
+   "bins": [
+    "Diode",
+    "Bipolar",
+    "FET"
+   ],
+   "cards": [
+    {
+     "t": "Anode",
+     "bin": "Diode",
+     "why": "A diode's electrodes are the anode and cathode."
+    },
+    {
+     "t": "Cathode",
+     "bin": "Diode",
+     "why": "A diode's electrodes are the anode and cathode."
+    },
+    {
+     "t": "A stripe on the package",
+     "bin": "Diode",
+     "why": "The stripe marks a diode's cathode end."
+    },
+    {
+     "t": "Emitter",
+     "bin": "Bipolar",
+     "why": "Bipolar: emitter, base, collector."
+    },
+    {
+     "t": "Base",
+     "bin": "Bipolar",
+     "why": "Bipolar: emitter, base, collector."
+    },
+    {
+     "t": "Collector",
+     "bin": "Bipolar",
+     "why": "Bipolar: emitter, base, collector."
+    },
+    {
+     "t": "Gate",
+     "bin": "FET",
+     "why": "FET: gate, drain, source."
+    },
+    {
+     "t": "Drain",
+     "bin": "FET",
+     "why": "FET: gate, drain, source."
+    },
+    {
+     "t": "Source",
+     "bin": "FET",
+     "why": "FET: gate, drain, source."
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "FET",
+   "how": "Field effect transistor. Gate, drain, source."
+  },
+  {
+   "term": "Bipolar",
+   "how": "Emitter, base, collector."
+  },
+  {
+   "term": "Diode",
+   "how": "Anode and cathode. Stripe = cathode."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T6B05",
+   "wrong": "Bipolar junction",
+   "why": "Bipolar transistors have an emitter, base and collector. Gate, drain and source is a FET."
+  },
+  {
+   "q": "T6B06",
+   "wrong": "With the letter K",
+   "why": "The package doesn't use a letter. The cathode end is marked with a stripe."
+  },
+  {
+   "q": "T6B08",
+   "wrong": "Fast Electron Transistor",
+   "why": "The F is for field: field effect transistor."
+  },
+  {
+   "q": "T6B09",
+   "wrong": "Source and drain",
+   "why": "Those are FET leads. A diode has an anode and a cathode."
+  },
+  {
+   "q": "T6B09",
+   "wrong": "Plus and minus",
+   "why": "Sounds right, but the electrode names are anode and cathode."
+  }
+ ],
+ "questions": [
+  "T6B05",
+  "T6B06",
+  "T6B08",
+  "T6B09",
+  "T6B12"
+ ]
+}

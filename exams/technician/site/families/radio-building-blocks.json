@@ -1,0 +1,135 @@
+{
+ "id": "radio-building-blocks",
+ "exam": "technician",
+ "title": "Radio building blocks",
+ "idea": "A radio is a handful of blocks, each with one job. The exam names the job and asks for the block.",
+ "core": {
+  "type": "list",
+  "items": [
+   [
+    "Sensitivity",
+    "A receiver's ability to detect a signal (a weak one)"
+   ],
+   [
+    "Selectivity",
+    "A receiver's ability to pick one signal out of many"
+   ],
+   [
+    "Oscillator",
+    "Generates a signal at a specific frequency"
+   ],
+   [
+    "VFO",
+    "The variable frequency oscillator: sets the receive and transmit frequency"
+   ],
+   [
+    "Mixer",
+    "Converts a signal from one frequency to another"
+   ],
+   [
+    "Transverter",
+    "Converts a transceiver's RF input and output to another band"
+   ],
+   [
+    "Modulation",
+    "Combining speech with an RF carrier"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "match",
+  "config": {
+   "left": "Block",
+   "right": "Job",
+   "pairs": [
+    [
+     "Sensitivity",
+     "Detects a weak signal"
+    ],
+    [
+     "Selectivity",
+     "Picks one signal out of many"
+    ],
+    [
+     "Oscillator",
+     "Generates a signal at one frequency"
+    ],
+    [
+     "VFO",
+     "Sets receive and transmit frequency"
+    ],
+    [
+     "Mixer",
+     "Moves a signal to another frequency"
+    ],
+    [
+     "Transverter",
+     "Moves a whole rig to another band"
+    ],
+    [
+     "Modulation",
+     "Puts speech on an RF carrier"
+    ]
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Sensitivity",
+   "how": "Can it hear the signal at all?"
+  },
+  {
+   "term": "Selectivity",
+   "how": "Can it pick one signal out from its neighbors?"
+  },
+  {
+   "term": "Mixer",
+   "how": "Changes a signal's frequency."
+  },
+  {
+   "term": "Transverter",
+   "how": "Changes a transceiver's RF in and out to another band."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T7A01",
+   "wrong": "Selectivity",
+   "why": "Selectivity is separating signals. Detecting a signal is sensitivity."
+  },
+  {
+   "q": "T7A04",
+   "wrong": "Sensitivity",
+   "why": "Sensitivity is detecting a signal. Telling signals apart is selectivity."
+  },
+  {
+   "q": "T7A03",
+   "wrong": "Amplifier",
+   "why": "An amplifier makes a signal stronger at the same frequency. A mixer moves it to another frequency."
+  },
+  {
+   "q": "T7A06",
+   "wrong": "Phase converter",
+   "why": "Moving a transceiver's RF to another band is a transverter."
+  },
+  {
+   "q": "T7A08",
+   "wrong": "Oscillation",
+   "why": "An oscillator makes the carrier. Putting speech onto it is modulation."
+  },
+  {
+   "q": "T7A11",
+   "wrong": "Inject a variable frequency to allow CW reception",
+   "why": "The VFO's job is simpler: it sets the receive and transmit frequency."
+  }
+ ],
+ "questions": [
+  "T7A01",
+  "T7A03",
+  "T7A04",
+  "T7A05",
+  "T7A06",
+  "T7A08",
+  "T7A11"
+ ]
+}
