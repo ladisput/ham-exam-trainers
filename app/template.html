@@ -130,6 +130,11 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
 .nums button.on{background:var(--red);border-color:var(--red);color:light-dark(#fff,#1a0d0a)}
 .sc .seg{flex-wrap:wrap}.sc .seg button{flex:1 1 auto;line-height:1.2;padding:8px 12px;text-align:left}
 .meterbar{height:16px;border-radius:8px;background:var(--tint);margin-top:10px;overflow:hidden}.meterbar i{display:block;height:100%;background:var(--blue);transition:width .15s}
+.bc{display:block;width:100%;height:auto;margin-top:12px;color:var(--ink)}.bc text{font:600 12px Barlow,sans-serif;fill:var(--mute)}
+.bc .k-cw{fill:var(--red)}.bc .k-phone{fill:var(--blue)}.bc .k-other{fill:var(--mute)}.bc .k-range{fill:var(--tint);stroke:var(--line)}.bc .k-range.alt{fill:var(--face)}
+.bc .sel{stroke:var(--ink);stroke-width:3}.bc .mk{stroke:var(--ink);stroke-width:2}.bc .bct{fill:var(--ink);font-weight:700}
+.bclist{display:flex;flex-direction:column;gap:6px;margin-top:10px}.bclist button{text-align:left;line-height:1.25;padding:8px 12px;display:flex;gap:10px;align-items:center}
+.bclist i{flex:none;width:14px;height:14px;border-radius:3px;border:1px solid var(--line)}.bclist button.on{border-color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
 </style>
 </head>
 <body style="--call-size:{{callSize}};--call-w:{{callWidth}}">
@@ -434,6 +439,38 @@ WIDGETS.scenario=(el,c)=>{
     res.innerHTML=`<div class="eq">${esc(r.title||S.title)}</div><p>${esc(r.text||S.text||'')}</p>`;
   }
   el.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{si=+b.dataset.s;draw()});
+  draw();
+};
+
+/* band-chart: tap a band to see it drawn to scale with its segments and marked frequencies; tap any item for details.
+   config {heading, lead, bands:[{name, lo, hi, unit, scale:'lin'|'log', ticks?, segs:[{lo,hi,label,kind,text}], marks:[{f,label,text}], text}]}.
+   kind: cw | phone | other | range. */
+WIDGETS['band-chart']=(el,c)=>{
+  let bi=0,ii=null;
+  el.classList.add('wg');
+  el.innerHTML=`<h3>${esc(c.heading||'The band map')}</h3><p class="small mute lead">${esc(c.lead||'Pick a band, then tap anything on it.')}</p>
+  ${c.bands.length>1?`<div class="seg" role="group" aria-label="Band">${c.bands.map((b,i)=>`<button data-b="${i}">${esc(b.name)}</button>`).join('')}</div>`:''}
+  <svg class="bc" viewBox="0 0 320 110" role="img"></svg><div class="bclist"></div><div class="wres"></div>`;
+  const svg=el.querySelector('svg'),list=el.querySelector('.bclist'),res=el.querySelector('.wres');
+  const col={cw:'var(--red)',phone:'var(--blue)',other:'var(--mute)',range:'var(--tint)'};
+  function draw(){
+    const B=c.bands[bi],u=B.unit||'MHz',lg=B.scale==='log',L=lg?Math.log:x=>x;
+    const X=f=>12+296*(L(f)-L(B.lo))/(L(B.hi)-L(B.lo));
+    el.querySelectorAll('[data-b]').forEach(b=>{const on=+b.dataset.b===bi;b.classList.toggle('pri',on);b.setAttribute('aria-pressed',on)});
+    const items=[...(B.segs||[]).map(x=>({...x,t:'s'})),...(B.marks||[]).map(x=>({...x,t:'m'}))];
+    let g=`<rect x="12" y="52" width="296" height="26" rx="4" class="k-range"/>`;
+    (B.segs||[]).forEach((x,i)=>{const on=items[ii]===undefined?false:items[ii].t==='s'&&items[ii].label===x.label;
+      g+=`<rect x="${X(x.lo)}" y="52" width="${Math.max(2,X(x.hi)-X(x.lo))}" height="26" class="k-${esc(x.kind||'range')}${x.kind==='range'&&i%2?' alt':''}${on?' sel':''}"/>`;
+      if(x.kind==='range'||X(x.hi)-X(x.lo)>40)g+=`<text x="${(X(x.lo)+X(x.hi))/2}" y="69" text-anchor="middle" class="bct" style="${x.kind&&x.kind!=='range'?'fill:var(--card)':''}">${esc(x.short||x.label)}</text>`});
+    (B.marks||[]).forEach((m,i)=>{const x=X(m.f),y=18+(i%2)*14;g+=`<line x1="${x}" y1="${y+4}" x2="${x}" y2="80" class="mk"/><text x="${Math.min(300,Math.max(20,x))}" y="${y}" text-anchor="middle" class="bct">${esc(m.short||m.label)}</text>`});
+    (B.ticks||[B.lo,B.hi]).forEach(t=>{g+=`<text x="${Math.min(306,Math.max(14,X(t)))}" y="98" text-anchor="${X(t)<30?'start':X(t)>290?'end':'middle'}">${fmt(t)}</text>`});
+    svg.innerHTML=g;svg.setAttribute('aria-label',`${B.name}, ${fmt(B.lo)} to ${fmt(B.hi)} ${u}`);
+    list.innerHTML=items.map((x,i)=>`<button data-i="${i}" class="${i===ii?'on':''}"><i style="background:${x.t==='m'?'var(--ink)':col[x.kind||'range']};${x.t==='m'?'width:4px':''}"></i><span>${esc(x.label)} <span class="small mute">${x.t==='m'?fmt(x.f)+' '+u:fmt(x.lo)+' to '+fmt(x.hi)+' '+u}</span></span></button>`).join('');
+    list.querySelectorAll('button').forEach(b=>b.onclick=()=>{ii=+b.dataset.i;draw()});
+    const I=ii!=null&&items[ii];
+    res.innerHTML=I?`<div class="eq" style="font-size:clamp(22px,6.5vw,30px)">${esc(I.label)}</div><p>${esc(I.text||'')}</p>`:`<div class="eq" style="font-size:clamp(22px,6.5vw,30px)">${esc(B.name)}: ${fmt(B.lo)} to ${fmt(B.hi)} ${esc(u)}</div>${B.text?`<p>${esc(B.text)}</p>`:''}`;
+  }
+  el.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{bi=+b.dataset.b;ii=null;draw()});
   draw();
 };
 

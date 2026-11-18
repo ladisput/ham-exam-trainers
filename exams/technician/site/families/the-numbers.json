@@ -1,0 +1,140 @@
+{
+ "id": "the-numbers",
+ "exam": "technician",
+ "title": "The numbers to memorize",
+ "idea": "A handful of numbers the exam asks for directly. Each one is paired with a near miss.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Number",
+    "What it is"
+   ],
+   [
+    "10 years",
+    "License term"
+   ],
+   [
+    "90 days",
+    "How early you can request renewal"
+   ],
+   [
+    "2 years",
+    "Grace period after it expires (but no transmitting)"
+   ],
+   [
+    "10 minutes",
+    "Give your call sign at least this often, and at the end"
+   ],
+   [
+    "50 km",
+    "Higher than this, a station is a space station"
+   ],
+   [
+    "4 members",
+    "Minimum for a club station license"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "match",
+  "config": {
+   "left": "Number",
+   "right": "What it is",
+   "pairs": [
+    [
+     "10 years",
+     "License term"
+    ],
+    [
+     "90 days",
+     "Earliest renewal request"
+    ],
+    [
+     "2 years",
+     "Grace period after expiring"
+    ],
+    [
+     "10 minutes",
+     "How often to give your call sign"
+    ],
+    [
+     "50 km",
+     "Altitude of a space station"
+    ],
+    [
+     "4 members",
+     "Smallest club for a license"
+    ]
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Grace period",
+   "how": "2 years to renew. You still can't transmit until it's renewed."
+  },
+  {
+   "term": "First license",
+   "how": "Transmit once the grant appears in the FCC database."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T1C07",
+   "wrong": "30 days",
+   "why": "You can ask for renewal up to 90 days before expiration."
+  },
+  {
+   "q": "T1C09",
+   "wrong": "Five years",
+   "why": "The grace period is 2 years."
+  },
+  {
+   "q": "T1C08",
+   "wrong": "Five years",
+   "why": "The license term is 10 years."
+  },
+  {
+   "q": "T1C10",
+   "wrong": "Immediately on receiving your Certificate of Successful Completion of Examination (CSCE)",
+   "why": "For a first license, wait until the grant appears in the FCC's license database."
+  },
+  {
+   "q": "T1C11",
+   "wrong": "Yes, for up to two years",
+   "why": "The grace period is for renewing, not for operating. No transmitting until it's renewed."
+  },
+  {
+   "q": "T1F03",
+   "wrong": "At least every 15 minutes during and at the end of a communication",
+   "why": "It's every 10 minutes, and at the end."
+  },
+  {
+   "q": "T1F02",
+   "wrong": "Never, the tactical call is sufficient",
+   "why": "Tactical calls are fine, but you still give your FCC call sign every 10 minutes and at the end."
+  },
+  {
+   "q": "T1A07",
+   "wrong": "Any satellite orbiting Earth",
+   "why": "A space station is an amateur station more than 50 km above the Earth."
+  },
+  {
+   "q": "T1F11",
+   "wrong": "The trustee must have an Amateur Extra Class operator license grant",
+   "why": "No license class requirement. The club needs at least four members."
+  }
+ ],
+ "questions": [
+  "T1C07",
+  "T1C08",
+  "T1C09",
+  "T1C10",
+  "T1C11",
+  "T1F02",
+  "T1F03",
+  "T1A07",
+  "T1F11"
+ ]
+}

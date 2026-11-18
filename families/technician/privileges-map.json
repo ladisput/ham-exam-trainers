@@ -1,0 +1,226 @@
+{
+ "id": "privileges-map",
+ "exam": "technician",
+ "title": "Technician privileges map",
+ "idea": "Technicians get one slice of HF phone (10 meters) and the run of VHF and UHF. A few edges and spots are worth memorizing.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "",
+    "What to remember"
+   ],
+   [
+    "10 m phone",
+    "28.300 to 28.500 MHz (the only HF phone)"
+   ],
+   [
+    "10 m beacons",
+    "28.200 to 28.300 MHz"
+   ],
+   [
+    "CW only",
+    "50.0 to 50.1 and 144.0 to 144.1 MHz"
+   ],
+   [
+    "2 m FM simplex calling",
+    "146.520 MHz"
+   ],
+   [
+    "Repeater offsets",
+    "2 m: 600 kHz. 70 cm: 5 MHz"
+   ],
+   [
+    "Power",
+    "HF: 200 W PEP. Above 30 MHz: 1500 W PEP"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "band-chart",
+  "config": {
+   "heading": "Your bands",
+   "lead": "Pick a band, then tap a segment or a frequency.",
+   "bands": [
+    {
+     "name": "10 m",
+     "lo": 28.0,
+     "hi": 28.5,
+     "ticks": [
+      28.0,
+      28.2,
+      28.3,
+      28.5
+     ],
+     "text": "Technicians' only HF phone band. HF power limit for Technicians: 200 watts PEP.",
+     "segs": [
+      {
+       "lo": 28.2,
+       "hi": 28.3,
+       "label": "Propagation beacons",
+       "short": "Beacons",
+       "kind": "other",
+       "text": "Automatically controlled HF propagation beacons are found on 10 meters, 28.200 to 28.300 MHz."
+      },
+      {
+       "lo": 28.3,
+       "hi": 28.5,
+       "label": "Technician phone (SSB)",
+       "short": "Phone",
+       "kind": "phone",
+       "text": "Technicians may use phone from 28.300 to 28.500 MHz. 10 meters is the only HF band where Technicians have phone privileges."
+      }
+     ]
+    },
+    {
+     "name": "6 m",
+     "lo": 50,
+     "hi": 54,
+     "ticks": [
+      50,
+      52,
+      54
+     ],
+     "text": "Above 30 MHz, Technicians may run up to 1500 watts PEP, except for some specific restrictions. SSB is allowed in at least some segment of every band above 50 MHz.",
+     "segs": [
+      {
+       "lo": 50.0,
+       "hi": 50.1,
+       "label": "CW only",
+       "short": "CW",
+       "kind": "cw",
+       "text": "50.0 to 50.1 MHz is limited to CW only."
+      }
+     ],
+     "marks": [
+      {
+       "f": 52.525,
+       "label": "52.525 MHz",
+       "short": "52.525",
+       "text": "A frequency in the 6 meter band, which runs 50 to 54 MHz."
+      }
+     ]
+    },
+    {
+     "name": "2 m",
+     "lo": 144,
+     "hi": 148,
+     "ticks": [
+      144,
+      146,
+      148
+     ],
+     "text": "Common repeater offset: plus or minus 600 kHz. Up to 1500 watts PEP above 30 MHz.",
+     "segs": [
+      {
+       "lo": 144.0,
+       "hi": 144.1,
+       "label": "CW only",
+       "short": "CW",
+       "kind": "cw",
+       "text": "144.0 to 144.1 MHz is limited to CW only."
+      }
+     ],
+     "marks": [
+      {
+       "f": 146.52,
+       "label": "National FM simplex calling frequency",
+       "short": "146.520",
+       "text": "146.520 MHz is the national calling frequency for FM simplex on 2 meters."
+      }
+     ]
+    },
+    {
+     "name": "70 cm",
+     "lo": 420,
+     "hi": 450,
+     "ticks": [
+      420,
+      435,
+      450
+     ],
+     "text": "Common repeater offset: plus or minus 5 MHz. Up to 1500 watts PEP above 30 MHz."
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "2 m offset",
+   "how": "Plus or minus 600 kHz."
+  },
+  {
+   "term": "70 cm offset",
+   "how": "Plus or minus 5 MHz."
+  },
+  {
+   "term": "HF power",
+   "how": "200 watts PEP."
+  },
+  {
+   "term": "Above 30 MHz",
+   "how": "1500 watts PEP."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T1B01",
+   "wrong": "28.100 MHz to 28.300 MHz",
+   "why": "Technician phone on 10 m starts at 28.300 and runs to 28.500 MHz."
+  },
+  {
+   "q": "T1B06",
+   "wrong": "80-meter, 40-meter, 15-meter, and 10-meter bands",
+   "why": "Technicians have HF phone on 10 meters only."
+  },
+  {
+   "q": "T1B07",
+   "wrong": "219 MHz to 220 MHz and 420.0 MHz to 420.1 MHz",
+   "why": "The CW-only segments are the bottom 100 kHz of 6 and 2 meters: 50.0-50.1 and 144.0-144.1 MHz."
+  },
+  {
+   "q": "T1B11",
+   "wrong": "100 watts",
+   "why": "Technician HF power limit is 200 watts PEP."
+  },
+  {
+   "q": "T1B12",
+   "wrong": "500 watts",
+   "why": "Above 30 MHz, Technicians can run the full 1500 watts PEP."
+  },
+  {
+   "q": "T2A01",
+   "wrong": "Plus or minus 5 MHz",
+   "why": "5 MHz is the 70 cm offset. 2 meters uses 600 kHz."
+  },
+  {
+   "q": "T2A03",
+   "wrong": "Plus or minus 600 kHz",
+   "why": "600 kHz is the 2 m offset. 70 cm uses 5 MHz."
+  },
+  {
+   "q": "T1B03",
+   "wrong": "49.00 MHz",
+   "why": "6 meters runs 50 to 54 MHz, so 49 MHz is just below it."
+  },
+  {
+   "q": "T1A06",
+   "wrong": "Anywhere in the Technician portion of 10 meters",
+   "why": "HF beacons have their own slice: 28.200 to 28.300 MHz."
+  }
+ ],
+ "questions": [
+  "T1B01",
+  "T1B03",
+  "T1B04",
+  "T1B06",
+  "T1B07",
+  "T1B10",
+  "T1B11",
+  "T1B12",
+  "T1A06",
+  "T2A01",
+  "T2A02",
+  "T2A03"
+ ]
+}

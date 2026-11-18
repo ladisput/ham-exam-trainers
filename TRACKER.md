@@ -8,7 +8,7 @@ Status: `todo`, `doing`, `done`. Update this file at the end of every session, t
 |---|---|---|
 | S1 | Merge the Technician and Extra `index.html` into one template plus per-exam config; keep each live `LS` key and db path; retest both and republish | done |
 | S2 | Add family support to the app: `#family-<id>` route, "Still confused?" button, family page renderer, "Drill these N" | done |
-| S3 | Build the reusable widgets listed in SPEC.md as they're first needed | doing (built: `formula-triangle`, `ladder`, `calculator` with `db` and `wavelength`, `circuit-toggle`, `sort-bins`, `match`, `figure-explorer`, `scenario`, calc `multipath`) |
+| S3 | Build the reusable widgets listed in SPEC.md as they're first needed | doing (built: `formula-triangle`, `ladder`, `calculator` with `db` and `wavelength`, `circuit-toggle`, `sort-bins`, `match`, `figure-explorer`, `scenario`, calc `multipath`, `band-chart`) |
 
 ## Technician families (34)
 
@@ -31,11 +31,11 @@ Status: `todo`, `doing`, `done`. Update this file at the end of every session, t
 | 13 | Radio building blocks (`radio-building-blocks`) | Commonly confused terms | 7 | done |
 | 14 | Which propagation, when (`which-propagation`) | Propagation | 8 | done |
 | 15 | Multipath and fading (`multipath-fading`) | Propagation | 4 | done |
-| 16 | Polarization (`polarization`) | Propagation | 7 | todo |
-| 17 | What weather and terrain do (`weather-terrain`) | Propagation | 3 | todo |
-| 18 | HF vs. VHF vs. UHF (`hf-vhf-uhf`) | Propagation | 7 | todo |
-| 19 | Technician privileges map (`privileges-map`) | Rules and numbers to memorize | 12 | todo |
-| 20 | The numbers to memorize (`the-numbers`) | Rules and numbers to memorize | 9 | todo |
+| 16 | Polarization (`polarization`) | Propagation | 7 | done |
+| 17 | What weather and terrain do (`weather-terrain`) | Propagation | 3 | done |
+| 18 | HF vs. VHF vs. UHF (`hf-vhf-uhf`) | Propagation | 7 | done |
+| 19 | Technician privileges map (`privileges-map`) | Rules and numbers to memorize | 12 | done |
+| 20 | The numbers to memorize (`the-numbers`) | Rules and numbers to memorize | 9 | done |
 | 21 | Who's responsible (`whos-responsible`) | Rules and numbers to memorize | 12 | todo |
 | 22 | Local vs. remote vs. automatic control (`control-types`) | Rules and numbers to memorize | 5 | todo |
 | 23 | "Only when..." exceptions (`only-when-exceptions`) | Rules and numbers to memorize | 8 | todo |
@@ -70,6 +70,7 @@ Status: `todo`, `doing`, `done`. Update this file at the end of every session, t
 
 ## Log
 
+- 2026-11-18 (Technician families 16-20): Polarization, weather and terrain, HF vs. VHF vs. UHF, privileges map, the numbers. New widget: `band-chart` (bands drawn to scale, linear or log, with segments and marked frequencies; details on tap). Only edges and spots the pool tests are drawn. Families 11-15 were republished to Technician on 2026-11-18 (v6). Next batch: families 21-25 (who's responsible, control types, only-when exceptions, RACES vs. ARES, bandwidth ladder).
 - 2026-11-18 (Technician families 11-15): Lead names, schematic symbols, radio building blocks, which propagation when, multipath and fading. New widgets: `figure-explorer` (numbered buttons under a pool figure, a ring marks the part; ring positions are percent of the 1800x1200 figure), `scenario` (situations, optional dims with first-match rules), calc `multipath` (illustration only, no real distances). Families 6-10 were republished to Technician on 2026-11-18 (v5). Next batch: families 16-20 (polarization, weather and terrain, HF vs. VHF vs. UHF, privileges map needs `band-chart`, the numbers).
 - 2026-11-18 (Technician families 6-10): Series vs. parallel, units, capacitor vs. inductor, resistance vs. impedance, what each component does. New widgets: `circuit-toggle` (series/parallel with ammeter or voltmeter; text from config), `sort-bins` (one card at a time, tap the bin), `match` (tap a term, then its partner). Families 1-5 were republished to Technician on 2026-11-18 (v4), and PR #2 was closed. Flow now: build, publish a preview copy (Technician Trainer Preview, https://claude.ai/artifact/JVa74CyW5j9ktfCoZp2u1o, no db), Brooke tries it, merges, then republish the real one. Next batch: families 11-15 (lead names, schematic symbols need `figure-explorer`, radio building blocks, which propagation needs `scenario`, multipath).
 - 2026-11-17 (Technician families 1-5): Ohm's law, power and batteries, metric prefixes, decibels, wavelength and frequency pages written. New widgets in `app/template.html`: `formula-triangle` (tap the unknown, fill two values, see the working), `ladder` (prefix converter; every rung shows the same amount), `calculator` (named calcs in `CALCS`: `db`, `wavelength`). Widgets take `presets` of pool questions as chips. Every preset result was checked against the pool's correct answer headless. `tools/test_app.py` now also opens every published family page and clicks each preset chip. Republish Technician after the PR merges. Next batch: families 6-10 (series vs. parallel needs `circuit-toggle`, units needs `match` or `sort-bins`).

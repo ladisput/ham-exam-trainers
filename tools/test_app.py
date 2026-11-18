@@ -92,7 +92,7 @@ async def main():
                 doc = json.load(open(os.path.join(site, "families", f["id"] + ".json")))
                 await pg.goto("about:blank"); await pg.goto(f"http://localhost:8790/index.html#family-{f['id']}"); await pg.wait_for_selector("#fdrill")
                 wt = doc["widget"]["type"]
-                if wt in ("formula-triangle", "ladder", "calculator", "circuit-toggle", "sort-bins", "match", "figure-explorer", "scenario"):
+                if wt in ("formula-triangle", "ladder", "calculator", "circuit-toggle", "sort-bins", "match", "figure-explorer", "scenario", "band-chart"):
                     assert await pg.locator("#widget").count() == 1, f"{f['id']}: widget card missing"
                     for i in range(await pg.locator("#widget .chip").count()):
                         await pg.locator("#widget .chip").nth(i).click(); assert await pg.is_visible("#widget .wres .eq"), f"{f['id']}: no result"
@@ -116,6 +116,13 @@ async def main():
                             for d in S.get("dims", []):
                                 for o in d["options"]:
                                     await pg.click(f'#widget [data-d="{d["id"]}"][data-o="{o}"]'); assert (await pg.text_content("#widget .wres .eq")).strip()
+                    if wt == "band-chart":  # every band draws; every segment and mark opens its details
+                        for bi, B in enumerate(doc["widget"]["config"]["bands"]):
+                            if len(doc["widget"]["config"]["bands"]) > 1: await pg.click(f'#widget [data-b="{bi}"]')
+                            items = B.get("segs", []) + B.get("marks", [])
+                            assert await pg.locator("#widget .bclist button").count() == len(items)
+                            for ii, it in enumerate(items):
+                                await pg.click(f'#widget .bclist [data-i="{ii}"]'); assert it["label"] in await pg.text_content("#widget .wres .eq")
                     if wt == "match":  # one wrong tap, then every right pair; expect all matched
                         pairs = doc["widget"]["config"]["pairs"]
                         await pg.locator("#widget .l").first.click()
