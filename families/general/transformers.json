@@ -1,0 +1,99 @@
+{
+ "id": "transformers",
+ "exam": "general",
+ "title": "Transformers and turns ratio",
+ "idea": "Voltage follows the turns, current goes the opposite way, and impedance follows the square of the turns ratio.",
+ "core": {
+  "type": "formula",
+  "text": "V out = V in x N out / N in",
+  "lines": [
+   "Current goes the other way: more volts out means less current out",
+   "Impedance ratio = (turns ratio)²",
+   "So to match impedances: turns ratio = √(impedance ratio)",
+   "Works by mutual inductance: the primary's field links the secondary"
+  ]
+ },
+ "widget": {
+  "type": "transformer",
+  "config": {
+   "np": 500,
+   "ns": 1500,
+   "vp": 120,
+   "presets": [
+    {
+     "q": "G5C06",
+     "np": 500,
+     "ns": 1500,
+     "vp": 120
+    },
+    {
+     "q": "G5C02",
+     "np": 400,
+     "ns": 100,
+     "vp": 12,
+     "flip": true
+    },
+    {
+     "q": "G5C05",
+     "np": 100,
+     "ns": 300,
+     "vp": 120
+    },
+    {
+     "q": "G5C07",
+     "np": 35,
+     "ns": 10,
+     "vp": 120,
+     "zp": 600,
+     "zs": 50
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Step-up",
+   "how": "More turns on the output. Voltage up, current down, so the input winding needs thicker wire."
+  },
+  {
+   "term": "Step-down",
+   "how": "Fewer turns on the output. Voltage down, current up. Feed it backward and it steps up."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G5C06",
+   "wrong": "40 volts",
+   "why": "That divides by 3. The secondary has more turns, so voltage goes up: 120 x 3 = 360 V."
+  },
+  {
+   "q": "G5C07",
+   "wrong": "12 to 1",
+   "why": "12 is the impedance ratio (600 / 50). The turns ratio is its square root, about 3.5."
+  },
+  {
+   "q": "G5C02",
+   "wrong": "The input voltage is divided by 4",
+   "why": "That's the normal direction. Fed from the secondary, a 4:1 step-down steps up by 4."
+  },
+  {
+   "q": "G5C05",
+   "wrong": "To improve the coupling between the primary and secondary",
+   "why": "Wire size is about current. A step-up's primary carries more current than its secondary."
+  },
+  {
+   "q": "G5C01",
+   "wrong": "Mutual capacitance",
+   "why": "The windings share a magnetic field, not an electric one: mutual inductance."
+  }
+ ],
+ "questions": [
+  "G5C01",
+  "G5C02",
+  "G5C05",
+  "G5C06",
+  "G5C07",
+  "G5A10",
+  "G7C03"
+ ]
+}

@@ -29,6 +29,8 @@ def paths(exam):
 def pdf_text(pdf):
     return subprocess.run(["pdftotext", "-layout", pdf, "-"], capture_output=True, text=True, check=True).stdout
 
+fixcase = lambda s: re.sub(r"\brf\b", "RF", s)  # capitalize() lowers acronyms
+
 norm = lambda s: re.sub(r"[^a-z0-9]", "", s.lower().replace("’", "'"))
 
 def build(exam):
@@ -69,7 +71,7 @@ def build(exam):
         line = line.strip()
         m = re.search(rf"SUBELEMENT ({L}\d) - (.+?) -? ?\[", line)
         if m:
-            subs[m.group(1)] = m.group(2).replace("’", "'").strip().capitalize(); cur = None
+            subs[m.group(1)] = fixcase(m.group(2).replace("’", "'").strip().capitalize()); cur = None
             line = line[:m.start()].strip()
         if not line:
             continue
@@ -80,7 +82,7 @@ def build(exam):
             groups[cur] += ("" if groups[cur].endswith("-") else " ") + line
     # the Safety subelement (x0) is listed last in some syllabi
     for m in re.finditer(rf"SUBELEMENT ({L}0) - (.+?) -? ?\[", t):
-        subs.setdefault(m.group(1), m.group(2).strip().capitalize())
+        subs.setdefault(m.group(1), fixcase(m.group(2).strip().capitalize()))
     for m in re.finditer(rf"\n\s*({L}0[A-Z]) (.+)", t[:first]):
         groups.setdefault(m.group(1), m.group(2).strip())
     qs = sorted([{"id": q["id"], "q": q["question"], "a": q["answers"], "c": q["correct"],

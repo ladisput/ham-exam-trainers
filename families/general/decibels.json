@@ -1,0 +1,123 @@
+{
+ "id": "decibels",
+ "exam": "general",
+ "title": "Decibels and the S meter",
+ "idea": "Decibels count power ratios. 3 dB doubles, 10 dB is ten times, and one S unit is 6 dB, about four times the power.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Change",
+    "Power"
+   ],
+   [
+    "+3 dB",
+    "x 2"
+   ],
+   [
+    "+6 dB (one S unit)",
+    "x 4"
+   ],
+   [
+    "+10 dB",
+    "x 10"
+   ],
+   [
+    "+20 dB",
+    "x 100"
+   ],
+   [
+    "-1 dB",
+    "x 0.794, a loss of 20.6 percent"
+   ],
+   [
+    "-3 dB",
+    "x 0.5 (half)"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "s-meter",
+  "config": {
+   "from": -6,
+   "d": 6,
+   "presets": [
+    {
+     "q": "G4D05",
+     "from": 0,
+     "d": 20
+    },
+    {
+     "q": "G4D06",
+     "from": -6,
+     "d": 6
+    },
+    {
+     "q": "G4D07",
+     "from": -6,
+     "d": 6
+    },
+    {
+     "q": "G5B01",
+     "from": -24,
+     "d": 3
+    },
+    {
+     "q": "G5B10",
+     "from": 0,
+     "d": -1
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "S units",
+   "how": "S1 to S9, each step about 6 dB. Used up to S9."
+  },
+  {
+   "term": "dB over S9",
+   "how": "Above S9 the meter is marked in dB: S9 +10, +20, +40."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G4D05",
+   "wrong": "It is 20 times more powerful",
+   "why": "20 dB is not 20 times. Every 10 dB multiplies by 10: 10 x 10 = 100 times."
+  },
+  {
+   "q": "G4D07",
+   "wrong": "Approximately 2 times",
+   "why": "2 times is only 3 dB. One S unit is 6 dB: 2 x 2 = 4 times."
+  },
+  {
+   "q": "G5B01",
+   "wrong": "Approximately 6 dB",
+   "why": "6 dB is four times the power. Twice is 3 dB."
+  },
+  {
+   "q": "G4D06",
+   "wrong": "12 dB",
+   "why": "12 dB is two S units. One S unit is 6 dB."
+  },
+  {
+   "q": "G5B10",
+   "wrong": "10.9 percent",
+   "why": "1 dB down leaves 0.794 of the power, so 1 - 0.794 = 20.6 percent is lost."
+  },
+  {
+   "q": "G4D04",
+   "wrong": "Transmitter power output",
+   "why": "An S meter reads the strength of signals you receive."
+  }
+ ],
+ "questions": [
+  "G5B01",
+  "G5B10",
+  "G4D04",
+  "G4D05",
+  "G4D06",
+  "G4D07"
+ ]
+}

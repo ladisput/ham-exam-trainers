@@ -1,0 +1,137 @@
+{
+ "id": "rms-peak-pep",
+ "exam": "general",
+ "title": "RMS, peak, peak-to-peak and PEP",
+ "idea": "One sine wave, three ways to measure its height. RMS is the one that heats a load like DC, so power always uses RMS.",
+ "core": {
+  "type": "formula",
+  "text": "RMS = peak x 0.707",
+  "lines": [
+   "Peak = RMS x 1.414",
+   "Peak-to-peak = 2 x peak",
+   "PEP = RMS² / R, with RMS taken at the envelope's peak",
+   "Steady, unmodulated carrier: PEP = average power (ratio 1.00)"
+  ]
+ },
+ "widget": {
+  "type": "sine-wave",
+  "config": {
+   "ohms": 50,
+   "start": {
+    "kind": "pk",
+    "v": 100
+   },
+   "presets": [
+    {
+     "q": "G5B06",
+     "kind": "pp",
+     "v": 200
+    },
+    {
+     "q": "G5B14",
+     "kind": "pp",
+     "v": 500
+    },
+    {
+     "q": "G5B08",
+     "kind": "rms",
+     "v": 120,
+     "ohms": 50
+    },
+    {
+     "q": "G5B09",
+     "kind": "pk",
+     "v": 17
+    },
+    {
+     "q": "G5B12",
+     "kind": "w",
+     "v": 1200
+    },
+    {
+     "q": "G5B13",
+     "kind": "w",
+     "v": 1060,
+     "carrier": true
+    },
+    {
+     "q": "G5B11",
+     "kind": "w",
+     "v": 100,
+     "carrier": true
+    },
+    {
+     "q": "G5B07",
+     "kind": "rms",
+     "v": 12
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Peak",
+   "how": "Center line to the top of the wave."
+  },
+  {
+   "term": "Peak-to-peak",
+   "how": "Bottom to top: twice the peak."
+  },
+  {
+   "term": "RMS",
+   "how": "0.707 of the peak. The DC voltage that would heat the load the same."
+  },
+  {
+   "term": "PEP",
+   "how": "Power at the highest point of the envelope. The FCC limits are in PEP output."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G5B08",
+   "wrong": "169.7 volts",
+   "why": "That's the peak (120 x 1.414). Peak-to-peak is twice it: 339.4 V."
+  },
+  {
+   "q": "G5B09",
+   "wrong": "8.5 volts",
+   "why": "That's half the peak. RMS is 17 x 0.707 = 12 V."
+  },
+  {
+   "q": "G5B14",
+   "wrong": "5000 watts",
+   "why": "Peak-to-peak can't go straight into the power formula. Halve it to 250 V peak, x 0.707 = 176.8 V RMS, then 176.8² / 50 = 625 W."
+  },
+  {
+   "q": "G5B07",
+   "wrong": "The peak value",
+   "why": "The peak is higher than the DC that would heat the resistor the same. That DC-equivalent value is RMS."
+  },
+  {
+   "q": "G5B11",
+   "wrong": "1.414",
+   "why": "1.414 is the peak-to-RMS voltage factor. A steady carrier's power at its peak equals its average: 1.00."
+  },
+  {
+   "q": "G5B13",
+   "wrong": "2120 watts",
+   "why": "No doubling: an unmodulated carrier never changes, so PEP equals the average power, 1060 W."
+  },
+  {
+   "q": "G1C11",
+   "wrong": "RMS output from the transmitter",
+   "why": "The power rules are written in PEP output from the transmitter."
+  }
+ ],
+ "questions": [
+  "G5B06",
+  "G5B07",
+  "G5B08",
+  "G5B09",
+  "G5B11",
+  "G5B12",
+  "G5B13",
+  "G5B14",
+  "G1C11"
+ ]
+}

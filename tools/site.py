@@ -75,6 +75,17 @@ def check(exam):
             k = {"match": "i", "sort-bins": "t", "scenario": "s"}.get(w.get("type"))
             if k and not (isinstance(pr.get(k), int) and 0 <= pr[k] < size[w["type"]]):
                 bad.append(f"{fid}: preset {pr.get('q')}: '{k}' is out of range")
+            t = w.get("type")
+            if t == "power-wheel" and not (len(pr.get("vals", {})) == 2 and set(pr["vals"]) <= set("PEIR")):
+                bad.append(f"{fid}: preset {pr.get('q')}: vals must give exactly two of P, E, I, R")
+            if t == "sine-wave" and pr.get("kind") not in ("pk", "pp", "rms", "w"):
+                bad.append(f"{fid}: preset {pr.get('q')}: kind must be pk, pp, rms or w")
+            if t == "s-meter" and not all(isinstance(pr.get(k), (int, float)) for k in ("from", "d")):
+                bad.append(f"{fid}: preset {pr.get('q')}: needs numbers 'from' and 'd'")
+            if t == "combiner" and not (pr.get("kind") in ("R", "L", "C") and pr.get("mode") in ("series", "parallel") and 2 <= len(pr.get("parts", [])) <= 4):
+                bad.append(f"{fid}: preset {pr.get('q')}: needs kind R/L/C, mode series/parallel and 2 to 4 parts")
+            if t == "transformer" and not (pr.get("np", 0) > 0 and pr.get("ns", 0) > 0):
+                bad.append(f"{fid}: preset {pr.get('q')}: needs np and ns above zero")
             if w.get("type") == "band-chart":
                 B = c["bands"][pr.get("b", 0)] if pr.get("b", 0) < len(c["bands"]) else None
                 if B is None or ("i" in pr and not 0 <= pr["i"] < len(B.get("segs", [])) + len(B.get("marks", []))):

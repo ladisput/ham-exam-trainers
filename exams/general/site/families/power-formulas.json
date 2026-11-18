@@ -1,0 +1,97 @@
+{
+ "id": "power-formulas",
+ "exam": "general",
+ "title": "Power from any two values (P, E, I, R)",
+ "idea": "Watts, volts, amps and ohms are locked together. Know any two and you can find the other two.",
+ "core": {
+  "type": "formula",
+  "text": "P = E x I",
+  "lines": [
+   "Know volts and ohms: P = E² / R",
+   "Know amps and ohms: P = I² x R",
+   "Need volts from watts and ohms: E = √(P x R)",
+   "Work in base units: 7 mA = 0.007 A"
+  ]
+ },
+ "widget": {
+  "type": "power-wheel",
+  "config": {
+   "start": {
+    "E": 12,
+    "I": 2
+   },
+   "presets": [
+    {
+     "q": "G5B03",
+     "vals": {
+      "E": 400,
+      "R": 800
+     }
+    },
+    {
+     "q": "G5B04",
+     "vals": {
+      "E": 12,
+      "I": 0.2
+     }
+    },
+    {
+     "q": "G5B05",
+     "vals": {
+      "I": 0.007,
+      "R": 1250
+     }
+    },
+    {
+     "q": "G5B12",
+     "vals": {
+      "P": 1200,
+      "R": 50
+     }
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "E² / R",
+   "how": "Use when you know volts and ohms (G5B03)."
+  },
+  {
+   "term": "I² x R",
+   "how": "Use when you know amps and ohms (G5B05)."
+  },
+  {
+   "term": "E x I",
+   "how": "Use when you know volts and amps (G5B04)."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G5B03",
+   "wrong": "0.5 watts",
+   "why": "400 / 800 = 0.5 is the current in amperes, not the power. Square the volts: 400 x 400 / 800 = 200 W."
+  },
+  {
+   "q": "G5B04",
+   "wrong": "24 watts",
+   "why": "Decimal slip. 12 x 0.2 = 2.4 W."
+  },
+  {
+   "q": "G5B05",
+   "wrong": "Approximately 61 watts",
+   "why": "Right digits, wrong prefix. 7 mA is 0.007 A, so the power is 0.061 W = 61 milliwatts."
+  },
+  {
+   "q": "G5B12",
+   "wrong": "346 volts",
+   "why": "346 V is the peak (245 x 1.414). The question asks for RMS: √(1200 x 50) = 245 V."
+  }
+ ],
+ "questions": [
+  "G5B03",
+  "G5B04",
+  "G5B05",
+  "G5B12"
+ ]
+}
