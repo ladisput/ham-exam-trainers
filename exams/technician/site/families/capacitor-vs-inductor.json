@@ -1,0 +1,142 @@
+{
+ "id": "capacitor-vs-inductor",
+ "exam": "technician",
+ "title": "Capacitor vs. inductor",
+ "idea": "Both store energy. A capacitor stores it in an electric field, an inductor in a magnetic field.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "",
+    "Capacitor",
+    "Inductor"
+   ],
+   [
+    "Stores energy in",
+    "An electric field",
+    "A magnetic field"
+   ],
+   [
+    "Built as",
+    "Conductive surfaces with an insulator between",
+    "A coil of wire"
+   ],
+   [
+    "Property",
+    "Capacitance",
+    "Inductance"
+   ],
+   [
+    "Unit",
+    "Farad",
+    "Henry"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "sort-bins",
+  "config": {
+   "bins": [
+    "Capacitor",
+    "Inductor"
+   ],
+   "cards": [
+    {
+     "t": "Stores energy in an electric field",
+     "bin": "Capacitor",
+     "why": "Electric field = capacitor."
+    },
+    {
+     "t": "Stores energy in a magnetic field",
+     "bin": "Inductor",
+     "why": "Magnetic field = inductor."
+    },
+    {
+     "t": "Conductive surfaces separated by an insulator",
+     "bin": "Capacitor",
+     "why": "Plates with an insulator between them make a capacitor."
+    },
+    {
+     "t": "A coil of wire",
+     "bin": "Inductor",
+     "why": "A coil of wire is an inductor."
+    },
+    {
+     "t": "Capacitance",
+     "bin": "Capacitor",
+     "why": "The capacitor's property is capacitance."
+    },
+    {
+     "t": "Inductance",
+     "bin": "Inductor",
+     "why": "The inductor's property is inductance."
+    },
+    {
+     "t": "Measured in farads",
+     "bin": "Capacitor",
+     "why": "Capacitance is in farads."
+    },
+    {
+     "t": "Measured in henrys",
+     "bin": "Inductor",
+     "why": "Inductance is in henrys."
+    },
+    {
+     "t": "Combined with an inductor to make a resonant circuit",
+     "bin": "Capacitor",
+     "why": "An inductor plus a capacitor makes a resonant circuit."
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Electric field",
+   "how": "Capacitor. Capacitance, farads."
+  },
+  {
+   "term": "Magnetic field",
+   "how": "Inductor. Inductance, henrys."
+  },
+  {
+   "term": "Together",
+   "how": "An inductor and a capacitor make a resonant (tuned) circuit."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T5C01",
+   "wrong": "Inductance",
+   "why": "Inductance is the magnetic one. An electric field is capacitance."
+  },
+  {
+   "q": "T5C03",
+   "wrong": "Capacitance",
+   "why": "Capacitance is the electric one. A magnetic field is inductance."
+  },
+  {
+   "q": "T6A04",
+   "wrong": "Inductor",
+   "why": "An inductor stores energy in a magnetic field, not an electric one."
+  },
+  {
+   "q": "T6A07",
+   "wrong": "Capacitor",
+   "why": "A capacitor is plates and an insulator. A coil of wire is an inductor."
+  },
+  {
+   "q": "T6D08",
+   "wrong": "Resistor",
+   "why": "A resonant circuit needs both kinds of storage: an inductor and a capacitor."
+  }
+ ],
+ "questions": [
+  "T5C01",
+  "T5C03",
+  "T6A04",
+  "T6A05",
+  "T6A06",
+  "T6A07",
+  "T6D08"
+ ]
+}

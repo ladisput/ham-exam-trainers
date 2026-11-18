@@ -2,6 +2,33 @@
  "exam": "technician",
  "families": [
   {
+   "id": "capacitor-vs-inductor",
+   "title": "Capacitor vs. inductor",
+   "questions": [
+    "T5C01",
+    "T5C03",
+    "T6A04",
+    "T6A05",
+    "T6A06",
+    "T6A07",
+    "T6D08"
+   ]
+  },
+  {
+   "id": "component-jobs",
+   "title": "What each component does",
+   "questions": [
+    "T6B02",
+    "T6B03",
+    "T6B10",
+    "T6D01",
+    "T6D02",
+    "T6D05",
+    "T6D06",
+    "T6D09"
+   ]
+  },
+  {
    "id": "decibels",
    "title": "Decibels",
    "questions": [
@@ -56,6 +83,45 @@
     "T5C11",
     "T4A01",
     "T4A09"
+   ]
+  },
+  {
+   "id": "resistance-vs-impedance",
+   "title": "Resistance vs. impedance",
+   "questions": [
+    "T5C12",
+    "T5A11",
+    "T6A01"
+   ]
+  },
+  {
+   "id": "series-vs-parallel",
+   "title": "Series vs. parallel",
+   "questions": [
+    "T5D13",
+    "T5D14",
+    "T7D02",
+    "T7D03",
+    "T0A08",
+    "T6D11"
+   ]
+  },
+  {
+   "id": "units",
+   "title": "Units and what they measure",
+   "questions": [
+    "T5A01",
+    "T5A02",
+    "T5A03",
+    "T5A04",
+    "T5A05",
+    "T5A06",
+    "T5A10",
+    "T5C02",
+    "T5C04",
+    "T5C05",
+    "T7D01",
+    "T7D04"
    ]
   },
   {

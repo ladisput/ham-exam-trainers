@@ -1,0 +1,110 @@
+{
+ "id": "series-vs-parallel",
+ "exam": "technician",
+ "title": "Series vs. parallel",
+ "idea": "Series is one path, so the current is the same everywhere. Parallel is side by side, so the voltage is the same across each part.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "",
+    "Series",
+    "Parallel"
+   ],
+   [
+    "Paths",
+    "One path",
+    "Side by side"
+   ],
+   [
+    "Same everywhere",
+    "Current",
+    "Voltage"
+   ],
+   [
+    "Meter wired this way",
+    "Ammeter (current)",
+    "Voltmeter (voltage)"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "circuit-toggle",
+  "config": {
+   "start": "series",
+   "series": {
+    "title": "Series: same current",
+    "lines": [
+     "There is only one path, so every bit of current goes through both resistors. The current is the same through all of them.",
+     "To measure current, the meter has to be in that path too: an ammeter or a multimeter set to current goes in series.",
+     "A fuse or circuit breaker also goes in series, in the hot wire only, so all the current passes through it."
+    ]
+   },
+   "parallel": {
+    "title": "Parallel: same voltage",
+    "lines": [
+     "Each resistor connects across the same two points, so each gets the same voltage.",
+     "To measure voltage, the meter connects across the part the same way: a voltmeter goes in parallel."
+    ]
+   }
+  }
+ },
+ "compare": [
+  {
+   "term": "Voltmeter",
+   "how": "In parallel, across the part."
+  },
+  {
+   "term": "Ammeter",
+   "how": "In series, in the path, so the current flows through it."
+  },
+  {
+   "term": "Fuse or breaker",
+   "how": "In series with the hot wire only. Not the neutral."
+  },
+  {
+   "term": "Resonant circuit",
+   "how": "An inductor and a capacitor. In series or in parallel, either one counts."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T5D13",
+   "wrong": "Parallel",
+   "why": "In parallel the voltage is the same, but the current splits between the branches."
+  },
+  {
+   "q": "T5D14",
+   "wrong": "Series",
+   "why": "In series the current is the same, but the voltage is divided between the parts."
+  },
+  {
+   "q": "T7D02",
+   "wrong": "In series",
+   "why": "Voltage is measured across a part, so the voltmeter goes in parallel with it."
+  },
+  {
+   "q": "T7D03",
+   "wrong": "In parallel",
+   "why": "Current has to flow through the meter, so it goes in series."
+  },
+  {
+   "q": "T0A08",
+   "wrong": "In series with the hot and neutral conductors",
+   "why": "The fuse or breaker goes in the hot wire only, never the neutral."
+  },
+  {
+   "q": "T0A08",
+   "wrong": "In parallel with the hot conductor only",
+   "why": "A fuse has to carry the circuit's current to protect it, so it goes in series."
+  }
+ ],
+ "questions": [
+  "T5D13",
+  "T5D14",
+  "T7D02",
+  "T7D03",
+  "T0A08",
+  "T6D11"
+ ]
+}

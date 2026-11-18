@@ -1,0 +1,85 @@
+{
+ "id": "resistance-vs-impedance",
+ "exam": "technician",
+ "title": "Resistance vs. impedance",
+ "idea": "Resistance opposes every kind of current. Impedance is the opposition to AC current flow. Both are measured in ohms.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "",
+    "Resistance",
+    "Impedance"
+   ],
+   [
+    "Opposes",
+    "All current: DC, AC and RF",
+    "AC current flow"
+   ],
+   [
+    "Unit",
+    "Ohms",
+    "Ohms"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "sort-bins",
+  "config": {
+   "bins": [
+    "Resistance",
+    "Impedance",
+    "Both"
+   ],
+   "cards": [
+    {
+     "t": "The opposition to AC current flow",
+     "bin": "Impedance",
+     "why": "That is the definition of impedance."
+    },
+    {
+     "t": "Opposes DC, AC and RF current",
+     "bin": "Resistance",
+     "why": "Resistance opposes all of them."
+    },
+    {
+     "t": "Measured in ohms",
+     "bin": "Both",
+     "why": "Resistance and impedance are both in ohms."
+    },
+    {
+     "t": "What a resistor gives a DC circuit",
+     "bin": "Resistance",
+     "why": "A resistor opposes current flow in a DC circuit."
+    }
+   ]
+  }
+ },
+ "traps": [
+  {
+   "q": "T5C12",
+   "wrong": "The inverse of resistance",
+   "why": "Impedance is not the inverse of anything. It is opposition to AC, in ohms like resistance."
+  },
+  {
+   "q": "T5C12",
+   "wrong": "The power handling capability of a component",
+   "why": "That is a power rating. Impedance is opposition to AC current flow."
+  },
+  {
+   "q": "T5A11",
+   "wrong": "Direct current",
+   "why": "True, but resistance opposes AC and RF too, so all these choices are correct."
+  },
+  {
+   "q": "T6A01",
+   "wrong": "Inductor",
+   "why": "The part made to oppose current in a DC circuit is the resistor."
+  }
+ ],
+ "questions": [
+  "T5C12",
+  "T5A11",
+  "T6A01"
+ ]
+}
