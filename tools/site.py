@@ -115,6 +115,16 @@ def check(exam):
                     bad.append(f"{fid}: preset {pr.get('q')}: needs a listed band b, f (kHz) inside it and a listed mode m")
             if t == "power-limit" and not (pr.get("b") in ("160", "80", "60", "40", "30", "20", "17", "15", "12", "10", "6") and pr.get("w", 0) > 0):
                 bad.append(f"{fid}: preset {pr.get('q')}: needs band b and w (watts)")
+            if t == "beacon" and pr.get("tab", "net") not in ("net", "own"):
+                bad.append(f"{fid}: preset {pr.get('q')}: tab must be net or own")
+            if t == "bw-scope" and pr.get("m") not in ("cw", "ft8", "rtty", "ssb", "am", "fm"):
+                bad.append(f"{fid}: preset {pr.get('q')}: m must be cw, ft8, rtty, ssb, am or fm")
+            if t == "voice-scope" and not (0 <= pr.get("mic", 40) <= 100 and pr.get("mode", "voice") in ("voice", "data")):
+                bad.append(f"{fid}: preset {pr.get('q')}: needs mic 0-100 and mode voice/data")
+            if t == "mod-scope" and pr.get("m") not in ("am", "fm", "pm", "fsk"):
+                bad.append(f"{fid}: preset {pr.get('q')}: m must be am, fm, pm or fsk")
+            if t == "rx-panel" and pr.get("p") not in ("whistle", "pops", "overload", "hiss", "qrm", "split"):
+                bad.append(f"{fid}: preset {pr.get('q')}: p must be a known problem")
             if w.get("type") == "band-chart":
                 B = c["bands"][pr.get("b", 0)] if pr.get("b", 0) < len(c["bands"]) else None
                 if B is None or ("i" in pr and not 0 <= pr["i"] < len(B.get("segs", [])) + len(B.get("marks", []))):

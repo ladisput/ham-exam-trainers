@@ -1,0 +1,126 @@
+{
+ "id": "modulation",
+ "exam": "general",
+ "title": "AM, FM and PM: what changes",
+ "idea": "Modulation puts information onto RF by changing one thing about it. AM changes the amplitude, FM the frequency, PM the phase. FSK flips between two frequencies.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Modulation",
+    "What changes"
+   ],
+   [
+    "AM",
+    "Instantaneous power (amplitude); the envelope joins the peaks"
+   ],
+   [
+    "FM",
+    "Instantaneous frequency"
+   ],
+   [
+    "PM",
+    "Phase angle; a reactance modulator on an RF amp makes it"
+   ],
+   [
+    "Direct binary FSK",
+    "Oscillator frequency switched by a digital signal"
+   ],
+   [
+    "Checking the envelope",
+    "Scope vertical input: attenuated RF output"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "mod-scope",
+  "config": {
+   "m": "am",
+   "presets": [
+    {
+     "q": "G8A05",
+     "m": "am",
+     "lvl": 70
+    },
+    {
+     "q": "G8A11",
+     "m": "am",
+     "lvl": 70,
+     "focus": "env"
+    },
+    {
+     "q": "G4B04",
+     "m": "am",
+     "lvl": 60,
+     "focus": "scope"
+    },
+    {
+     "q": "G8A03",
+     "m": "fm",
+     "lvl": 70
+    },
+    {
+     "q": "G8A02",
+     "m": "pm",
+     "lvl": 70
+    },
+    {
+     "q": "G8A04",
+     "m": "pm",
+     "lvl": 70,
+     "focus": "react"
+    },
+    {
+     "q": "G8A01",
+     "m": "fsk",
+     "lvl": 70
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "AM",
+   "how": "Amplitude: the instantaneous power level changes."
+  },
+  {
+   "term": "FM",
+   "how": "Instantaneous frequency changes."
+  },
+  {
+   "term": "PM",
+   "how": "Phase angle changes."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G8A04",
+   "wrong": "Amplitude modulation",
+   "why": "A reactance modulator shifts the phase: phase modulation."
+  },
+  {
+   "q": "G8A05",
+   "wrong": "Power modulation",
+   "why": "No such name. Varying the power level is amplitude modulation."
+  },
+  {
+   "q": "G8A11",
+   "wrong": "The bandwidth of the modulated signal",
+   "why": "The envelope is the line joining the peaks."
+  },
+  {
+   "q": "G4B04",
+   "wrong": "The local oscillator of the transmitter",
+   "why": "You look at what comes out: the attenuated RF output."
+  }
+ ],
+ "questions": [
+  "G4B04",
+  "G8A01",
+  "G8A02",
+  "G8A03",
+  "G8A04",
+  "G8A05",
+  "G8A11"
+ ]
+}

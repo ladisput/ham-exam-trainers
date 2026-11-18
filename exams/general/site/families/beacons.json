@@ -1,0 +1,140 @@
+{
+ "id": "beacons",
+ "exam": "general",
+ "title": "Beacons",
+ "idea": "A beacon just sends its call sign so others can watch propagation. On HF, automatic beacons live between 28.20 and 28.30 MHz, at up to 100 watts, one per band per location.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Rule",
+    "Detail"
+   ],
+   [
+    "Purpose",
+    "Observation of propagation and reception"
+   ],
+   [
+    "Automatic HF beacons",
+    "28.20 to 28.30 MHz only"
+   ],
+   [
+    "Power",
+    "100 W PEP output max"
+   ],
+   [
+    "Per location",
+    "One beacon per band"
+   ],
+   [
+    "Beacon network",
+    "14.100, 18.110, 21.150, 24.930, 28.200 MHz: avoid them"
+   ],
+   [
+    "Low-power digital beacon",
+    "WSPR"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "beacon",
+  "config": {
+   "presets": [
+    {
+     "q": "G1E10",
+     "tab": "net",
+     "t": 0,
+     "b": 0,
+     "focus": "avoid"
+    },
+    {
+     "q": "G1B03",
+     "tab": "net",
+     "t": 4,
+     "b": 2,
+     "cond": "fair",
+     "focus": "purpose"
+    },
+    {
+     "q": "G1B09",
+     "tab": "own",
+     "ob": "15",
+     "f": 21085,
+     "w": 50
+    },
+    {
+     "q": "G1B10",
+     "tab": "own",
+     "ob": "10",
+     "f": 28250,
+     "w": 150
+    },
+    {
+     "q": "G1B02",
+     "tab": "own",
+     "ob": "10",
+     "f": 28250,
+     "w": 50,
+     "two": true
+    },
+    {
+     "q": "G8C02",
+     "tab": "own",
+     "ob": "10",
+     "f": 28250,
+     "w": 5,
+     "mode": "wspr"
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Beacon network",
+   "how": "14.100, 18.110, 21.150, 24.930 and 28.200 MHz."
+  },
+  {
+   "term": "Your own HF beacon",
+   "how": "28.20 to 28.30 MHz, 100 W max, one per band."
+  },
+  {
+   "term": "WSPR",
+   "how": "Low-power digital beacon for HF propagation."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G1B10",
+   "wrong": "200 watts PEP output",
+   "why": "200 W is the 30 m limit. Beacons: 100 W."
+  },
+  {
+   "q": "G1B09",
+   "wrong": "On any frequency if power is less than 1 watt",
+   "why": "Low power doesn't matter: automatic HF beacons only on 28.20 to 28.30 MHz."
+  },
+  {
+   "q": "G1B03",
+   "wrong": "Automatic identification of repeaters",
+   "why": "A beacon's purpose is observing propagation and reception."
+  },
+  {
+   "q": "G1B02",
+   "wrong": "The frequency must be coordinated with the National Beacon Organization",
+   "why": "No such requirement. The rule is one beacon per band per location."
+  },
+  {
+   "q": "G8C02",
+   "wrong": "PSK31",
+   "why": "PSK31 is for keyboard chat. WSPR is the low-power beacon mode."
+  }
+ ],
+ "questions": [
+  "G1B02",
+  "G1B03",
+  "G1B09",
+  "G1B10",
+  "G1E10",
+  "G8C02"
+ ]
+}

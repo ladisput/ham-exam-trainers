@@ -1,0 +1,145 @@
+{
+ "id": "signal-width",
+ "exam": "general",
+ "title": "How wide is each signal",
+ "idea": "CW is a few hundred hertz, SSB about 3 kHz, AM twice that, FM wider still. Leave room for the station next door, match your receiver's filter to the signal, and don't overmodulate.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Mode or rule",
+    "Width or spacing"
+   ],
+   [
+    "CW spacing",
+    "150 to 500 Hz"
+   ],
+   [
+    "SSB spacing",
+    "2 to 3 kHz"
+   ],
+   [
+    "Narrowest phone mode",
+    "Single sideband"
+   ],
+   [
+    "60 m USB",
+    "2.8 kHz max"
+   ],
+   [
+    "Overmodulation",
+    "Excessive bandwidth; vertical lines on a waterfall"
+   ],
+   [
+    "Higher symbol rate",
+    "Wider bandwidth"
+   ],
+   [
+    "Filter matched to mode",
+    "Best signal-to-noise ratio"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "bw-scope",
+  "config": {
+   "m": "ssb",
+   "presets": [
+    {
+     "q": "G2B04",
+     "m": "cw",
+     "sp": 300
+    },
+    {
+     "q": "G2B05",
+     "m": "ssb",
+     "sp": 2800
+    },
+    {
+     "q": "G8A07",
+     "m": "ssb",
+     "focus": "phone"
+    },
+    {
+     "q": "G1C03",
+     "m": "ssb",
+     "focus": "60"
+    },
+    {
+     "q": "G8B09",
+     "m": "cw",
+     "fw": 150,
+     "focus": "filter"
+    },
+    {
+     "q": "G8A08",
+     "m": "ssb",
+     "over": true
+    },
+    {
+     "q": "G8C13",
+     "m": "rtty",
+     "over": true,
+     "focus": "wf"
+    },
+    {
+     "q": "G8B10",
+     "m": "rtty",
+     "rate": 200,
+     "focus": "rate"
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "CW",
+   "how": "About 150 Hz wide; leave 150 to 500 Hz."
+  },
+  {
+   "term": "SSB",
+   "how": "About 2.8 kHz wide; leave 2 to 3 kHz."
+  },
+  {
+   "term": "AM / FM",
+   "how": "About 6 kHz / 10 to 16 kHz."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G2B04",
+   "wrong": "1 kHz to 3 kHz",
+   "why": "That's SSB spacing. CW needs only 150 to 500 Hz."
+  },
+  {
+   "q": "G8A08",
+   "wrong": "Insufficient bandwidth",
+   "why": "Overmodulation makes the signal too wide, not too narrow."
+  },
+  {
+   "q": "G8B09",
+   "wrong": "It is required by FCC rules",
+   "why": "It's not a rule; it gives the best signal-to-noise ratio."
+  },
+  {
+   "q": "G8B10",
+   "wrong": "Lower symbol rates require wider bandwidth",
+   "why": "The other way round: faster symbols, wider signal."
+  },
+  {
+   "q": "G8C13",
+   "wrong": "Long path propagation",
+   "why": "Vertical lines either side of a data signal mean overmodulation."
+  }
+ ],
+ "questions": [
+  "G1C03",
+  "G2B04",
+  "G2B05",
+  "G8A07",
+  "G8A08",
+  "G8B09",
+  "G8B10",
+  "G8C13"
+ ]
+}

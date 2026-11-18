@@ -337,7 +337,7 @@
     "G1E10",
     "G8C02"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "signal-width",
@@ -354,7 +354,7 @@
     "G8B10",
     "G8C13"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "speech-alc",
@@ -370,7 +370,7 @@
     "G4D03",
     "G8A10"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "modulation",
@@ -386,7 +386,7 @@
     "G8A05",
     "G8A11"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "receiver-tools",
@@ -401,7 +401,7 @@
     "G4A12",
     "G4A13"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "waterfall-ft8",
