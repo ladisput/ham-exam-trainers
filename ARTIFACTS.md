@@ -15,3 +15,16 @@ Files published per artifact: `index.html`, `pool.json`, `hooks.json`, `fig/*.pn
 The preview is a test copy for trying a batch before its PR merges. Publish the branch's built site there
 (title changed to "Technician Trainer Preview", no `db`/`user`, so it never touches saved progress), then
 republish the real artifact from `main` after the merge.
+
+# Public website
+
+The `web/` folder, served by Cloudflare Pages from this repo (free plan, Brooke's Cloudflare account).
+Settings: production branch `main`, no build command, build output directory `web`. Every merge to `main`
+updates the site in about a minute; every other branch gets a preview link (shown on its PR).
+
+| Page | Link |
+|---|---|
+| Hub | https://ham-trainers.pages.dev/ |
+| Technician | https://ham-trainers.pages.dev/technician/ |
+
+Cloudflare project name: `ham-trainers`. A branch's preview is at `https://<branch>.ham-trainers.pages.dev/`.

@@ -82,17 +82,24 @@ def check(exam):
     return bad
 
 
-def build(exam):
+def render(exam, extra=None):
+    """The page for one exam: app/template.html filled in from exam.json (plus `extra` settings, e.g. {"web": true})."""
     cfg = load(os.path.join(ROOT, "exams", exam, "exam.json"))
     missing = [k for k in REQUIRED if k not in cfg]
     if missing:
         sys.exit(f"exam.json is missing: {', '.join(missing)}")
+    cfg.update(extra or {})
     html = open(os.path.join(ROOT, "app", "template.html"), encoding="utf-8").read()
     for k in ["title", "callSize", "callWidth"]:
         html = html.replace("{{" + k + "}}", str(cfg[k]))
     html = html.replace("{{config}}", json.dumps(cfg, ensure_ascii=False).replace("</", "<\\/"))
     if "{{" in html:
         sys.exit("template has an unfilled {{placeholder}}")
+    return html
+
+
+def build(exam):
+    html = render(exam)
     site = os.path.join(ROOT, "exams", exam, "site")
     with open(os.path.join(site, "index.html"), "w", encoding="utf-8") as f:
         f.write(html)

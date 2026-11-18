@@ -1,0 +1,184 @@
+{
+ "id": "whos-responsible",
+ "exam": "technician",
+ "title": "Who's responsible",
+ "idea": "Every transmission has a control operator. The station licensee picks that person, and when it's someone else, both share the blame.",
+ "core": {
+  "type": "list",
+  "items": [
+   [
+    "Transmit without a control operator?",
+    "Never. Not even a repeater"
+   ],
+   [
+    "Who names the control operator",
+    "The station licensee"
+   ],
+   [
+    "Whose privileges apply",
+    "The control operator's license class"
+   ],
+   [
+    "Control operator is not the licensee",
+    "Both are responsible"
+   ],
+   [
+    "A repeater passes on a violation",
+    "The originating station's control operator is accountable"
+   ],
+   [
+    "RF exposure limits",
+    "The station licensee"
+   ],
+   [
+    "Repeater channels",
+    "Recommended by a volunteer frequency coordinator, chosen by local hams"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "match",
+  "config": {
+   "left": "Question",
+   "right": "Answer",
+   "pairs": [
+    [
+     "Names the control operator",
+     "The station licensee"
+    ],
+    [
+     "Keeps people under RF exposure limits",
+     "The station licensee"
+    ],
+    [
+     "Sets which frequencies you can use",
+     "The control operator's license class"
+    ],
+    [
+     "Responsible when a friend operates your station",
+     "Both of you"
+    ],
+    [
+     "Accountable when a repeater relays a violation",
+     "The originating control operator"
+    ],
+    [
+     "Recommends repeater channels",
+     "A volunteer frequency coordinator"
+    ],
+    [
+     "Chooses the frequency coordinator",
+     "Local hams who could run repeaters"
+    ],
+    [
+     "Control operator through a satellite",
+     "Any ham allowed on the uplink"
+    ]
+   ],
+   "presets": [
+    {
+     "q": "T1E02",
+     "i": 7
+    },
+    {
+     "q": "T1E03",
+     "i": 0
+    },
+    {
+     "q": "T1E04",
+     "i": 2
+    },
+    {
+     "q": "T1E07",
+     "i": 3
+    },
+    {
+     "q": "T1F10",
+     "i": 4
+    },
+    {
+     "q": "T0C13",
+     "i": 1
+    },
+    {
+     "q": "T1A08",
+     "i": 5
+    },
+    {
+     "q": "T1A09",
+     "i": 6
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Station licensee",
+   "how": "Holds the station license. Names the control operator. Answers for RF exposure."
+  },
+  {
+   "term": "Control operator",
+   "how": "The person designated to be responsible for transmissions. Their license class sets the privileges."
+  },
+  {
+   "term": "Control point",
+   "how": "Where the control operator function is performed."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T1E01",
+   "wrong": "When using automatic control, such as in the case of a repeater",
+   "why": "Even a repeater has a control operator. A station never transmits without one."
+  },
+  {
+   "q": "T1E04",
+   "wrong": "The highest class of operator license held by anyone on the premises",
+   "why": "It's the control operator's license class that counts, not whoever is in the room."
+  },
+  {
+   "q": "T1E06",
+   "wrong": "When designated as the control operator by an Amateur Extra Class licensee",
+   "why": "Outside an emergency, a Technician can never control a station in an Extra-only segment."
+  },
+  {
+   "q": "T1E07",
+   "wrong": "Only the station licensee",
+   "why": "When someone else is the control operator, both the control operator and the licensee are responsible."
+  },
+  {
+   "q": "T1F10",
+   "wrong": "The control operator of the repeater",
+   "why": "The originating station's control operator is accountable, not the repeater's."
+  },
+  {
+   "q": "T0C13",
+   "wrong": "The FCC",
+   "why": "The station licensee makes sure no one is exposed above the limits."
+  },
+  {
+   "q": "T1A08",
+   "wrong": "A Frequency Spectrum Manager appointed by the FCC",
+   "why": "The FCC isn't involved. A volunteer frequency coordinator recognized by local hams recommends channels."
+  },
+  {
+   "q": "T1E02",
+   "wrong": "Only an Amateur Extra Class operator",
+   "why": "Any ham allowed to transmit on the satellite's uplink frequency can be the control operator."
+  }
+ ],
+ "questions": [
+  "T1E01",
+  "T1E02",
+  "T1E03",
+  "T1E04",
+  "T1E05",
+  "T1E06",
+  "T1E07",
+  "T1E11",
+  "T1F10",
+  "T0C13",
+  "T1A08",
+  "T1A09"
+ ]
+}

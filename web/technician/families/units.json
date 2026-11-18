@@ -1,0 +1,183 @@
+{
+ "id": "units",
+ "exam": "technician",
+ "title": "Units and what they measure",
+ "idea": "Every quantity has its own unit, and some of the names look alike. Hertz is not henry, watts are not watt-hours.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Quantity",
+    "Unit",
+    "What it is"
+   ],
+   [
+    "Current",
+    "Amperes",
+    "The flow of electrons"
+   ],
+   [
+    "Voltage",
+    "Volts",
+    "The push: a difference in voltage makes electrons flow"
+   ],
+   [
+    "Power",
+    "Watts",
+    "The rate electrical energy is used"
+   ],
+   [
+    "Frequency",
+    "Hertz",
+    "Complete cycles per second"
+   ],
+   [
+    "Capacitance",
+    "Farads",
+    "Storing energy in an electric field"
+   ],
+   [
+    "Inductance",
+    "Henrys",
+    "Storing energy in a magnetic field"
+   ],
+   [
+    "Impedance",
+    "Ohms",
+    "The opposition to AC current flow"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "match",
+  "config": {
+   "left": "Quantity",
+   "right": "Unit",
+   "pairs": [
+    [
+     "Current",
+     "Amperes"
+    ],
+    [
+     "Voltage",
+     "Volts"
+    ],
+    [
+     "Power",
+     "Watts"
+    ],
+    [
+     "Frequency",
+     "Hertz"
+    ],
+    [
+     "Capacitance",
+     "Farads"
+    ],
+    [
+     "Inductance",
+     "Henrys"
+    ],
+    [
+     "Impedance",
+     "Ohms"
+    ]
+   ],
+   "presets": [
+    {
+     "q": "T5A01",
+     "i": 0
+    },
+    {
+     "q": "T5A02",
+     "i": 2
+    },
+    {
+     "q": "T5A06",
+     "i": 3
+    },
+    {
+     "q": "T5C02",
+     "i": 4
+    },
+    {
+     "q": "T5C04",
+     "i": 5
+    },
+    {
+     "q": "T5C05",
+     "i": 6
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Voltmeter",
+   "how": "Measures voltage, also called electric potential."
+  },
+  {
+   "term": "Ammeter",
+   "how": "Measures current."
+  },
+  {
+   "term": "Hertz",
+   "how": "Frequency. Cycles per second."
+  },
+  {
+   "term": "Henry",
+   "how": "Inductance. Looks like hertz, but isn't."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T5A02",
+   "wrong": "Watt-hours",
+   "why": "Watt-hours measure energy used over time. Power itself is in watts."
+  },
+  {
+   "q": "T5A03",
+   "wrong": "Voltage",
+   "why": "Voltage is the push. The flow of electrons is current."
+  },
+  {
+   "q": "T5A04",
+   "wrong": "Wavelength",
+   "why": "Wavelength is the length of one wave. Cycles per second is frequency."
+  },
+  {
+   "q": "T5A06",
+   "wrong": "Henry",
+   "why": "Henry is the unit of inductance. Frequency is in hertz."
+  },
+  {
+   "q": "T5A10",
+   "wrong": "Current",
+   "why": "Current is the flow. The rate energy is used is power."
+  },
+  {
+   "q": "T5C04",
+   "wrong": "Farad",
+   "why": "Farad is capacitance. Inductance is the henry."
+  },
+  {
+   "q": "T7D01",
+   "wrong": "A potentiometer",
+   "why": "Despite the name, a potentiometer is not a meter. Electric potential (voltage) is measured with a voltmeter."
+  }
+ ],
+ "questions": [
+  "T5A01",
+  "T5A02",
+  "T5A03",
+  "T5A04",
+  "T5A05",
+  "T5A06",
+  "T5A10",
+  "T5C02",
+  "T5C04",
+  "T5C05",
+  "T7D01",
+  "T7D04"
+ ]
+}

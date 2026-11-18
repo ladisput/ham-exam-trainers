@@ -1,0 +1,165 @@
+{
+ "id": "hf-vhf-uhf",
+ "exam": "technician",
+ "title": "HF vs. VHF vs. UHF",
+ "idea": "Each range is ten times the one below it. HF bounces off the ionosphere; VHF and UHF mostly stop near the horizon.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Range",
+    "Frequencies",
+    "How it travels"
+   ],
+   [
+    "HF",
+    "3 to 30 MHz",
+    "Reflected by the ionosphere: long distance is far more common"
+   ],
+   [
+    "VHF",
+    "30 to 300 MHz",
+    "Line of sight, plus a little: the atmosphere bends it slightly"
+   ],
+   [
+    "UHF",
+    "300 to 3000 MHz",
+    "Usually not propagated by the ionosphere, so it stops near the horizon"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "band-chart",
+  "config": {
+   "heading": "Three ranges, each ten times the last",
+   "lead": "Tap a range to see how it travels. The scale grows by ten at each step.",
+   "bands": [
+    {
+     "name": "HF, VHF and UHF",
+     "lo": 3,
+     "hi": 3000,
+     "scale": "log",
+     "ticks": [
+      3,
+      30,
+      300,
+      3000
+     ],
+     "text": "Each range runs from a number to ten times that number: 3 to 30, 30 to 300, 300 to 3000 MHz.",
+     "segs": [
+      {
+       "lo": 3,
+       "hi": 30,
+       "label": "HF",
+       "short": "HF",
+       "kind": "range",
+       "text": "3 to 30 MHz. The ionosphere can reflect HF, so long-distance contacts are far more common here than on VHF and up."
+      },
+      {
+       "lo": 30,
+       "hi": 300,
+       "label": "VHF",
+       "short": "VHF",
+       "kind": "range",
+       "text": "30 to 300 MHz. The radio horizon is a bit farther than the visual horizon, because the atmosphere refracts radio waves slightly."
+      },
+      {
+       "lo": 300,
+       "hi": 3000,
+       "label": "UHF",
+       "short": "UHF",
+       "kind": "range",
+       "text": "300 to 3000 MHz. UHF signals are usually not propagated by the ionosphere, so simplex UHF is rarely heard beyond the radio horizon."
+      }
+     ]
+    }
+   ],
+   "presets": [
+    {
+     "q": "T3B10",
+     "i": 0
+    },
+    {
+     "q": "T3B08",
+     "i": 1
+    },
+    {
+     "q": "T3B09",
+     "i": 2
+    },
+    {
+     "q": "T3A11",
+     "i": 0
+    },
+    {
+     "q": "T3C02",
+     "i": 0
+    },
+    {
+     "q": "T3C11",
+     "i": 1
+    },
+    {
+     "q": "T3C01",
+     "i": 2
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Ionosphere",
+   "how": "Reflects HF. That's the long-distance layer."
+  },
+  {
+   "term": "Radio horizon",
+   "how": "A little past the visual horizon: the atmosphere bends VHF and UHF slightly."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T3B10",
+   "wrong": "300 to 3000 kHz",
+   "why": "Watch the units. HF is 3 to 30 MHz. 300 to 3000 kHz is a lower range."
+  },
+  {
+   "q": "T3B08",
+   "wrong": "30 kHz to 300 kHz",
+   "why": "Right digits, wrong unit. VHF is 30 to 300 MHz."
+  },
+  {
+   "q": "T3B09",
+   "wrong": "300 to 3000 kHz",
+   "why": "Right digits, wrong unit. UHF is 300 to 3000 MHz."
+  },
+  {
+   "q": "T3A11",
+   "wrong": "The troposphere",
+   "why": "The troposphere is where ducting happens. HF is reflected by the ionosphere."
+  },
+  {
+   "q": "T3C01",
+   "wrong": "FCC regulations prohibit them from going more than 50 miles",
+   "why": "No such rule. UHF just isn't usually propagated by the ionosphere."
+  },
+  {
+   "q": "T3C11",
+   "wrong": "Radio signals move somewhat faster than the speed of light",
+   "why": "Nothing does. The atmosphere bends radio waves slightly, carrying them past the visual horizon."
+  },
+  {
+   "q": "T3C02",
+   "wrong": "HF antennas are generally smaller",
+   "why": "HF has longer waves, so HF antennas are bigger. The answer is long-distance ionospheric propagation."
+  }
+ ],
+ "questions": [
+  "T3B08",
+  "T3B09",
+  "T3B10",
+  "T3A11",
+  "T3C01",
+  "T3C02",
+  "T3C11"
+ ]
+}

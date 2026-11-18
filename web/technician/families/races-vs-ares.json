@@ -1,0 +1,129 @@
+{
+ "id": "races-vs-ares",
+ "exam": "technician",
+ "title": "RACES vs. ARES",
+ "idea": "RACES is an FCC service for civil defense and needs civil defense certification. ARES is a volunteer group. FCC rules apply to both.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "",
+    "RACES",
+    "ARES"
+   ],
+   [
+    "What it is",
+    "An FCC Part 97 service for civil defense communications in national emergencies",
+    "Licensed hams who voluntarily register their qualifications and equipment for public service"
+   ],
+   [
+    "Extra requirement",
+    "Certification of enrollment by a civil defense organization",
+    "None beyond your license"
+   ],
+   [
+    "FCC rules apply?",
+    "Always",
+    "Always"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "sort-bins",
+  "config": {
+   "bins": [
+    "RACES",
+    "ARES",
+    "Both"
+   ],
+   "cards": [
+    {
+     "t": "An FCC Part 97 service for civil defense communications",
+     "bin": "RACES",
+     "why": "RACES is the Radio Amateur Civil Emergency Service."
+    },
+    {
+     "t": "Needs certification by a civil defense agency",
+     "bin": "RACES",
+     "why": "RACES control operators need certification of enrollment by a civil defense organization."
+    },
+    {
+     "t": "Hams who voluntarily register their skills and equipment for public service",
+     "bin": "ARES",
+     "why": "That's the Amateur Radio Emergency Service."
+    },
+    {
+     "t": "FCC Part 97 rules still apply",
+     "bin": "Both",
+     "why": "FCC rules always apply."
+    }
+   ],
+   "presets": [
+    {
+     "q": "T1A10",
+     "t": 1
+    },
+    {
+     "q": "T2C01",
+     "t": 3
+    },
+    {
+     "q": "T2C04",
+     "t": 0
+    },
+    {
+     "q": "T2C06",
+     "t": 2
+    },
+    {
+     "q": "T2C12",
+     "t": 1
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "RACES",
+   "how": "Civil defense. Needs civil defense certification."
+  },
+  {
+   "term": "ARES",
+   "how": "Volunteers registered for public service."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T1A10",
+   "wrong": "Membership in the Amateur Radio Emergency Service (ARES)",
+   "why": "RACES needs certification of enrollment by a civil defense organization, not ARES membership."
+  },
+  {
+   "q": "T2C01",
+   "wrong": "When operating under RACES rules",
+   "why": "FCC rules always apply, RACES included."
+  },
+  {
+   "q": "T2C12",
+   "wrong": "ARES",
+   "why": "ARES is volunteer registration. RACES is the one that needs civil defense certification."
+  },
+  {
+   "q": "T2C04",
+   "wrong": "An emergency organization combining amateur radio and citizens band operators and frequencies",
+   "why": "RACES is an amateur service under Part 97, for civil defense. No CB."
+  },
+  {
+   "q": "T2C06",
+   "wrong": "A training program that certifies amateur operators for membership in the Radio Amateur Civil Emergency Service",
+   "why": "ARES is a group of volunteers who register their qualifications and equipment, not a training program."
+  }
+ ],
+ "questions": [
+  "T1A10",
+  "T2C01",
+  "T2C04",
+  "T2C06",
+  "T2C12"
+ ]
+}

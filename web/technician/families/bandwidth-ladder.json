@@ -1,0 +1,158 @@
+{
+ "id": "bandwidth-ladder",
+ "exam": "technician",
+ "title": "Bandwidth ladder",
+ "idea": "From narrowest to widest: CW, SSB, FM, fast-scan TV. Each step up is a big jump.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Signal",
+    "About how wide"
+   ],
+   [
+    "CW",
+    "150 Hz"
+   ],
+   [
+    "SSB voice",
+    "3 kHz (best receive filter: 2400 Hz)"
+   ],
+   [
+    "FM voice on repeaters",
+    "10 to 15 kHz"
+   ],
+   [
+    "AM fast-scan TV",
+    "6 MHz"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "band-chart",
+  "config": {
+   "heading": "How wide is each signal?",
+   "lead": "Each step on the scale is ten times wider. Tap a signal for its number.",
+   "bands": [
+    {
+     "name": "Signal width",
+     "lo": 0.1,
+     "hi": 10000,
+     "unit": "kHz",
+     "scale": "log",
+     "ticks": [
+      0.1,
+      1,
+      10,
+      100,
+      1000,
+      10000
+     ],
+     "text": "CW, then SSB, then FM, then fast-scan TV. SSB is narrower than FM. The scale is in kHz.",
+     "segs": [
+      {
+       "lo": 10,
+       "hi": 15,
+       "label": "FM voice on repeaters",
+       "show": "10 to 15 kHz",
+       "kind": "phone",
+       "text": "An FM voice signal on VHF repeaters is between 10 and 15 kHz wide, wider than SSB."
+      }
+     ],
+     "marks": [
+      {
+       "f": 0.15,
+       "label": "CW",
+       "short": "CW",
+       "show": "150 Hz",
+       "text": "CW needs about 150 Hz. It's the narrowest signal."
+      },
+      {
+       "f": 3,
+       "label": "SSB voice",
+       "short": "SSB",
+       "show": "3 kHz",
+       "text": "A typical SSB voice signal is about 3 kHz wide. The receiver filter with the best signal-to-noise ratio for SSB is 2400 Hz."
+      },
+      {
+       "f": 6000,
+       "label": "AM fast-scan TV",
+       "short": "Fast-scan TV",
+       "show": "6 MHz",
+       "text": "AM fast-scan TV is about 6 MHz wide."
+      }
+     ],
+     "title": "Narrowest to widest"
+    }
+   ],
+   "presets": [
+    {
+     "q": "T8A08",
+     "i": 2
+    },
+    {
+     "q": "T8A09",
+     "i": 0
+    },
+    {
+     "q": "T8A10",
+     "i": 3
+    },
+    {
+     "q": "T8A11",
+     "i": 1
+    },
+    {
+     "q": "T4B10",
+     "i": 2
+    }
+   ]
+  }
+ },
+ "traps": [
+  {
+   "q": "T8A05",
+   "wrong": "SSB voice",
+   "why": "SSB is narrow, but CW is narrower still."
+  },
+  {
+   "q": "T8A07",
+   "wrong": "SSB signals are easier to tune in correctly",
+   "why": "The difference the exam wants: SSB has a narrower bandwidth than FM."
+  },
+  {
+   "q": "T8A08",
+   "wrong": "6 kHz",
+   "why": "SSB voice is about 3 kHz."
+  },
+  {
+   "q": "T8A09",
+   "wrong": "About 150 kHz",
+   "why": "FM voice on repeaters is 10 to 15 kHz. 150 is a CW number, in Hz."
+  },
+  {
+   "q": "T8A10",
+   "wrong": "About 3 MHz",
+   "why": "AM fast-scan TV is about 6 MHz."
+  },
+  {
+   "q": "T8A11",
+   "wrong": "2.4 kHz",
+   "why": "2.4 kHz is the SSB filter. CW needs about 150 Hz."
+  },
+  {
+   "q": "T4B10",
+   "wrong": "500 Hz",
+   "why": "500 Hz would cut off SSB voice. 2400 Hz matches the signal for the best signal-to-noise."
+  }
+ ],
+ "questions": [
+  "T8A05",
+  "T8A07",
+  "T8A08",
+  "T8A09",
+  "T8A10",
+  "T8A11",
+  "T4B10"
+ ]
+}

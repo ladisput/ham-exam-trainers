@@ -1,0 +1,172 @@
+{
+ "id": "component-jobs",
+ "exam": "technician",
+ "title": "What each component does",
+ "idea": "Each part has one job the exam asks about. Learn the job, and the name follows.",
+ "core": {
+  "type": "list",
+  "items": [
+   [
+    "Diode",
+    "Lets current flow in only one direction"
+   ],
+   [
+    "Transistor",
+    "An electronic switch. It can also give power gain"
+   ],
+   [
+    "Rectifier",
+    "Changes AC into a varying DC"
+   ],
+   [
+    "Relay",
+    "An electrically controlled switch"
+   ],
+   [
+    "Regulator",
+    "Controls the voltage from a power supply"
+   ],
+   [
+    "Transformer",
+    "Changes 120 V AC to a lower AC voltage"
+   ],
+   [
+    "Integrated circuit",
+    "Many semiconductors and other parts in one package"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "match",
+  "config": {
+   "left": "Component",
+   "right": "Job",
+   "pairs": [
+    [
+     "Diode",
+     "Current flows one way only"
+    ],
+    [
+     "Transistor",
+     "Electronic switch, power gain"
+    ],
+    [
+     "Rectifier",
+     "AC into varying DC"
+    ],
+    [
+     "Relay",
+     "Electrically controlled switch"
+    ],
+    [
+     "Regulator",
+     "Controls a power supply's voltage"
+    ],
+    [
+     "Transformer",
+     "120 V AC down to lower AC"
+    ],
+    [
+     "Integrated circuit",
+     "Many parts in one package"
+    ]
+   ],
+   "presets": [
+    {
+     "q": "T6B02",
+     "i": 0,
+     "from": "r"
+    },
+    {
+     "q": "T6B03",
+     "i": 1,
+     "from": "r"
+    },
+    {
+     "q": "T6B10",
+     "i": 1,
+     "from": "r"
+    },
+    {
+     "q": "T6D01",
+     "i": 2,
+     "from": "r"
+    },
+    {
+     "q": "T6D02",
+     "i": 3
+    },
+    {
+     "q": "T6D05",
+     "i": 4,
+     "from": "r"
+    },
+    {
+     "q": "T6D06",
+     "i": 5,
+     "from": "r"
+    },
+    {
+     "q": "T6D09",
+     "i": 6,
+     "from": "r"
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Relay",
+   "how": "A switch worked by electricity."
+  },
+  {
+   "term": "Transistor",
+   "how": "An electronic switch that can also give power gain."
+  },
+  {
+   "term": "Transformer",
+   "how": "AC in, lower AC out."
+  },
+  {
+   "term": "Rectifier",
+   "how": "AC in, varying DC out."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T6B02",
+   "wrong": "Fuse",
+   "why": "A fuse protects the circuit. Current flowing in only one direction is a diode."
+  },
+  {
+   "q": "T6B10",
+   "wrong": "Transformer",
+   "why": "A transformer changes voltage but gives no power gain. A transistor can."
+  },
+  {
+   "q": "T6D01",
+   "wrong": "Transformer",
+   "why": "A transformer's output is still AC. Turning AC into a varying DC is the rectifier's job."
+  },
+  {
+   "q": "T6D02",
+   "wrong": "A current-controlled amplifier",
+   "why": "A relay doesn't amplify. It is a switch worked by electricity."
+  },
+  {
+   "q": "T6D09",
+   "wrong": "Multi-pole relay",
+   "why": "A relay with several switches is still a relay. Many parts in one package is an integrated circuit."
+  }
+ ],
+ "questions": [
+  "T6B02",
+  "T6B03",
+  "T6B10",
+  "T6D01",
+  "T6D02",
+  "T6D05",
+  "T6D06",
+  "T6D09"
+ ]
+}

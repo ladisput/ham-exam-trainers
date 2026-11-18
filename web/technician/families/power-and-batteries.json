@@ -1,0 +1,116 @@
+{
+ "id": "power-and-batteries",
+ "exam": "technician",
+ "title": "Power and batteries (P = I x E)",
+ "idea": "Power in watts is current times voltage. A battery's amp-hours divided by the current you draw tells you how long it lasts.",
+ "core": {
+  "type": "formula",
+  "text": "P = I x E",
+  "lines": [
+   "I = P / E",
+   "E = P / I",
+   "Battery hours = amp-hours / average current draw"
+  ]
+ },
+ "widget": {
+  "type": "formula-triangle",
+  "config": {
+   "top": {
+    "s": "P",
+    "n": "Power",
+    "u": "watts"
+   },
+   "left": {
+    "s": "I",
+    "n": "Current",
+    "u": "amperes"
+   },
+   "right": {
+    "s": "E",
+    "n": "Voltage",
+    "u": "volts"
+   },
+   "start": "P",
+   "presets": [
+    {
+     "q": "T5C09",
+     "find": "P",
+     "vals": {
+      "E": 13.8,
+      "I": 10
+     }
+    },
+    {
+     "q": "T5C10",
+     "find": "P",
+     "vals": {
+      "E": 12,
+      "I": 2.5
+     }
+    },
+    {
+     "q": "T5C11",
+     "find": "I",
+     "vals": {
+      "P": 120,
+      "E": 12
+     }
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "P = I x E",
+   "how": "Power, in watts. Memory hook: PIE."
+  },
+  {
+   "term": "E = I x R",
+   "how": "Voltage, in volts. That is Ohm's law, a different formula."
+  },
+  {
+   "term": "Amp-hours",
+   "how": "How much a battery holds. Divide by average amps to get hours."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T5C08",
+   "wrong": "P = E / I",
+   "why": "Volts divided by amps gives ohms, not watts. Power multiplies: P = I x E."
+  },
+  {
+   "q": "T5C09",
+   "wrong": "23.8 watts",
+   "why": "That is 13.8 + 10. Power multiplies: 13.8 x 10 = 138 W."
+  },
+  {
+   "q": "T5C11",
+   "wrong": "132 amperes",
+   "why": "That is 120 + 12. Current is power divided by voltage: 120 / 12 = 10 A."
+  },
+  {
+   "q": "T4A01",
+   "wrong": "24.0 volts at 12 amperes",
+   "why": "Mobile rigs run on a car's 13.8 V system, not 24 V."
+  },
+  {
+   "q": "T4A01",
+   "wrong": "13.8 volts at 4 amperes",
+   "why": "That is only about 55 W going in, and a transmitter turns some of it into heat. A 50 W rig needs about 12 A."
+  },
+  {
+   "q": "T4A09",
+   "wrong": "Divide the watt-hour rating of the battery by the peak power consumption of the equipment",
+   "why": "Peak draw only happens some of the time. Use amp-hours divided by the average current."
+  }
+ ],
+ "questions": [
+  "T5C08",
+  "T5C09",
+  "T5C10",
+  "T5C11",
+  "T4A01",
+  "T4A09"
+ ]
+}
