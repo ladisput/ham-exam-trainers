@@ -1,0 +1,200 @@
+{
+ "id": "sidebands",
+ "exam": "general",
+ "title": "Which sideband, and where it sits",
+ "idea": "Below 10 MHz, voice is lower sideband; from 14 MHz up, upper sideband, by custom. The dial shows the suppressed carrier, and the 3 kHz signal sits on one side of it, so keep 3 kHz from the edge it grows toward.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Situation",
+    "Sideband or rule"
+   ],
+   [
+    "160, 75, 40 m voice",
+    "LSB (custom, not law)"
+   ],
+   [
+    "20, 17, 15, 12, 10 m and VHF/UHF voice",
+    "USB"
+   ],
+   [
+    "RTTY by AFSK",
+    "LSB"
+   ],
+   [
+    "FT8, FT4, JT65, JT9",
+    "USB"
+   ],
+   [
+    "3 kHz LSB near a lower edge",
+    "Carrier at least 3 kHz above it"
+   ],
+   [
+    "3 kHz USB near an upper edge",
+    "Carrier at least 3 kHz below it"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "band-tuner",
+  "config": {
+   "bands": [
+    "80",
+    "40",
+    "20",
+    "17",
+    "15",
+    "12",
+    "10",
+    "2"
+   ],
+   "modes": [
+    "voice",
+    "rtty",
+    "ft8"
+   ],
+   "heading": "Tune for the sideband",
+   "lead": "Pick a band and a mode; the sideband follows the custom. Turn the dial near a band edge and watch the 3 kHz signal in the close-up.",
+   "presets": [
+    {
+     "q": "G2A01",
+     "b": "20",
+     "m": "voice",
+     "f": 14250
+    },
+    {
+     "q": "G2A02",
+     "b": "40",
+     "m": "voice",
+     "f": 7200
+    },
+    {
+     "q": "G2A03",
+     "b": "2",
+     "m": "voice",
+     "f": 144200
+    },
+    {
+     "q": "G2A04",
+     "b": "17",
+     "m": "voice",
+     "f": 18140
+    },
+    {
+     "q": "G2A05",
+     "b": "20",
+     "m": "voice",
+     "f": 14300,
+     "focus": "hf"
+    },
+    {
+     "q": "G2A07",
+     "b": "20",
+     "m": "voice",
+     "f": 14285,
+     "focus": "ssb"
+    },
+    {
+     "q": "G2A09",
+     "b": "80",
+     "m": "voice",
+     "f": 3900,
+     "focus": "conv"
+    },
+    {
+     "q": "G4D08",
+     "b": "40",
+     "m": "voice",
+     "f": 7178
+    },
+    {
+     "q": "G4D09",
+     "b": "20",
+     "m": "voice",
+     "f": 14347
+    },
+    {
+     "q": "G4D10",
+     "b": "40",
+     "m": "voice",
+     "f": 7178
+    },
+    {
+     "q": "G4D11",
+     "b": "20",
+     "m": "voice",
+     "f": 14347
+    },
+    {
+     "q": "G2E01",
+     "b": "20",
+     "m": "rtty",
+     "f": 14085
+    },
+    {
+     "q": "G2E05",
+     "b": "20",
+     "m": "ft8",
+     "f": 14074
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "LSB",
+   "how": "Occupies the 3 kHz below the displayed carrier."
+  },
+  {
+   "term": "USB",
+   "how": "Occupies the 3 kHz above the displayed carrier."
+  },
+  {
+   "term": "SSB",
+   "how": "One sideband sent; the other sideband and the carrier suppressed."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G2A09",
+   "wrong": "Lower sideband is the only sideband legal on these frequency bands",
+   "why": "Both are legal. LSB is just commonly accepted practice."
+  },
+  {
+   "q": "G2A07",
+   "wrong": "Only one sideband and the carrier are transmitted; the other sideband is suppressed",
+   "why": "The carrier is suppressed too."
+  },
+  {
+   "q": "G4D08",
+   "wrong": "7.178 MHz to 7.181 MHz",
+   "why": "That's USB. LSB sits below the carrier: 7.175 to 7.178."
+  },
+  {
+   "q": "G4D10",
+   "wrong": "At least 3 kHz below the edge of the segment",
+   "why": "Below the lower edge is outside the segment. LSB grows downward, so stay 3 kHz above it."
+  },
+  {
+   "q": "G2E05",
+   "wrong": "LSB",
+   "why": "RTTY uses LSB; the JT and FT digital modes use USB."
+  }
+ ],
+ "questions": [
+  "G2A01",
+  "G2A02",
+  "G2A03",
+  "G2A04",
+  "G2A05",
+  "G2A07",
+  "G2A09",
+  "G4D08",
+  "G4D09",
+  "G4D10",
+  "G4D11",
+  "G2E01",
+  "G2E05"
+ ]
+}

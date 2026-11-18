@@ -1,0 +1,111 @@
+{
+ "id": "scatter",
+ "exam": "general",
+ "title": "Skip zone and scatter",
+ "idea": "Between where the ground wave dies out and where the sky wave first comes down is the skip zone. Scatter leaks a little energy into it: weak, fluttery and distorted.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Signal",
+    "What it sounds like"
+   ],
+   [
+    "Ground wave",
+    "Close in. Steady"
+   ],
+   [
+    "Skip zone",
+    "Nothing: the sky wave jumps over"
+   ],
+   [
+    "Scatter in the skip zone",
+    "Weak and fluttering"
+   ],
+   [
+    "Sky wave",
+    "Beyond the skip zone. Strong"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "skip-zone",
+  "config": {
+   "band": "20",
+   "d": 300,
+   "scatter": false,
+   "presets": [
+    {
+     "q": "G3C09",
+     "band": "20",
+     "d": 300,
+     "scatter": true,
+     "focus": "which"
+    },
+    {
+     "q": "G3C06",
+     "band": "20",
+     "d": 250,
+     "scatter": true,
+     "focus": "flutter"
+    },
+    {
+     "q": "G3C07",
+     "band": "40",
+     "d": 150,
+     "scatter": true,
+     "focus": "distort"
+    },
+    {
+     "q": "G3C08",
+     "band": "10",
+     "d": 500,
+     "scatter": true,
+     "focus": "weak"
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Why weak",
+   "how": "Only a small part of the energy is scattered into the skip zone."
+  },
+  {
+   "term": "Why distorted",
+   "how": "It arrives through several different paths at once."
+  },
+  {
+   "term": "What it sounds like",
+   "how": "A flutter."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G3C06",
+   "wrong": "There are very large, sudden swings in signal strength",
+   "why": "Scatter is a fast flutter on a weak signal, not big swings."
+  },
+  {
+   "q": "G3C07",
+   "wrong": "The ionospheric region involved is unstable",
+   "why": "The distortion comes from several paths arriving out of step."
+  },
+  {
+   "q": "G3C08",
+   "wrong": "Propagation is via ground waves, which absorb most of the signal energy",
+   "why": "The skip zone is past the ground wave's reach. Scatter is weak because only a little energy is scattered there."
+  },
+  {
+   "q": "G3C09",
+   "wrong": "Short-path",
+   "why": "Short path is a direction around the globe, not a way into the skip zone."
+  }
+ ],
+ "questions": [
+  "G3C06",
+  "G3C07",
+  "G3C08",
+  "G3C09"
+ ]
+}

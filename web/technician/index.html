@@ -182,6 +182,24 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
 .circ .kq{fill:var(--ok)}.circ .kun{fill:#c99a2e}.circ .kst{fill:var(--red)}.circ .kb{cursor:pointer;outline:none}.circ .kb:focus-visible rect:first-child{stroke:var(--blue);stroke-width:3}
 .circ .gnd2{fill:var(--face);stroke:var(--line)}.circ .lay{opacity:.55}.circ .lD{fill:#c99a2e}.circ .lD.hot{fill:var(--red)}.circ .lE{fill:var(--okbg)}.circ .lF{fill:light-dark(#d5e1f2,#1d2b40)}
 .circ .ray2{fill:none;stroke:var(--red);stroke-width:3;stroke-linejoin:round}.circ .xmark{font:700 18px Barlow,sans-serif;fill:var(--red);text-anchor:middle}.circ .land{fill:var(--red)}
+.hl{background:var(--tint);border-radius:4px;padding:0 3px}
+.circ .skhl{stroke:var(--red);stroke-width:1.5;opacity:.6}.circ .skgw{fill:none;stroke:var(--ok);stroke-width:6;stroke-linecap:round;opacity:.8}
+.circ .skray{fill:none;stroke:var(--blue);stroke-width:2;stroke-linejoin:round;opacity:.7}.circ .skray.first{stroke-width:3;opacity:1}.circ .skray.thru{stroke-dasharray:3 4;opacity:.5}
+.circ .skscat{fill:none;stroke:var(--red);stroke-width:1.5;stroke-dasharray:3 5;animation:flow 1s linear infinite}
+.circ .skf line{stroke:var(--ink);stroke-width:2.5}.circ .skf circle{fill:var(--ink)}
+.skm.flut i{transform-origin:left;animation:flut .23s steps(3) infinite alternate}
+@keyframes flut{0%{transform:scaleX(.25)}50%{transform:scaleX(1.1)}100%{transform:scaleX(.55)}}
+@media (prefers-reduced-motion:reduce){.skm.flut i,.circ .skscat{animation:none}}
+.circ .gcsea{fill:light-dark(#e6eef8,#18222f);stroke:var(--line);stroke-width:1.5}.circ .gcring{fill:none;stroke:var(--line);stroke-dasharray:3 4}
+.circ .gcbeam{fill:var(--blue);opacity:.22}.circ .gcpath{fill:none;stroke:var(--red);stroke-width:3;stroke-linecap:round}.circ .gcpath.lp{stroke-dasharray:7 5}
+.circ .gcwrap{fill:var(--card);stroke:var(--red);stroke-width:2}.circ .gccity{fill:var(--mute)}.circ .gccity.on{fill:var(--red)}
+.gct,.btb,.plb{flex-wrap:wrap}.gct button,.btb button,.plb button{flex:1 1 auto}
+.bt .btex{opacity:.35}.bt .btbg{fill:transparent}.bt .skhl{stroke:var(--ink);stroke-width:1.2;opacity:.5}.bt .btmk{fill:var(--ink)}
+.bt .btcur{fill:var(--ink)}.bt .btcurl{stroke:var(--ink);stroke-width:2}.bt .btz{opacity:.25}.bt .btedge{stroke:var(--ink);stroke-width:2}
+.bt .btghost{fill:none;stroke:var(--mute);stroke-width:1.5;stroke-dasharray:4 3}.bt .btsig.ok{fill:var(--ok)}.bt .btsig.bad{fill:var(--red)}
+.bt .btcar{stroke:var(--ink);stroke-width:1.5;stroke-dasharray:3 3}
+.circ .plmtr{fill:var(--card);stroke:var(--ink);stroke-width:2.5}.circ .plmtr.hi{stroke:var(--red);stroke-width:4}
+.circ .skz{fill:var(--badbg)}.circ .sktk{stroke:var(--mute)}.circ .plbg{fill:var(--tint);stroke:var(--line)}.circ .plok{fill:var(--ok)}.circ .plover{fill:var(--red)}.circ .pllim{stroke:var(--red);stroke-width:2.5}
 </style>
 </head>
 <body style="--call-size:20px;--call-w:8.2em">
@@ -1370,6 +1388,269 @@ WIDGETS.ionosphere=(el,c)=>{
   sf.oninput=()=>{st.f=LOGS(FA,FB,+sf.value);unchip(el);draw()};se.oninput=()=>{st.el=+se.value;unchip(el);draw()};
   chips(el,c.presets,p=>{st={f:p.f??14.2,el:p.el??15,tod:p.tod||'day'};const q=P();
     if(p.snap==='muf')st.f=0.95*q.foF2*sec(st.el);if(p.snap==='fc'){st.el=90;st.f=q.foF2}if(p.snap==='ca')st.el=Math.asin(q.foF2/st.f)*180/Math.PI-0.5;draw()},svg);
+  draw();
+};
+/* Morse "CQ" on a 650 Hz tone through Web Audio, for hearing propagation effects. o: {lvl 0-1, flut (flutter + several paths),
+   echo (seconds), noise 0-1}. Returns false when the browser has no audio. */
+let ACX=null;
+function playCW(o){
+  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return false;
+  try{ACX=ACX||new AC();if(ACX.state==='suspended')ACX.resume()}catch(e){return false}
+  const a=ACX,t0=a.currentTime+.05,u=.07,out=a.createGain();out.gain.value=.3;out.connect(a.destination);
+  const key=a.createGain();key.gain.setValueAtTime(0,t0);let t=t0;
+  for(const ch of '-.-. --.-'){if(ch===' '){t+=2*u;continue}const d=ch==='-'?3*u:u;key.gain.setValueAtTime(0,t);key.gain.linearRampToValueAtTime(1,t+.006);key.gain.setValueAtTime(1,t+d-.006);key.gain.linearRampToValueAtTime(0,t+d);t+=d+u}
+  const end=t+.4+(o.echo||0),osc=a.createOscillator();osc.frequency.value=650;osc.connect(key);
+  const lv=a.createGain();lv.gain.value=o.lvl??1;lv.connect(out);
+  const path=(delay,g,fl)=>{const dn=a.createDelay(1);dn.delayTime.value=delay;const gn=a.createGain();gn.gain.value=g;key.connect(dn).connect(gn).connect(lv);
+    if(fl){[[fl,.45*g],[fl*1.6,.25*g]].forEach(([hz,amt])=>{const l=a.createOscillator(),lg=a.createGain();l.frequency.value=hz;lg.gain.value=amt;l.connect(lg).connect(gn.gain);l.start(t0);l.stop(end)})}};
+  if(o.flut){path(0,.5,9);path(.004,.4,13);path(.009,.35,7)}else path(0,1,0);
+  if(o.echo)path(o.echo,.55,0);
+  if(o.noise){const n=a.createBufferSource(),b=a.createBuffer(1,a.sampleRate*(end-t0+.1),a.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+    n.buffer=b;const f=a.createBiquadFilter();f.type='bandpass';f.frequency.value=800;f.Q.value=.7;const ng=a.createGain();ng.gain.value=o.noise;n.connect(f).connect(ng).connect(out);n.start(t0);n.stop(end)}
+  osc.start(t0);osc.stop(end);return true;
+}
+
+/* skip-zone: cross-section with ground wave, the skip zone and sky wave, and scatter leaking into the skip zone.
+   config {band '40'|'20'|'10', d miles, scatter, presets:[{q, band, d, scatter, focus 'which'|'flutter'|'distort'|'weak'}]}. Illustrative distances. */
+WIDGETS['skip-zone']=(el,c)=>{
+  const BANDS={'40':{gw:60,sk:250,n:'40 m at night'},'20':{gw:40,sk:600,n:'20 m by day'},'10':{gw:25,sk:1100,n:'10 m by day'}},DMAX=2500;
+  let st={band:c.band||'20',d:c.d??300,sc:!!c.scatter,focus:null};
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Find the skip zone</h3><p class="small mute lead">Slide the other station away from you. Close in, the ground wave reaches them. Far out, the sky wave lands. In between is a gap the sky wave jumps right over.</p>
+  <div class="seg skb" role="group" aria-label="Band">${Object.entries(BANDS).map(([k,v])=>`<button data-b="${k}">${v.n}</button>`).join('')}</div>
+  <svg class="circ sk" viewBox="0 0 300 190" role="img"></svg>
+  <label for="sk-d" style="margin-top:8px">The other station is <b class="skdv"></b> away</label><input id="sk-d" type="range" min="0" max="1000">
+  <div class="row" style="gap:8px;margin-top:8px"><button class="smb skt" aria-pressed="false">Scatter</button><button class="smb lis">▶ Listen</button></div>
+  <div class="meterbar skm"><i></i></div><div class="wres"></div>`;
+  const svg=el.querySelector('svg'),sd=el.querySelector('#sk-d'),res=el.querySelector('.wres'),bar=el.querySelector('.skm');
+  const GY=146,X=d=>20+270*Math.sqrt(Math.min(d,DMAX)/DMAX),FY=62;
+  const state=()=>{const B=BANDS[st.band];return st.d<=B.gw?'gw':st.d<B.sk?(st.sc?'sc':'none'):'sky'};
+  function draw(){
+    segOn(el,'.skb','b',st.band);sd.value=LOGI(10,DMAX,st.d);el.querySelector('.skdv').textContent=fmt(Math.round(st.d/10)*10||10)+' miles';
+    const t=el.querySelector('.skt');t.classList.toggle('pri',st.sc);t.setAttribute('aria-pressed',st.sc);t.textContent=st.sc?'Scatter: on':'Scatter: off';
+    const B=BANDS[st.band],s=state(),xg=X(B.gw),xs=X(B.sk),xf=X(st.d);
+    let g=`<defs><pattern id="skh" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="6" class="skhl"/></pattern></defs>`;
+    g+=`<rect x="0" y="${FY-14}" width="300" height="24" class="lay lF"/><text class="lbl" x="296" y="${FY+3}" style="text-anchor:end">F layer</text>`;
+    g+=`<rect x="0" y="${GY}" width="300" height="44" class="gnd2"/>`;
+    g+=`<rect x="${xg}" y="${GY}" width="${xs-xg}" height="22" class="skz"/><rect x="${xg}" y="${GY}" width="${xs-xg}" height="22" fill="url(#skh)"/><text class="lbl" x="${(xg+xs)/2}" y="${GY+37}" style="fill:var(--red);font-weight:700">skip zone</text>`;
+    g+=`<path d="M20 ${GY-2} L${xg} ${GY-2}" class="skgw"/>`;
+    [B.sk,B.sk*1.5,B.sk*2.3,DMAX].forEach((d,i)=>{if(d>DMAX)return;const xm=(20+X(d))/2;g+=`<path d="M20 ${GY} L${xm} ${FY} L${X(d)} ${GY}" class="skray${i?'':' first'}"/>`});
+    g+=`<path d="M20 ${GY} L${X(B.sk*.25)} 4" class="skray thru"/>`;
+    if(st.sc){const tx=s==='sc'?xf:(xg+xs)/2;[[X(B.sk*1.2),GY],[ (20+xs)/2+18,FY+8],[(20+xs)/2-14,FY+8]].forEach(([x,y])=>{g+=`<path d="M${x} ${y} L${tx} ${GY-3}" class="skscat"/>`})}
+    g+=`<circle cx="20" cy="${GY}" r="5" class="land"/><text class="lbl" x="18" y="${GY+16}" style="fill:var(--ink);text-anchor:start">you</text>`;
+    g+=`<g class="skf"><line x1="${xf}" y1="${GY}" x2="${xf}" y2="${GY-22}"/><circle cx="${xf}" cy="${GY-24}" r="3.5"/></g>`;
+    [100,500,1000,2000].forEach(d=>{g+=`<line x1="${X(d)}" y1="${GY}" x2="${X(d)}" y2="${GY+4}" class="sktk"/><text class="lbl" x="${X(d)}" y="${GY+16}" style="font-size:11px">${d<1000?d:d/1000+'k'} mi</text>`});
+    svg.innerHTML=g;svg.setAttribute('aria-label',`Ground wave to ${B.gw} miles, skip zone to ${B.sk} miles; the other station is at ${Math.round(st.d)} miles`);
+    const lv={gw:Math.max(.35,1-st.d/B.gw*.5),none:0,sc:.14,sky:.8}[s];
+    bar.classList.toggle('flut',s==='sc');bar.querySelector('i').style.width=Math.round(lv*100)+'%';
+    const F=k=>st.focus===k?' class="hl"':'';
+    const say={gw:`Close enough for the <b>ground wave</b>, which hugs the Earth for a few dozen miles on HF. Steady and clear.`,
+      none:`You're in the <b>skip zone</b>: too far for the ground wave, too close for the sky wave, which comes down beyond ${fmt(B.sk)} miles. Even the steepest ray that still bends back lands past you. Nothing but noise. Turn on scatter.`,
+      sc:`In the skip zone, but you can hear them by <b>scatter</b>: the propagation that lets signals be heard in the transmitting station's skip zone.
+        <span${F('weak')}>It's <b>weak</b>, because only a small part of the signal energy is scattered into the skip zone.</span>
+        <span${F('distort')}>It sounds <b>distorted</b>, because the energy is scattered into the skip zone through several different paths that arrive a little out of step.</span>
+        <span${F('flutter')}>Listen: scatter signals have a <b>fluttering</b> sound.</span>`,
+      sky:`Beyond the skip zone: the <b>sky wave</b> comes back down here. Strong, with only the usual slow fading.`}[s];
+    res.innerHTML=`<div class="eq">${ ({gw:'Ground wave',none:'Skip zone: silence',sc:'Scatter: weak and fluttery',sky:'Sky wave'})[s]}</div><p>${say}</p>`;
+  }
+  el.querySelectorAll('.skb button').forEach(b=>b.onclick=()=>{st.band=b.dataset.b;unchip(el);draw()});
+  sd.oninput=()=>{st.d=LOGS(10,DMAX,+sd.value);st.focus=null;unchip(el);draw()};
+  el.querySelector('.skt').onclick=()=>{st.sc=!st.sc;unchip(el);draw()};
+  el.querySelector('.lis').onclick=()=>{const s=state();playCW({gw:{lvl:.9,noise:.03},none:{lvl:0,noise:.12},sc:{lvl:.22,flut:1,noise:.08},sky:{lvl:.8,noise:.04}}[s])};
+  chips(el,c.presets,p=>{st={band:p.band||'20',d:p.d??300,sc:!!p.scatter,focus:p.focus||null};draw()},svg);
+  draw();
+};
+
+/* great-circle: azimuthal equidistant map centred on the station, with a beam you can turn, a short or long path to a city, and the echo
+   when both paths are open. config {home:[lat,lon,name], to, path 'short'|'long', both, presets:[{q, to, path, both, focus 'map'}]}. */
+WIDGETS['great-circle']=(el,c)=>{
+  const H=c.home||[39.1,-94.6,'Kansas'],CITIES={London:[51.5,-.13],Tokyo:[35.7,139.7],Sydney:[-33.9,151.2],'Cape Town':[-33.9,18.4],Rio:[-22.9,-43.2],Mumbai:[19.1,72.9]};
+  const RAD=Math.PI/180,EK=40075,CX=150,CY=150,RR=132;
+  const geo=([la,lo])=>{const p1=H[0]*RAD,p2=la*RAD,dl=(lo-H[1])*RAD;
+    const b=(Math.atan2(Math.sin(dl)*Math.cos(p2),Math.cos(p1)*Math.sin(p2)-Math.sin(p1)*Math.cos(p2)*Math.cos(dl))/RAD+360)%360;
+    const d=Math.acos(Math.min(1,Math.sin(p1)*Math.sin(p2)+Math.cos(p1)*Math.cos(p2)*Math.cos(dl)))*6371;return{b,d}};
+  const P=(b,d)=>[CX+RR*d/(EK/2)*Math.sin(b*RAD),CY-RR*d/(EK/2)*Math.cos(b*RAD)];
+  let st={to:c.to||'London',path:c.path||'short',both:!!c.both,head:null,focus:null};
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Point the beam</h3><p class="small mute lead">This map is centred on you, so every straight line from the middle is a true bearing and a true distance. The outer rim is the far side of the Earth. Pick a station, then go the short way or the long way round.</p>
+  <div class="seg gct" role="group" aria-label="Station">${Object.keys(CITIES).map(k=>`<button data-t="${k}">${k}</button>`).join('')}</div>
+  <svg class="circ gc" viewBox="0 0 300 300" role="img"></svg>
+  <div class="seg gcp" role="group" aria-label="Path" style="margin-top:8px"><button data-p="short">Short path</button><button data-p="long">Long path</button></div>
+  <label for="gc-h" style="margin-top:8px">Beam heading: <b class="gchv"></b></label><input id="gc-h" type="range" min="0" max="359">
+  <div class="row" style="gap:8px;margin-top:8px"><button class="smb gcb" aria-pressed="false">Both paths open</button><button class="smb lis">▶ Listen</button></div>
+  <div class="wres"></div>`;
+  const svg=el.querySelector('svg'),sh=el.querySelector('#gc-h'),res=el.querySelector('.wres');
+  const ang=(a,b)=>Math.abs(((a-b)%360+540)%360-180);
+  function draw(){
+    const T=geo(CITIES[st.to]),lb=(T.b+180)%360,want=st.path==='long'?lb:T.b;if(st.head==null)st.head=Math.round(want);
+    segOn(el,'.gct','t',st.to);segOn(el,'.gcp','p',st.path);sh.value=Math.round(st.head);
+    const bt=el.querySelector('.gcb');bt.classList.toggle('pri',st.both);bt.setAttribute('aria-pressed',st.both);
+    el.querySelector('.gchv').textContent=Math.round(st.head)+'°';
+    let g=`<circle cx="${CX}" cy="${CY}" r="${RR}" class="gcsea"/>`;
+    [5000,10000,15000].forEach(k=>{g+=`<circle cx="${CX}" cy="${CY}" r="${RR*k/(EK/2)}" class="gcring"/><text class="lbl" x="${CX}" y="${CY+RR*k/(EK/2)-3}" style="font-size:10px">${fmt(Math.round(k*.621/100)*100)} mi</text>`});
+    [['N',0],['E',90],['S',180],['W',270]].forEach(([n,b])=>{const[x,y]=P(b,EK/2*1.09);g+=`<text class="lbl" x="${x}" y="${y+4}" style="fill:var(--ink)">${n}</text>`});
+    const beam=b=>{const[x1,y1]=P(b-16,9000),[x2,y2]=P(b+16,9000),[x0,y0]=P(b,10400);return`<path d="M${CX} ${CY} L${x1} ${y1} Q${x0} ${y0} ${x2} ${y2} Z" class="gcbeam"/>`};
+    g+=beam(st.head);
+    const[cx,cy]=P(T.b,T.d),[rs,rsy]=P(T.b,EK/2),[rl,rly]=P(lb,EK/2);
+    const onS=ang(st.head,T.b)<=20,onL=ang(st.head,lb)<=20;
+    if(onS||st.both)g+=`<path d="M${CX} ${CY} L${cx} ${cy}" class="gcpath"/>`;
+    if(onL||st.both)g+=`<path d="M${CX} ${CY} L${rl} ${rly}" class="gcpath lp"/><path d="M${rs} ${rsy} L${cx} ${cy}" class="gcpath lp"/><circle cx="${rl}" cy="${rly}" r="4" class="gcwrap"/><circle cx="${rs}" cy="${rsy}" r="4" class="gcwrap"/>`;
+    Object.entries(CITIES).forEach(([n,ll])=>{const k=geo(ll),[x,y]=P(k.b,k.d),on=n===st.to;g+=`<circle cx="${x}" cy="${y}" r="${on?5:3}" class="gccity${on?' on':''}"/><text class="lbl" x="${x}" y="${y-8}" style="${on?'fill:var(--ink);font-weight:700':''}">${n}</text>`});
+    g+=`<circle cx="${CX}" cy="${CY}" r="5" class="land"/><text class="lbl" x="${CX}" y="${CY+17}" style="fill:var(--ink)">you</text>`;
+    svg.innerHTML=g;svg.setAttribute('aria-label',`Azimuthal map centred on ${H[2]}. ${st.to}: short path ${Math.round(T.b)} degrees, long path ${Math.round(lb)} degrees. Beam at ${Math.round(st.head)} degrees.`);
+    const ds=T.d,dl=EK-T.d,ms=x=>x/299.79,echo=ms(dl)-ms(ds),mi=x=>fmt(Math.round(x*.621/100)*100);
+    const aim=onS?'short':onL?'long':null;
+    let say=st.both?`Both paths are open, so ${st.to} arrives twice: first by the short path, then ${fmt(Math.round(echo))} milliseconds later by the long path. You may hear a <b>slightly delayed echo</b>.`
+      :aim==='short'?`Pointed at ${Math.round(T.b)}°, the <b>short path</b>: the direct great-circle route, ${mi(ds)} miles.`
+      :aim==='long'?`Pointed at ${Math.round(lb)}°, the <b>long path</b>: <b>180 degrees from the short-path heading</b>, out the back and round the far side of the Earth, ${mi(dl)} miles. The two rim dots are the same place: the point opposite you.`
+      :`The beam isn't pointed at ${st.to} either way. Short path is ${Math.round(T.b)}°, long path ${Math.round(lb)}°.`;
+    if(st.focus==='map')say+=` An <b>azimuthal projection</b> map like this shows <b>true bearings and distances from one specific location</b>, here ${H[2]}. Land shapes get badly stretched toward the rim, so it's no good for accurate land masses.`;
+    res.innerHTML=`<div class="eq">${st.both?'Echo: '+fmt(Math.round(echo))+' ms':aim?(aim==='short'?'Short path':'Long path')+': '+(aim==='short'?Math.round(T.b):Math.round(lb))+'°':'Off target'}</div>
+    <div class="swr" style="margin-top:8px"><div><span>Short path</span><b>${Math.round(T.b)}° · ${mi(ds)} mi</b></div><div><span>Long path</span><b>${Math.round(lb)}° · ${mi(dl)} mi</b></div><div><span>Delay</span><b>${fmt(Math.round(ms(ds)))} / ${fmt(Math.round(ms(dl)))} ms</b></div></div><p>${say}</p>`;
+  }
+  const aimNow=()=>{const T=geo(CITIES[st.to]);st.head=Math.round(st.path==='long'?(T.b+180)%360:T.b)};
+  el.querySelectorAll('.gct button').forEach(b=>b.onclick=()=>{st.to=b.dataset.t;st.focus=null;aimNow();unchip(el);draw()});
+  el.querySelectorAll('.gcp button').forEach(b=>b.onclick=()=>{st.path=b.dataset.p;st.focus=null;aimNow();unchip(el);draw()});
+  sh.oninput=()=>{st.head=+sh.value;unchip(el);draw()};
+  el.querySelector('.gcb').onclick=()=>{st.both=!st.both;unchip(el);draw()};
+  el.querySelector('.lis').onclick=()=>{const T=geo(CITIES[st.to]);const e=(EK-2*T.d)/299790;playCW(st.both?{lvl:.7,echo:Math.min(.3,e),noise:.04}:{lvl:.7,noise:.04})};
+  chips(el,c.presets,p=>{st={to:p.to||'London',path:p.path||'short',both:!!p.both,head:null,focus:p.focus||null};draw()},svg);
+  draw();
+};
+
+/* US amateur band plan for General and Extra, in kHz. Segment [lo, hi, kind, who]: kind cw = CW and data, ph = phone and image (and CW),
+   all = every mode, cwo = CW only, vhf = every mode (VHF/UHF); who G = General and Extra, E = Extra only. Marks [lo, hi, label, text]. */
+const USPLAN={
+  '160':{n:'160 m',lo:1800,hi:2000,s:[[1800,2000,'all','G']]},
+  '80':{n:'80/75 m',lo:3500,hi:4000,s:[[3500,3525,'cw','E'],[3525,3600,'cw','G'],[3600,3800,'ph','E'],[3800,4000,'ph','G']]},
+  '40':{n:'40 m',lo:7000,hi:7300,s:[[7000,7025,'cw','E'],[7025,7125,'cw','G'],[7125,7175,'ph','E'],[7175,7300,'ph','G']]},
+  '30':{n:'30 m',lo:10100,hi:10150,s:[[10100,10150,'cw','G']],note:'30 meters is CW and data only: phone and image are prohibited. Power limit 200 watts PEP.'},
+  '20':{n:'20 m',lo:14000,hi:14350,s:[[14000,14025,'cw','E'],[14025,14150,'cw','G'],[14150,14225,'ph','E'],[14225,14350,'ph','G']],m:[[14070,14100,'Digital modes','Most digital mode activity on 20 meters is between 14.070 and 14.100 MHz.'],[14074,14077,'FT8','FT8 lives at about 14.074 to 14.077 MHz.']]},
+  '17':{n:'17 m',lo:18068,hi:18168,s:[[18068,18110,'cw','G'],[18110,18168,'ph','G']]},
+  '15':{n:'15 m',lo:21000,hi:21450,s:[[21000,21025,'cw','E'],[21025,21200,'cw','G'],[21200,21275,'ph','E'],[21275,21450,'ph','G']]},
+  '12':{n:'12 m',lo:24890,hi:24990,s:[[24890,24930,'cw','G'],[24930,24990,'ph','G']]},
+  '10':{n:'10 m',lo:28000,hi:29700,s:[[28000,28300,'cw','G'],[28300,29700,'ph','G']],m:[[29500,29700,'Repeaters','The portion of 10 meters above 29.5 MHz is available for repeater use.']],note:'CW is allowed across the entire band.'},
+  '6':{n:'6 m',lo:50000,hi:54000,s:[[50000,50100,'cwo','G'],[50100,54000,'vhf','G']],m:[[50100,50125,'DX window','Band plan: from 50.100 to 50.125 MHz, stations in the 48 contiguous states make contacts only with stations outside the 48 states.']]},
+  '2':{n:'2 m',lo:144000,hi:148000,s:[[144000,144100,'cwo','G'],[144100,148000,'vhf','G']]}
+};
+/* band-tuner: tune a displayed carrier frequency across a band; the signal is drawn on the side its mode puts it (voice: LSB below 10 MHz,
+   USB above; RTTY LSB; FT8 USB; CW narrow), with a close-up of the band edges, and checked against the licence's privileges.
+   config {bands:[keys of USPLAN], modes:[cw,voice,image,rtty,ft8], heading, lead, presets:[{q, b, f kHz, m, lic 'G'|'E', focus 'ssb'|'conv'|'hf'|'extra'|'upper'}]}. */
+WIDGETS['band-tuner']=(el,c)=>{
+  const BK=c.bands||Object.keys(USPLAN),MODES=c.modes||['cw','voice','image','rtty','ft8'],MN={cw:'CW',voice:'Voice',image:'Image',rtty:'RTTY',ft8:'FT8'};
+  const cent=b=>{const B=USPLAN[b],p=B.s.find(s=>s[2]==='ph'&&s[3]==='G')||B.s[B.s.length-1];return Math.round((p[0]+p[1])/2)};
+  let st={b:c.b||BK[0],f:null,m:c.m||MODES[0],lic:'G',focus:null};
+  el.classList.add('wg');
+  el.innerHTML=`<h3>${esc(c.heading||'Tune the band')}</h3><p class="small mute lead">${esc(c.lead||'Pick a band and a mode, then turn the dial. The close-up shows exactly where your signal sits.')}</p>
+  <div class="seg btb" role="group" aria-label="Band">${BK.map(k=>`<button data-b="${k}">${USPLAN[k].n}</button>`).join('')}</div>
+  <div class="row" style="gap:8px;margin-top:8px;flex-wrap:wrap"><div class="seg btm" role="group" aria-label="Mode">${MODES.map(k=>`<button data-m="${k}">${MN[k]}</button>`).join('')}</div>
+  <div class="seg btl" role="group" aria-label="Licence"><button data-l="G">General</button><button data-l="E">Extra</button></div></div>
+  <svg class="bc bt" viewBox="0 0 320 168" role="img"></svg>
+  <label for="bt-f">Displayed carrier: <b class="btfv"></b></label>
+  <div class="row" style="gap:6px;align-items:center"><button class="smb btd" data-d="-1" aria-label="Down 1 kHz">−1k</button><input id="bt-f" type="range" style="flex:1;min-width:0"><button class="smb btd" data-d="1" aria-label="Up 1 kHz">+1k</button></div>
+  <div class="wres"></div>`;
+  const svg=el.querySelector('svg'),sf=el.querySelector('#bt-f'),res=el.querySelector('.wres');
+  const side=()=>st.m==='cw'?'CW':st.m==='rtty'?'LSB':st.m==='ft8'?'USB':st.f<10000?'LSB':'USB';
+  const occ=()=>{const s=side();return s==='CW'?[st.f-.1,st.f+.1]:s==='LSB'?[st.f-3,st.f]:[st.f,st.f+3]};
+  const okKind=(k,m)=>k==='all'||k==='vhf'||m==='cw'&&k!=='x'||(k==='cw'&&(m==='rtty'||m==='ft8'))||(k==='ph'&&(m==='voice'||m==='image'));
+  const ok=(s,m)=>okKind(s[2],m)&&(s[3]==='G'||st.lic==='E');
+  const runs=(B,m)=>{const r=[];B.s.forEach(s=>{if(!ok(s,m))return;const l=r[r.length-1];if(l&&l[1]===s[0])l[1]=s[1];else r.push([s[0],s[1]])});return r};
+  const MHz=k=>(k/1000).toFixed(Math.abs(k-Math.round(k))>1e-6?4:3)+' MHz';
+  function draw(){
+    const B=USPLAN[st.b];if(st.f==null)st.f=cent(st.b);st.f=Math.max(B.lo,Math.min(B.hi,st.f));
+    segOn(el,'.btb','b',st.b);segOn(el,'.btm','m',st.m);segOn(el,'.btl','l',st.lic);
+    sf.min=B.lo;sf.max=B.hi;sf.step=.5;sf.value=st.f;el.querySelector('.btfv').textContent=MHz(st.f);
+    const X=f=>12+296*(f-B.lo)/(B.hi-B.lo),[o0,o1]=occ(),S=side(),R=runs(B,st.m),run=R.find(r=>st.f>=r[0]&&st.f<=r[1]);
+    const good=run&&o0>=run[0]-1e-9&&o1<=run[1]+1e-9&&o0>=B.lo&&o1<=B.hi;
+    let g=`<defs><pattern id="bth" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><rect width="5" height="5" class="btbg"/><line x1="0" y1="0" x2="0" y2="5" class="skhl"/></pattern></defs>`;
+    const kc=k=>k==='ph'||k==='vhf'?'k-phone':k==='all'?'k-other':'k-cw';
+    B.s.forEach(s=>{const ex=s[3]==='E'&&st.lic==='G';g+=`<rect x="${X(s[0])}" y="16" width="${X(s[1])-X(s[0])}" height="22" class="${kc(s[2])}${ex?' btex':''}"/>${ex?`<rect x="${X(s[0])}" y="16" width="${X(s[1])-X(s[0])}" height="22" fill="url(#bth)"/>`:''}`;
+      const w=X(s[1])-X(s[0]);if(w>34)g+=`<text x="${(X(s[0])+X(s[1]))/2}" y="31" text-anchor="middle" class="bct" style="fill:${ex?'var(--ink)':'var(--card)'};font-size:11px">${ex?'Extra':s[2]==='ph'?'Phone':s[2]==='vhf'?'All modes':s[2]==='all'?'All modes':s[2]==='cwo'?'CW':'CW/data'}</text>`});
+    (B.m||[]).forEach(m=>{g+=`<rect x="${X(m[0])}" y="40" width="${Math.max(2,X(m[1])-X(m[0]))}" height="4" class="btmk"/>`});
+    g+=`<path d="M${X(st.f)} 12 l-5 -8 h10 z" class="btcur"/><line x1="${X(st.f)}" y1="12" x2="${X(st.f)}" y2="44" class="btcurl"/>`;
+    g+=`<text x="12" y="56" text-anchor="start">${MHz(B.lo)}</text><text x="308" y="56" text-anchor="end">${MHz(B.hi)}</text>`;
+    const W=8,Z=f=>12+296*(f-(st.f-W))/(2*W),ZY=78,ZH=44;
+    g+=`<rect x="12" y="${ZY}" width="296" height="${ZH}" class="k-range"/>`;
+    B.s.forEach(s=>{const a=Math.max(s[0],st.f-W),b=Math.min(s[1],st.f+W);if(b>a)g+=`<rect x="${Z(a)}" y="${ZY}" width="${Z(b)-Z(a)}" height="${ZH}" class="btz ${kc(s[2])}"/>${s[3]==='E'&&st.lic==='G'?`<rect x="${Z(a)}" y="${ZY}" width="${Z(b)-Z(a)}" height="${ZH}" fill="url(#bth)"/><text x="${(Z(a)+Z(b))/2}" y="${ZY+ZH-4}" text-anchor="middle" style="font-size:10px;fill:var(--ink)">Extra only</text>`:''}`});
+    const edges=new Set([B.lo,B.hi]);B.s.forEach(s=>{edges.add(s[0]);edges.add(s[1])});
+    [...edges].filter(e=>e>st.f-W&&e<st.f+W).forEach(e=>{g+=`<line x1="${Z(e)}" y1="${ZY-4}" x2="${Z(e)}" y2="${ZY+ZH+4}" class="btedge"/><text x="${Z(e)}" y="${ZY+ZH+16}" text-anchor="${Z(e)<40?'start':Z(e)>280?'end':'middle'}" class="bct">${(e/1000).toFixed(3)}</text>`});
+    if(S!=='CW'){const g0=S==='LSB'?st.f:st.f-3,g1=g0+3;g+=`<rect x="${Z(g0)}" y="${ZY+8}" width="${Z(g1)-Z(g0)}" height="${ZH-8}" class="btghost"/><text x="${(Z(g0)+Z(g1))/2}" y="${ZY+ZH-6}" text-anchor="middle" style="font-size:10px">cut</text>`}
+    g+=`<rect x="${Z(o0)}" y="${ZY+8}" width="${Math.max(3,Z(o1)-Z(o0))}" height="${ZH-8}" class="btsig ${good?'ok':'bad'}"/>`;
+    if(S!=='CW')g+=`<text x="${(Z(o0)+Z(o1))/2}" y="${ZY+30}" text-anchor="middle" class="bct" style="fill:var(--card)">${S}</text>`;
+    g+=`<line x1="${Z(st.f)}" y1="${ZY-6}" x2="${Z(st.f)}" y2="${ZY+ZH}" class="btcar"/><text x="${Z(st.f)}" y="${ZY-9}" text-anchor="middle" class="bct">${S==='CW'?'CW':'carrier (suppressed)'}</text>`;
+    g+=`<text x="12" y="${ZY+ZH+30}" text-anchor="start" style="font-size:11px">Close-up: 16 kHz around the dial</text>`;
+    svg.innerHTML=g;svg.setAttribute('aria-label',`${B.n}, ${MN[st.m]} at ${MHz(st.f)}, ${S}, occupying ${MHz(o0)} to ${MHz(o1)}: ${good?'inside your privileges':'not allowed'}`);
+    const here=B.s.find(s=>st.f>=s[0]&&st.f<s[1])||B.s.find(s=>st.f>=s[0]&&st.f<=s[1]);let why='';
+    if(!good){
+      if(o0<B.lo||o1>B.hi)why=`Part of the signal is outside the band.`;
+      else if(run){const lo=o0<run[0];why=lo?`It spills ${fmt(run[0]-o0,3)} kHz below the ${MHz(run[0])} edge. With ${S==='LSB'?'3 kHz LSB, keep the displayed carrier <b>at least 3 kHz above</b> the lower edge':'a signal this wide, move up'}.`
+        :`It spills ${fmt(o1-run[1],3)} kHz above the ${MHz(run[1])} edge. With ${S==='USB'?'3 kHz USB, keep the displayed carrier <b>at least 3 kHz below</b> the upper edge':'a signal this wide, move down'}.`}
+      else if(here&&here[3]==='E'&&st.lic==='G'&&okKind(here[2],st.m))why=`${MHz(here[0])} to ${MHz(here[1])} is <b>Extra only</b>. A General can't be control operator here.`;
+      else why=`${MN[st.m]} isn't allowed here${here?` (${here[2]==='cw'?'CW and data only':here[2]==='cwo'?'CW only':'phone and image segment'})`:''}.${st.b==='30'&&(st.m==='voice'||st.m==='image')?' <b>Phone and image are prohibited on 30 meters.</b>':''}`}
+    else if(S!=='CW'&&run){const lo=S==='LSB'?st.f-run[0]:null,hi=S==='USB'?run[1]-st.f:null;
+      if(lo!=null&&lo<5)why=`Carrier ${fmt(lo,3)} kHz above the ${MHz(run[0])} edge: the signal just fits. Keep it <b>at least 3 kHz above</b> the lower edge with 3 kHz LSB.`;
+      if(hi!=null&&hi<5)why=`Carrier ${fmt(hi,3)} kHz below the ${MHz(run[1])} edge: the signal just fits. Keep it <b>at least 3 kHz below</b> the upper edge with 3 kHz USB.`}
+    const conv=st.m==='voice'?(st.f<10000?`Voice below 10 MHz (160, 75 and 40 meters) is <b>lower sideband</b>, simply because it is <b>commonly accepted amateur practice</b>. Both sidebands are legal and work just as well.`:`Voice on 14 MHz and up (20, 17, 15, 12 and 10 meters, and SSB on VHF and UHF) is <b>upper sideband</b>, by convention.`)
+      :st.m==='rtty'?`RTTY sent as audio tones (AFSK) through an SSB transmitter normally uses <b>LSB</b>.`:st.m==='ft8'?`FT8, FT4, JT65 and JT9 sent as audio tones (AFSK) use <b>USB</b> as standard.`:st.m==='image'?`Image modes like SSTV live in the phone segments, on the voice sideband for the band.`:`CW is a narrow carrier, allowed anywhere in an amateur band you have privileges on.`;
+    const mk=(B.m||[]).filter(m=>st.f>=m[0]-1&&st.f<=m[1]+1).map(m=>m[3]).join(' ');
+    let fx='';const F=st.focus;
+    if(F==='ssb')fx=`<b>Single sideband</b>: only one sideband is transmitted; the other sideband and the carrier are suppressed (the dashed outline and line in the close-up).`;
+    if(F==='hf')fx=`Single sideband is the most common voice mode on the HF amateur bands.`;
+    if(F==='extra')fx=`Bands with Extra-only slices, where a General can't transmit: <b>80, 40, 20 and 15 meters</b>. Tap Extra to see them open up.`;
+    if(F==='upper')fx=`Where a General doesn't get the whole voice segment, they get the <b>upper</b> part of it. The lower part is Extra only.`;
+    res.innerHTML=`<div class="eq">${S==='CW'?'CW at '+MHz(st.f):S+' · '+MHz(o0)+' to '+MHz(o1)}</div><div class="verdict ${good?'ok':'no'}">${good?`Inside ${st.lic==='G'?'General':'Extra'} privileges`:'Not allowed here'}</div>
+    ${why?`<p>${why}</p>`:''}${fx?`<p>${fx}</p>`:''}<p>${conv}</p>${mk?`<p class="small mute">${esc(mk)}</p>`:''}${B.note?`<p class="small mute">${esc(B.note)}</p>`:''}`;
+  }
+  el.querySelectorAll('.btb button').forEach(b=>b.onclick=()=>{st.b=b.dataset.b;st.f=null;st.focus=null;unchip(el);draw()});
+  el.querySelectorAll('.btm button').forEach(b=>b.onclick=()=>{st.m=b.dataset.m;unchip(el);draw()});
+  el.querySelectorAll('.btl button').forEach(b=>b.onclick=()=>{st.lic=b.dataset.l;unchip(el);draw()});
+  el.querySelectorAll('.btd').forEach(b=>b.onclick=()=>{st.f+=+b.dataset.d;unchip(el);draw()});
+  sf.oninput=()=>{st.f=+sf.value;unchip(el);draw()};
+  chips(el,c.presets,p=>{st={b:p.b,f:p.f??null,m:p.m||MODES[0],lic:p.lic||'G',focus:p.focus||null};draw()},el.querySelector('.btb'));
+  draw();
+};
+
+/* power-limit: turn up a transmitter on a band and read PEP output against the limit. 30 m: 200 W PEP; 60 m: 100 W ERP over a dipole
+   (antenna gain slider), USB, 2.8 kHz; spread spectrum 10 W; otherwise 1500 W PEP. config {b, w, presets:[{q, b, w, g dBd, ss, focus 'pep'|'bw'|'gain'}]}. */
+WIDGETS['power-limit']=(el,c)=>{
+  const BK=['160','80','60','40','30','20','17','15','12','10','6'];
+  let st={b:c.b||'20',w:c.w??100,g:0,ss:false,focus:null};
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Turn up the power</h3><p class="small mute lead">Pick a band and turn the knob. The meter reads what the FCC measures: peak envelope power at the transmitter's output.</p>
+  <div class="seg plb" role="group" aria-label="Band">${BK.map(k=>`<button data-b="${k}">${k} m</button>`).join('')}</div>
+  <div class="row" style="gap:8px;margin-top:8px"><button class="smb pls" aria-pressed="false">Spread spectrum</button></div>
+  <svg class="circ pl" viewBox="0 0 300 150" role="img"></svg>
+  <label for="pl-w" style="margin-top:8px">Transmitter output: <b class="plwv"></b></label><input id="pl-w" type="range" min="0" max="1000">
+  <div class="plg" hidden><label for="pl-g" style="margin-top:8px">Antenna gain over a dipole: <b class="plgv"></b></label><input id="pl-g" type="range" min="0" max="12"></div>
+  <div class="wres"></div>`;
+  const svg=el.querySelector('svg'),sw=el.querySelector('#pl-w'),sg=el.querySelector('#pl-g'),res=el.querySelector('.wres');
+  function draw(){
+    segOn(el,'.plb','b',st.b);const s=el.querySelector('.pls');s.classList.toggle('pri',st.ss);s.setAttribute('aria-pressed',st.ss);
+    sw.value=LOGI(1,3000,st.w);el.querySelector('.plwv').textContent=fmt(Math.round(st.w))+' W PEP';
+    const six=st.b==='60'&&!st.ss;el.querySelector('.plg').hidden=!six;sg.value=st.g*2;el.querySelector('.plgv').textContent=fmt(st.g)+' dBd';
+    const erp=st.w*10**(st.g/10),lim=st.ss?10:six?100:st.b==='30'?200:1500,val=six?erp:st.w,over=val>lim+1e-6;
+    const lx=v=>14+272*Math.log10(Math.max(1,v))/Math.log10(3000);
+    let g=`<rect x="4" y="20" width="76" height="40" rx="6" class="sbx"/><text class="lbl" x="42" y="44" style="fill:var(--ink);font-size:12px">Transmitter</text>
+    <line x1="80" y1="40" x2="104" y2="40" class="coax"/><circle cx="122" cy="40" r="18" class="plmtr ${st.focus==='pep'?'hi':''}"/><text class="lbl" x="122" y="38" style="fill:var(--ink);font-size:10px">PEP</text><text class="lbl" x="122" y="50" style="font-size:9px">output</text>
+    <line x1="140" y1="40" x2="236" y2="40" class="coax"/><text class="lbl" x="188" y="34" style="font-size:11px">feed line</text>
+    <path d="M236 40 L252 40 M252 12 L252 64 M244 12 L260 12" class="w" style="stroke:var(--ink)"/>${six?`<text class="lbl" x="256" y="80" style="font-size:11px">ERP ${fmt(Math.round(erp))} W</text>`:''}`;
+    g+=`<rect x="14" y="104" width="272" height="16" rx="4" class="plbg"/><rect x="14" y="104" width="${Math.max(2,lx(val)-14)}" height="16" rx="4" class="${over?'plover':'plok'}"/>`;
+    g+=`<line x1="${lx(lim)}" y1="96" x2="${lx(lim)}" y2="126" class="pllim"/><text class="lbl" x="${lx(lim)}" y="92" style="fill:var(--red);font-weight:700;text-anchor:${lx(lim)>250?'end':'middle'}">limit ${fmt(lim)} W${six?' ERP':''}</text>`;
+    [1,10,100,1000].forEach(v=>{g+=`<text class="lbl" x="${lx(v)}" y="138" style="font-size:10px">${fmt(v)}</text>`});
+    svg.innerHTML=g;svg.setAttribute('aria-label',`${st.b} meters, ${Math.round(st.w)} watts PEP output, limit ${lim} watts`);
+    const F=k=>st.focus===k?' class="hl"':'';
+    const note=st.ss?`<b>Spread spectrum</b> transmissions are limited to <b>10 watts PEP output</b>, on any band where they're allowed.`
+      :six?`60 meters is special. The limit is <b>100 watts ERP</b> (effective radiated power) compared to a half-wave dipole, so antenna gain counts against you. Upper sideband only, on set channels, with a <b>maximum bandwidth of 2.8 kHz</b>. <span${F('gain')}>${st.g>0?'This antenna isn\'t a dipole, so you must <b>keep a record of its gain</b>.':'Use an antenna other than a dipole and you must keep a record of its gain.'}</span>`
+      :st.b==='30'?`30 meters (10.100 to 10.150 MHz) is the exception on HF: <b>200 watts PEP output</b>.`
+      :`Every other HF band, and 6 meters, allows up to <b>1500 watts PEP output</b>${st.b==='10'?'. That includes a General on 28 MHz (Technicians are held to 200 watts on HF)':''}.`;
+    res.innerHTML=`<div class="eq">${fmt(Math.round(val))} W${six?' ERP':' PEP'} · ${over?'<em>over the limit</em>':'within the limit'}</div>
+    <p>${note}</p><p${F('pep')}>FCC power limits are measured as <b>PEP output from the transmitter</b>: not RMS, and not at the antenna. Even so, use only the minimum power needed to communicate.</p>
+    ${six&&st.focus==='bw'?'<p class="hl">On 60 meters USB, the maximum bandwidth permitted is <b>2.8 kHz</b>.</p>':''}`;
+  }
+  el.querySelectorAll('.plb button').forEach(b=>b.onclick=()=>{st.b=b.dataset.b;st.focus=null;unchip(el);draw()});
+  el.querySelector('.pls').onclick=()=>{st.ss=!st.ss;unchip(el);draw()};
+  sw.oninput=()=>{st.w=LOGS(1,3000,+sw.value);unchip(el);draw()};sg.oninput=()=>{st.g=+sg.value/2;unchip(el);draw()};
+  chips(el,c.presets,p=>{st={b:p.b||'20',w:p.w??100,g:p.g||0,ss:!!p.ss,focus:p.focus||null};draw()},svg);
   draw();
 };
 function coreHtml(c){

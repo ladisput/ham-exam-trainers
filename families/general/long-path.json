@@ -1,0 +1,85 @@
+{
+ "id": "long-path",
+ "exam": "general",
+ "title": "Short path vs. long path",
+ "idea": "A signal can take the short way round the Earth or the long way. To work the long path, turn the beam 180 degrees from the short-path heading. If both paths are open, you hear an echo.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "",
+    ""
+   ],
+   [
+    "Long-path heading",
+    "180 degrees from the short-path heading"
+   ],
+   [
+    "Both paths open",
+    "A slightly delayed echo"
+   ],
+   [
+    "Azimuthal map",
+    "True bearings and distances from one location"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "great-circle",
+  "config": {
+   "to": "London",
+   "path": "short",
+   "presets": [
+    {
+     "q": "G2D04",
+     "to": "Tokyo",
+     "path": "short",
+     "focus": "map"
+    },
+    {
+     "q": "G2D06",
+     "to": "Tokyo",
+     "path": "long"
+    },
+    {
+     "q": "G3B01",
+     "to": "Cape Town",
+     "path": "short",
+     "both": true
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Short path",
+   "how": "The direct great-circle route."
+  },
+  {
+   "term": "Long path",
+   "how": "The other way round, 180 degrees from the short-path heading."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G2D06",
+   "wrong": "Along the gray line",
+   "why": "Gray line is a time of day for good propagation, not a heading. Long path is 180 degrees from short path."
+  },
+  {
+   "q": "G2D04",
+   "wrong": "A map that shows accurate land masses",
+   "why": "An azimuthal map stretches land toward the edge. What it gets right is bearing and distance from its centre."
+  },
+  {
+   "q": "G3B01",
+   "wrong": "The signal might be cancelled causing severe attenuation",
+   "why": "The long-path copy arrives many milliseconds late, so you hear an echo, not a cancellation."
+  }
+ ],
+ "questions": [
+  "G3B01",
+  "G2D04",
+  "G2D06"
+ ]
+}

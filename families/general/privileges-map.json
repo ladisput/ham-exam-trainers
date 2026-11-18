@@ -1,0 +1,187 @@
+{
+ "id": "privileges-map",
+ "exam": "general",
+ "title": "General privileges map",
+ "idea": "A General can use all of 160, 60, 30, 17, 12 and 10 meters. On 80, 40, 20 and 15 meters, a slice of each CW and phone segment is Extra only, and the General gets the upper part.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Rule",
+    "Detail"
+   ],
+   [
+    "Extra-only slices",
+    "80, 40, 20 and 15 meters"
+   ],
+   [
+    "General voice",
+    "The upper part of those phone segments"
+   ],
+   [
+    "40 m Extra only phone",
+    "7.125 to 7.175 MHz"
+   ],
+   [
+    "30 m",
+    "No phone, no image"
+   ],
+   [
+    "10 m",
+    "CW anywhere; repeaters above 29.5 MHz"
+   ],
+   [
+    "20 m digital",
+    "14.070 to 14.100 MHz; FT8 near 14.074"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "band-tuner",
+  "config": {
+   "bands": [
+    "160",
+    "80",
+    "40",
+    "30",
+    "20",
+    "17",
+    "15",
+    "12",
+    "10",
+    "6"
+   ],
+   "modes": [
+    "cw",
+    "voice",
+    "image",
+    "ft8"
+   ],
+   "heading": "Where can you transmit?",
+   "lead": "Pick a band and a mode and turn the dial. Hatched slices are Extra only: switch the licence to see them open up.",
+   "presets": [
+    {
+     "q": "G1A01",
+     "b": "40",
+     "m": "voice",
+     "f": 7150,
+     "focus": "extra"
+    },
+    {
+     "q": "G1A08",
+     "b": "20",
+     "m": "voice",
+     "f": 14200,
+     "focus": "extra"
+    },
+    {
+     "q": "G1A05",
+     "b": "40",
+     "m": "voice",
+     "f": 7150
+    },
+    {
+     "q": "G1A11",
+     "b": "40",
+     "m": "voice",
+     "f": 7250,
+     "focus": "upper"
+    },
+    {
+     "q": "G1A02",
+     "b": "30",
+     "m": "voice",
+     "f": 10125
+    },
+    {
+     "q": "G1A03",
+     "b": "30",
+     "m": "image",
+     "f": 10125
+    },
+    {
+     "q": "G1A07",
+     "b": "10",
+     "m": "cw",
+     "f": 29000
+    },
+    {
+     "q": "G1A09",
+     "b": "15",
+     "m": "voice",
+     "f": 21300
+    },
+    {
+     "q": "G1A10",
+     "b": "10",
+     "m": "voice",
+     "f": 29600
+    },
+    {
+     "q": "G2B08",
+     "b": "6",
+     "m": "cw",
+     "f": 50110
+    },
+    {
+     "q": "G2E08",
+     "b": "20",
+     "m": "ft8",
+     "f": 14085
+    },
+    {
+     "q": "G2E15",
+     "b": "20",
+     "m": "ft8",
+     "f": 14074
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Extra-only slices",
+   "how": "80, 40, 20 and 15 meters."
+  },
+  {
+   "term": "No Extra-only slices",
+   "how": "160, 60, 30, 17, 12 and 10 meters."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G1A01",
+   "wrong": "60 meters, 30 meters, 17 meters, and 12 meters",
+   "why": "Those are the bands a General gets in full."
+  },
+  {
+   "q": "G1A11",
+   "wrong": "The lower frequency portion",
+   "why": "The lower part of the voice segment is the Extra-only slice."
+  },
+  {
+   "q": "G1A07",
+   "wrong": "28.000 MHz to 28.300 MHz only",
+   "why": "That's the CW and data segment, but CW is allowed across the whole band."
+  },
+  {
+   "q": "G1A10",
+   "wrong": "The entire band",
+   "why": "Only above 29.5 MHz."
+  }
+ ],
+ "questions": [
+  "G1A01",
+  "G1A02",
+  "G1A03",
+  "G1A05",
+  "G1A07",
+  "G1A08",
+  "G1A09",
+  "G1A10",
+  "G1A11",
+  "G2B08",
+  "G2E08",
+  "G2E15"
+ ]
+}
