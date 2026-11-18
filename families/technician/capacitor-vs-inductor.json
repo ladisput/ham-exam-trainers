@@ -86,6 +86,28 @@
      "bin": "Capacitor",
      "why": "An inductor plus a capacitor makes a resonant circuit."
     }
+   ],
+   "presets": [
+    {
+     "q": "T6A04",
+     "t": 0
+    },
+    {
+     "q": "T6A05",
+     "t": 2
+    },
+    {
+     "q": "T6A06",
+     "t": 1
+    },
+    {
+     "q": "T6A07",
+     "t": 3
+    },
+    {
+     "q": "T6D08",
+     "t": 8
+    }
    ]
   }
  },

@@ -78,6 +78,42 @@
      "Can't get into a repeater you can hear",
      "Offset, tone or code is wrong"
     ]
+   ],
+   "presets": [
+    {
+     "q": "T2B01",
+     "i": 0
+    },
+    {
+     "q": "T2B02",
+     "i": 1,
+     "from": "r"
+    },
+    {
+     "q": "T2B03",
+     "i": 3
+    },
+    {
+     "q": "T2B04",
+     "i": 7
+    },
+    {
+     "q": "T2B06",
+     "i": 2,
+     "from": "r"
+    },
+    {
+     "q": "T2B12",
+     "i": 5
+    },
+    {
+     "q": "T2B14",
+     "i": 4
+    },
+    {
+     "q": "T4B07",
+     "i": 6
+    }
    ]
   }
  },

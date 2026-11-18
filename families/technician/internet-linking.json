@@ -59,6 +59,36 @@
      "title": "VoIP",
      "text": "Voice Over Internet Protocol delivers voice over the internet using digital techniques."
     }
+   ],
+   "presets": [
+    {
+     "q": "T8C06",
+     "s": 1
+    },
+    {
+     "q": "T8C07",
+     "s": 4
+    },
+    {
+     "q": "T8C08",
+     "s": 1
+    },
+    {
+     "q": "T8C09",
+     "s": 0
+    },
+    {
+     "q": "T8C10",
+     "s": 0
+    },
+    {
+     "q": "T8C11",
+     "s": 3
+    },
+    {
+     "q": "T4A10",
+     "s": 2
+    }
    ]
   }
  },

@@ -17,7 +17,25 @@
   "type": "calculator",
   "config": {
    "calc": "multipath",
-   "feet": 0
+   "feet": 0,
+   "presets": [
+    {
+     "q": "T3A01",
+     "x": 25
+    },
+    {
+     "q": "T3A06",
+     "x": 75
+    },
+    {
+     "q": "T3A08",
+     "x": 40
+    },
+    {
+     "q": "T3A10",
+     "x": 25
+    }
+   ]
   }
  },
  "traps": [

@@ -76,6 +76,24 @@
      "bin": "Together",
      "why": "That's part of the right approach, along with finding the device and checking your own station."
     }
+   ],
+   "presets": [
+    {
+     "q": "T7B05",
+     "t": 0
+    },
+    {
+     "q": "T7B06",
+     "t": 2
+    },
+    {
+     "q": "T7B07",
+     "t": 3
+    },
+    {
+     "q": "T7B09",
+     "t": 1
+    }
    ]
   }
  },

@@ -2,6 +2,17 @@
  "exam": "technician",
  "families": [
   {
+   "id": "antenna-length",
+   "title": "Antenna length rules",
+   "questions": [
+    "T9A02",
+    "T9A04",
+    "T9A05",
+    "T9A08",
+    "T9A09"
+   ]
+  },
+  {
    "id": "bandwidth-ladder",
    "title": "Bandwidth ladder",
    "questions": [
@@ -25,6 +36,22 @@
     "T6A06",
     "T6A07",
     "T6D08"
+   ]
+  },
+  {
+   "id": "coax-connectors",
+   "title": "Coax and connectors",
+   "questions": [
+    "T7C07",
+    "T7C09",
+    "T7C10",
+    "T7C11",
+    "T9B02",
+    "T9B05",
+    "T9B06",
+    "T9B07",
+    "T9B10",
+    "T9B11"
    ]
   },
   {
@@ -59,6 +86,20 @@
     "T5B09",
     "T5B10",
     "T5B11"
+   ]
+  },
+  {
+   "id": "grounding-lightning",
+   "title": "Grounding and lightning",
+   "questions": [
+    "T0A07",
+    "T0A08",
+    "T0A09",
+    "T0B01",
+    "T0B08",
+    "T0B10",
+    "T0B11",
+    "T4A08"
    ]
   },
   {
@@ -261,6 +302,25 @@
     "T5C12",
     "T5A11",
     "T6A01"
+   ]
+  },
+  {
+   "id": "rf-exposure",
+   "title": "RF exposure",
+   "questions": [
+    "T0C01",
+    "T0C02",
+    "T0C03",
+    "T0C04",
+    "T0C05",
+    "T0C06",
+    "T0C07",
+    "T0C08",
+    "T0C09",
+    "T0C10",
+    "T0C11",
+    "T0C12",
+    "T0C13"
    ]
   },
   {

@@ -70,6 +70,42 @@
      "Modulation",
      "Puts speech on an RF carrier"
     ]
+   ],
+   "presets": [
+    {
+     "q": "T7A01",
+     "i": 0,
+     "from": "r"
+    },
+    {
+     "q": "T7A03",
+     "i": 4,
+     "from": "r"
+    },
+    {
+     "q": "T7A04",
+     "i": 1,
+     "from": "r"
+    },
+    {
+     "q": "T7A05",
+     "i": 2,
+     "from": "r"
+    },
+    {
+     "q": "T7A06",
+     "i": 5,
+     "from": "r"
+    },
+    {
+     "q": "T7A08",
+     "i": 6,
+     "from": "r"
+    },
+    {
+     "q": "T7A11",
+     "i": 3
+    }
    ]
   }
  },

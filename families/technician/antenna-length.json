@@ -1,0 +1,121 @@
+{
+ "id": "antenna-length",
+ "exam": "technician",
+ "title": "Antenna length rules",
+ "idea": "Shorter means higher resonant frequency. A coil makes an antenna electrically longer. Shrinking an antenna below full size costs efficiency, and a longer 5/8-wave whip gives more gain.",
+ "core": {
+  "type": "list",
+  "items": [
+   [
+    "Shorten a dipole",
+    "Its resonant frequency goes up"
+   ],
+   [
+    "Loading",
+    "Electrically lengthening by inserting inductors in the radiating elements"
+   ],
+   [
+    "Short flexible handheld antenna",
+    "Low efficiency compared to a full-sized quarter wave"
+   ],
+   [
+    "19-inch vertical on 2 meters",
+    "A resonant quarter wave"
+   ],
+   [
+    "5/8-wave whip vs. 1/4-wave on VHF/UHF mobile",
+    "More gain"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "scenario",
+  "config": {
+   "heading": "Change the antenna",
+   "lead": "Pick a change to see what it does.",
+   "situations": [
+    {
+     "label": "Shorten a dipole",
+     "title": "Resonant frequency goes up",
+     "text": "Shortening a dipole increases its resonant frequency. Lengthening it, coils in series with the wires, or capacitive loading at the ends don't."
+    },
+    {
+     "label": "Insert a coil in the radiating element",
+     "title": "Loading: electrically longer",
+     "text": "Antenna loading means electrically lengthening the antenna by inserting inductors in its radiating elements. Not a resistor and not a spring."
+    },
+    {
+     "label": "Use the short flexible antenna on a handheld",
+     "title": "Low efficiency",
+     "text": "Compared to a full-sized quarter-wave antenna, a handheld's short flexible antenna has low efficiency."
+    },
+    {
+     "label": "Put a 19-inch vertical on 2 meters",
+     "title": "A resonant quarter wave",
+     "text": "On 2 meters, 19 inches is a resonant quarter wave. That's why it's so common, not for high gain."
+    },
+    {
+     "label": "Swap a 1/4-wave mobile whip for a 5/8-wave",
+     "title": "More gain",
+     "text": "For VHF or UHF mobile, a 5/8-wavelength whip has more gain than a 1/4-wave antenna."
+    }
+   ],
+   "presets": [
+    {
+     "q": "T9A05",
+     "s": 0
+    },
+    {
+     "q": "T9A02",
+     "s": 1
+    },
+    {
+     "q": "T9A04",
+     "s": 2
+    },
+    {
+     "q": "T9A08",
+     "s": 3
+    },
+    {
+     "q": "T9A09",
+     "s": 4
+    }
+   ]
+  }
+ },
+ "traps": [
+  {
+   "q": "T9A02",
+   "wrong": "Inserting a resistor in the radiating portion of the antenna to make it resonant",
+   "why": "Loading uses inductors (coils) to lengthen the antenna electrically, not a resistor."
+  },
+  {
+   "q": "T9A04",
+   "wrong": "It is more susceptible to receiver desensitization",
+   "why": "The short antenna's problem is low efficiency."
+  },
+  {
+   "q": "T9A05",
+   "wrong": "Lengthening it",
+   "why": "Lengthening lowers the resonant frequency. Shortening raises it."
+  },
+  {
+   "q": "T9A08",
+   "wrong": "It is a resonant half-wave",
+   "why": "19 inches on 2 meters is a quarter wave, not a half wave."
+  },
+  {
+   "q": "T9A09",
+   "wrong": "It has lower SWR",
+   "why": "The 5/8-wave whip's advantage is more gain, not lower SWR."
+  }
+ ],
+ "questions": [
+  "T9A02",
+  "T9A04",
+  "T9A05",
+  "T9A08",
+  "T9A09"
+ ]
+}

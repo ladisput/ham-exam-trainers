@@ -74,6 +74,40 @@
      "Control operator through a satellite",
      "Any ham allowed on the uplink"
     ]
+   ],
+   "presets": [
+    {
+     "q": "T1E02",
+     "i": 7
+    },
+    {
+     "q": "T1E03",
+     "i": 0
+    },
+    {
+     "q": "T1E04",
+     "i": 2
+    },
+    {
+     "q": "T1E07",
+     "i": 3
+    },
+    {
+     "q": "T1F10",
+     "i": 4
+    },
+    {
+     "q": "T0C13",
+     "i": 1
+    },
+    {
+     "q": "T1A08",
+     "i": 5
+    },
+    {
+     "q": "T1A09",
+     "i": 6
+    }
    ]
   }
  },

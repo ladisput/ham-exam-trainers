@@ -483,7 +483,7 @@
     "T9B10",
     "T9B11"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "antenna-length",
@@ -496,7 +496,7 @@
     "T9A08",
     "T9A09"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "grounding-lightning",
@@ -512,7 +512,7 @@
     "T0B11",
     "T4A08"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "rf-exposure",
@@ -533,7 +533,7 @@
     "T0C12",
     "T0C13"
    ],
-   "status": "todo"
+   "status": "done"
   }
  ]
 }

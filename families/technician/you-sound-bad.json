@@ -62,6 +62,33 @@
      "Distorted through the repeater",
      "Off frequency, too loud, or a bad spot"
     ]
+   ],
+   "presets": [
+    {
+     "q": "T2B05",
+     "i": 0
+    },
+    {
+     "q": "T4B01",
+     "i": 2,
+     "from": "r"
+    },
+    {
+     "q": "T4B04",
+     "i": 3
+    },
+    {
+     "q": "T7B01",
+     "i": 1
+    },
+    {
+     "q": "T7B10",
+     "i": 5
+    },
+    {
+     "q": "T7B11",
+     "i": 4
+    }
    ]
   }
  },

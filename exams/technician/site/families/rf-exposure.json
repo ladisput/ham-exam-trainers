@@ -1,0 +1,323 @@
+{
+ "id": "rf-exposure",
+ "exam": "technician",
+ "title": "RF exposure",
+ "idea": "RF is non-ionizing: it heats, it doesn't damage DNA. How much you get depends on frequency, power, distance and the antenna pattern, averaged over how much of the time you transmit. The station licensee answers for it.",
+ "core": {
+  "type": "list",
+  "items": [
+   [
+    "What RF is",
+    "Non-ionizing radiation. Not enough energy to cause chemical changes in cells or damage DNA"
+   ],
+   [
+    "Lowest exposure limit (of 3.5, 50, 440, 1296 MHz)",
+    "50 MHz. The body absorbs more RF at some frequencies than others"
+   ],
+   [
+    "What sets exposure",
+    "Frequency and power, distance, and the antenna's radiation pattern"
+   ],
+   [
+    "Duty cycle",
+    "The percentage of time you're transmitting. It affects the average exposure"
+   ],
+   [
+    "Duty cycle from 100% to 50%",
+    "Allowed power density doubles"
+   ],
+   [
+    "Check compliance by",
+    "Calculation (OET Bulletin 65 or computer modeling) or measurement with calibrated equipment"
+   ],
+   [
+    "Stay in compliance",
+    "Re-evaluate whenever the transmitter or antenna system changes"
+   ],
+   [
+    "Reduce exposure",
+    "Relocate antennas"
+   ],
+   [
+    "Touch an antenna while transmitting",
+    "RF burn to skin"
+   ],
+   [
+    "Responsible",
+    "The station licensee"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "scenario",
+  "config": {
+   "heading": "RF safety, case by case",
+   "lead": "Pick a case. Some let you change a setting.",
+   "situations": [
+    {
+     "label": "Is RF like radioactivity?",
+     "title": "No: non-ionizing",
+     "text": "Radio signals are non-ionizing radiation. They don't have enough energy to cause chemical changes in cells and damage DNA."
+    },
+    {
+     "label": "Which band has the strictest limit?",
+     "dims": [
+      {
+       "id": "band",
+       "label": "Band",
+       "options": [
+        "3.5 MHz",
+        "50 MHz",
+        "440 MHz",
+        "1296 MHz"
+       ]
+      }
+     ],
+     "title": "Exposure limits",
+     "rules": [
+      {
+       "when": {
+        "band": [
+         "50 MHz"
+        ]
+       },
+       "title": "50 MHz: the lowest limit of these",
+       "text": "Of these bands, 50 MHz has the lowest maximum permissible exposure. Limits vary with frequency because the body absorbs more RF at some frequencies than at others."
+      },
+      {
+       "when": {
+        "band": [
+         "3.5 MHz",
+         "440 MHz",
+         "1296 MHz"
+        ]
+       },
+       "title": "A higher limit than 50 MHz",
+       "text": "This band's limit is higher than 50 MHz's. Limits vary because the body absorbs more RF energy at some frequencies than at others."
+      }
+     ]
+    },
+    {
+     "label": "Someone stands near my antenna",
+     "title": "Four things set their exposure",
+     "text": "The frequency and power level of the RF field, the distance from the antenna, and the antenna's radiation pattern. All of them count."
+    },
+    {
+     "label": "I transmit less of the time",
+     "dims": [
+      {
+       "id": "duty",
+       "label": "Duty cycle (time spent transmitting)",
+       "options": [
+        "100%",
+        "50%"
+       ]
+      }
+     ],
+     "title": "Duty cycle",
+     "rules": [
+      {
+       "when": {
+        "duty": [
+         "100%"
+        ]
+       },
+       "title": "Transmitting all the time",
+       "text": "Duty cycle is the percentage of time a transmitter is transmitting. It matters because it affects the average exposure."
+      },
+      {
+       "when": {
+        "duty": [
+         "50%"
+        ]
+       },
+       "title": "Allowed power density doubles",
+       "text": "Going from 100% to 50% duty cycle increases the allowable power density by a factor of 2, because the average exposure halves."
+      }
+     ]
+    },
+    {
+     "label": "Does my station comply?",
+     "title": "Calculate or measure",
+     "text": "Calculation based on FCC OET Bulletin 65, calculation based on computer modeling, or measurement with calibrated equipment: any of them is acceptable. Re-evaluate whenever an item in the transmitter or antenna system changes."
+    },
+    {
+     "label": "Lower the exposure near my station",
+     "title": "Relocate antennas",
+     "text": "Moving the antennas reduces exposure. Moving the transmitter doesn't help, and a higher duty cycle makes it worse."
+    },
+    {
+     "label": "Touch the antenna while transmitting",
+     "title": "RF burn to skin",
+     "text": "Touching an antenna during a transmission can cause an RF burn to the skin. It isn't ionizing radiation."
+    },
+    {
+     "label": "Who answers for it?",
+     "title": "The station licensee",
+     "text": "The station licensee is responsible for making sure no person is exposed to RF energy above the FCC limits."
+    }
+   ],
+   "presets": [
+    {
+     "q": "T0C01",
+     "s": 0
+    },
+    {
+     "q": "T0C12",
+     "s": 0
+    },
+    {
+     "q": "T0C02",
+     "s": 1,
+     "dims": {
+      "band": "50 MHz"
+     }
+    },
+    {
+     "q": "T0C05",
+     "s": 1,
+     "dims": {
+      "band": "50 MHz"
+     }
+    },
+    {
+     "q": "T0C04",
+     "s": 2
+    },
+    {
+     "q": "T0C03",
+     "s": 3,
+     "dims": {
+      "duty": "50%"
+     }
+    },
+    {
+     "q": "T0C10",
+     "s": 3,
+     "dims": {
+      "duty": "100%"
+     }
+    },
+    {
+     "q": "T0C11",
+     "s": 3,
+     "dims": {
+      "duty": "100%"
+     }
+    },
+    {
+     "q": "T0C06",
+     "s": 4
+    },
+    {
+     "q": "T0C09",
+     "s": 4
+    },
+    {
+     "q": "T0C08",
+     "s": 5
+    },
+    {
+     "q": "T0C07",
+     "s": 6
+    },
+    {
+     "q": "T0C13",
+     "s": 7
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Non-ionizing (RF)",
+   "how": "Not enough energy to change cells or damage DNA."
+  },
+  {
+   "term": "Ionizing (radioactivity)",
+   "how": "Gamma and alpha radiation. Not what radio signals are."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T0C01",
+   "wrong": "Ionizing radiation",
+   "why": "Radio signals are non-ionizing radiation."
+  },
+  {
+   "q": "T0C02",
+   "wrong": "1296 MHz",
+   "why": "Higher frequency doesn't mean a stricter limit. Of these, 50 MHz has the lowest."
+  },
+  {
+   "q": "T0C03",
+   "wrong": "It decreases by 50 percent",
+   "why": "Halving the duty cycle doubles the allowable power density. It doesn't cut it."
+  },
+  {
+   "q": "T0C04",
+   "wrong": "Distance from the antenna to a person",
+   "why": "Distance matters, but so do frequency, power and the radiation pattern. It's all of them."
+  },
+  {
+   "q": "T0C05",
+   "wrong": "Lower frequency RF fields have more energy than higher frequency fields",
+   "why": "It's not about energy per frequency. The body absorbs more RF at some frequencies than others."
+  },
+  {
+   "q": "T0C06",
+   "wrong": "By measurement of field strength using calibrated equipment",
+   "why": "Measurement works, but so do both kinds of calculation. Any of them is acceptable."
+  },
+  {
+   "q": "T0C07",
+   "wrong": "Electrocution",
+   "why": "The hazard is an RF burn to the skin."
+  },
+  {
+   "q": "T0C08",
+   "wrong": "Relocate the transmitter",
+   "why": "Moving the transmitter doesn't help. Moving the antennas does."
+  },
+  {
+   "q": "T0C09",
+   "wrong": "By making sure your antennas have low SWR",
+   "why": "Low SWR isn't RF safety. Re-evaluate whenever the transmitter or antenna system changes."
+  },
+  {
+   "q": "T0C10",
+   "wrong": "It affects the peak exposure to radiation",
+   "why": "Duty cycle affects the average exposure, not the peak."
+  },
+  {
+   "q": "T0C11",
+   "wrong": "The percentage of time that a transmitter is not transmitting",
+   "why": "Duty cycle is the time spent transmitting, not the time off."
+  },
+  {
+   "q": "T0C12",
+   "wrong": "RF radiation is perfectly safe",
+   "why": "RF isn't perfectly safe. It just can't change cells or damage DNA the way ionizing radiation can."
+  },
+  {
+   "q": "T0C13",
+   "wrong": "The FCC",
+   "why": "Not the FCC. The station licensee is responsible."
+  }
+ ],
+ "questions": [
+  "T0C01",
+  "T0C02",
+  "T0C03",
+  "T0C04",
+  "T0C05",
+  "T0C06",
+  "T0C07",
+  "T0C08",
+  "T0C09",
+  "T0C10",
+  "T0C11",
+  "T0C12",
+  "T0C13"
+ ]
+}

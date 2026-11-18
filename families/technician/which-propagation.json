@@ -156,6 +156,50 @@
       }
      ]
     }
+   ],
+   "presets": [
+    {
+     "q": "T3C03",
+     "s": 2
+    },
+    {
+     "q": "T3C04",
+     "s": 0
+    },
+    {
+     "q": "T3C05",
+     "s": 3
+    },
+    {
+     "q": "T3C06",
+     "s": 1
+    },
+    {
+     "q": "T3C07",
+     "s": 4
+    },
+    {
+     "q": "T3C08",
+     "s": 1
+    },
+    {
+     "q": "T3C09",
+     "s": 5,
+     "dims": {
+      "band": "10 m",
+      "sun": "High (peak of the cycle)",
+      "time": "Dawn to just after sunset"
+     }
+    },
+    {
+     "q": "T3C10",
+     "s": 5,
+     "dims": {
+      "band": "6 m",
+      "sun": "High (peak of the cycle)",
+      "time": "Dawn to just after sunset"
+     }
+    }
    ]
   }
  },

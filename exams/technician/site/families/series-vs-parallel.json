@@ -46,7 +46,25 @@
      "Each resistor connects across the same two points, so each gets the same voltage.",
      "To measure voltage, the meter connects across the part the same way: a voltmeter goes in parallel."
     ]
-   }
+   },
+   "presets": [
+    {
+     "q": "T5D13",
+     "m": "series"
+    },
+    {
+     "q": "T5D14",
+     "m": "parallel"
+    },
+    {
+     "q": "T7D02",
+     "m": "parallel"
+    },
+    {
+     "q": "T7D03",
+     "m": "series"
+    }
+   ]
   }
  },
  "compare": [

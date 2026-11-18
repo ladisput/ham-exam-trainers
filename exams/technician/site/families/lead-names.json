@@ -78,6 +78,20 @@
      "bin": "FET",
      "why": "FET: gate, drain, source."
     }
+   ],
+   "presets": [
+    {
+     "q": "T6B05",
+     "t": 6
+    },
+    {
+     "q": "T6B09",
+     "t": 0
+    },
+    {
+     "q": "T6B12",
+     "t": 3
+    }
    ]
   }
  },

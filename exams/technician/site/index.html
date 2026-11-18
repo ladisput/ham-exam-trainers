@@ -325,11 +325,12 @@ function famBack(){if(famPushed)history.back();else{history.replaceState(null,''
 const WIDGETS={};
 const fmt=(x,s=6)=>isFinite(x)?x.toLocaleString('en-US',{maximumSignificantDigits:s,useGrouping:Math.abs(x)>=1e4}):'?';
 const num=v=>{const x=parseFloat(String(v).replace(/,/g,''));return isFinite(x)?x:NaN};
-/* Preset chips: one per pool question the widget can work. pick(i) loads preset i; the question text shows under the chips. */
-function chips(el,presets,pick){
+/* Preset chips: one per pool question the widget can work. pick(p) loads preset p; the question text shows under the chips.
+   Every widget type takes presets (see SPEC.md). before: put the chips above that node instead of at the end. */
+function chips(el,presets,pick,before){
   if(!presets||!presets.length)return;
   const box=document.createElement('div');box.innerHTML=`<p class="small mute" style="margin:14px 0 0">Try a question from the pool:</p><div class="chips">${presets.map((p,i)=>`<button class="chip" data-i="${i}">${esc(p.q)}</button>`).join('')}</div><p class="wq" hidden></p>`;
-  el.appendChild(box);
+  if(before){box.style.marginBottom='14px';el.insertBefore(box,before)}else el.appendChild(box);
   box.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{box.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===b));const p=presets[+b.dataset.i],w=box.querySelector('.wq');w.hidden=!BY[p.q];if(BY[p.q])w.textContent=BY[p.q].q;pick(p)});
 }
 const unchip=el=>{el.querySelectorAll('.chip.on').forEach(x=>x.classList.remove('on'));const w=el.querySelector('.wq');if(w)w.hidden=true};
@@ -397,7 +398,7 @@ WIDGETS.ladder=(el,c)=>{
 };
 
 /* figure-explorer: tap a part number to see what it is. config {figs:[{f, title, parts:[{n, x, y, name, look, job, q}]}]}.
-   x and y place a ring on the figure, as percent of its width and height. */
+   x and y place a ring on the figure, as percent of its width and height. Presets come from each part's q (question ids). */
 WIDGETS['figure-explorer']=(el,c)=>{
   let fi=0,pi=null;
   el.classList.add('wg');
@@ -410,17 +411,19 @@ WIDGETS['figure-explorer']=(el,c)=>{
     el.querySelectorAll('[data-f]').forEach(b=>{const on=+b.dataset.f===fi;b.classList.toggle('pri',on);b.setAttribute('aria-pressed',on)});
     if(img.getAttribute('src')!=='fig/'+F.f){img.src='fig/'+F.f;img.alt=F.title}
     nums.innerHTML=F.parts.map((p,i)=>`<button data-p="${i}" class="${i===pi?'on':''}" aria-label="Part ${p.n}">${p.n}</button>`).join('');
-    nums.querySelectorAll('button').forEach(b=>b.onclick=()=>{pi=+b.dataset.p;draw()});
+    nums.querySelectorAll('button').forEach(b=>b.onclick=()=>{pi=+b.dataset.p;unchip(el);draw()});
     const P=pi!=null&&F.parts[pi];ring.hidden=!P;
     if(P){ring.style.left=P.x+'%';ring.style.top=P.y+'%';
       res.innerHTML=`<div class="eq">${esc(F.title)}, part ${P.n}: <em>${esc(P.name)}</em></div><p>${esc(P.look)}</p>${P.job?`<p class="small mute">${esc(P.job)}</p>`:''}${P.q?`<p class="small mute">Asked in ${esc(P.q)}.</p>`:''}`}
     else res.innerHTML=`<p class="small mute" style="margin:0">The exam asks about parts ${F.parts.map(p=>p.n).join(', ')} of ${esc(F.title)}.</p>`;
   }
-  el.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{fi=+b.dataset.f;pi=null;draw()});
+  el.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{fi=+b.dataset.f;pi=null;unchip(el);draw()});
+  chips(el,c.presets||c.figs.flatMap((F,f)=>F.parts.flatMap((P,p)=>(String(P.q||'').match(/T\d[A-Z]\d\d/g)||[]).map(q=>({q,f,p})))),p=>{fi=p.f;pi=p.p;draw()},el.querySelector('.lead').nextElementSibling);
   draw();
 };
 
-/* scenario: pick a situation, see what applies. config {situations:[{label, title, text, dims?:[{id,label,options}], rules?:[{when:{id:[options]}, title, text}]}]}.
+/* scenario: pick a situation, see what applies. config {situations:[{label, title, text, dims?:[{id,label,options}], rules?:[{when:{id:[options]}, title, text}]}],
+   presets:[{q, s, dims?:{id:option}}]}.
    When a situation has dims, the first rule whose every listed dim matches gives the result. */
 WIDGETS.scenario=(el,c)=>{
   let si=0;const pick={};
@@ -433,18 +436,20 @@ WIDGETS.scenario=(el,c)=>{
     el.querySelectorAll('[data-s]').forEach(b=>{const on=+b.dataset.s===si;b.classList.toggle('pri',on);b.setAttribute('aria-pressed',on)});
     dims.innerHTML=(S.dims||[]).map(d=>{if(!(d.id in pick)||!d.options.includes(pick[d.id]))pick[d.id]=d.options[0];
       return`<p class="small mute" style="margin:12px 0 0">${esc(d.label)}</p><div class="seg">${d.options.map(o=>`<button data-d="${esc(d.id)}" data-o="${esc(o)}" class="${pick[d.id]===o?'pri':''}" aria-pressed="${pick[d.id]===o}">${esc(o)}</button>`).join('')}</div>`}).join('');
-    dims.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{pick[b.dataset.d]=b.dataset.o;draw()});
+    dims.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{pick[b.dataset.d]=b.dataset.o;unchip(el);draw()});
     let r=S;
     if(S.rules)r=S.rules.find(x=>Object.entries(x.when).every(([k,v])=>v.includes(pick[k])))||S;
     res.innerHTML=`<div class="eq">${esc(r.title||S.title)}</div><p>${esc(r.text||S.text||'')}</p>`;
   }
-  el.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{si=+b.dataset.s;draw()});
+  el.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{si=+b.dataset.s;unchip(el);draw()});
+  chips(el,c.presets,p=>{si=p.s;Object.assign(pick,p.dims||{});draw()},el.querySelector('.lead').nextElementSibling);
   draw();
 };
 
 /* band-chart: tap a band to see it drawn to scale with its segments and marked frequencies; tap any item for details.
    config {heading, lead, bands:[{name, title?, lo, hi, unit, scale:'lin'|'log', ticks?, segs:[{lo,hi,label,kind,text}], marks:[{f,label,text}], text}]}.
-   kind: cw | phone | other | range. An item's optional `show` replaces its frequency text in the list. */
+   kind: cw | phone | other | range. An item's optional `show` replaces its frequency text in the list.
+   presets:[{q, b?, i?}]: band b (default 0), item i (segs first, then marks; leave out for the band itself). */
 WIDGETS['band-chart']=(el,c)=>{
   let bi=0,ii=null;
   el.classList.add('wg');
@@ -466,11 +471,12 @@ WIDGETS['band-chart']=(el,c)=>{
     (B.ticks||[B.lo,B.hi]).forEach(t=>{g+=`<text x="${Math.min(306,Math.max(14,X(t)))}" y="98" text-anchor="${X(t)<30?'start':X(t)>290?'end':'middle'}">${fmt(t)}</text>`});
     svg.innerHTML=g;svg.setAttribute('aria-label',`${B.name}, ${fmt(B.lo)} to ${fmt(B.hi)} ${u}`);
     list.innerHTML=items.map((x,i)=>`<button data-i="${i}" class="${i===ii?'on':''}"><i style="background:${x.t==='m'?'var(--ink)':col[x.kind||'range']};${x.t==='m'?'width:4px':''}"></i><span>${esc(x.label)} <span class="small mute">${x.show?esc(x.show):x.t==='m'?fmt(x.f)+' '+u:fmt(x.lo)+' to '+fmt(x.hi)+' '+u}</span></span></button>`).join('');
-    list.querySelectorAll('button').forEach(b=>b.onclick=()=>{ii=+b.dataset.i;draw()});
+    list.querySelectorAll('button').forEach(b=>b.onclick=()=>{ii=+b.dataset.i;unchip(el);draw()});
     const I=ii!=null&&items[ii];
     res.innerHTML=I?`<div class="eq" style="font-size:clamp(22px,6.5vw,30px)">${esc(I.label)}</div><p>${esc(I.text||'')}</p>`:`<div class="eq" style="font-size:clamp(22px,6.5vw,30px)">${esc(B.title||B.name+': '+fmt(B.lo)+' to '+fmt(B.hi)+' '+u)}</div>${B.text?`<p>${esc(B.text)}</p>`:''}`;
   }
-  el.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{bi=+b.dataset.b;ii=null;draw()});
+  el.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{bi=+b.dataset.b;ii=null;unchip(el);draw()});
+  chips(el,c.presets,p=>{bi=p.b||0;ii=p.i??null;draw()},el.querySelector('.lead').nextElementSibling);
   draw();
 };
 
@@ -499,7 +505,7 @@ const CALCS={
     draw();
   },
   /* Multipath: a direct and a reflected copy of a signal. Moving the antenna changes how they line up.
-     config {feet}. Purely an illustration: no real distances are claimed. */
+     config {feet, presets:[{q, x}]}. Purely an illustration: no real distances are claimed. x is the slider position, 0 to 100. */
   multipath(el,c){
     let x=c.feet??0;
     el.innerHTML=`<h3>Move the antenna</h3><p class="small mute lead">Two copies of the same signal arrive: one direct, one bounced off something. Slide the antenna a few feet and watch them add up or cancel.</p>
@@ -518,7 +524,8 @@ const CALCS={
       const t=amp>.75?['Reinforcing','The copies line up and add together: a strong signal.']:amp<.25?['Cancelling','The copies are out of step and cancel: the signal nearly disappears.']:['Partly cancelling','The copies are partly out of step: a weaker signal.'];
       res.innerHTML=`<div class="eq"><em>${t[0]}</em></div><p>${t[1]}</p><p class="small mute">Drive through this and it flickers fast: picket fencing. Send data through it and errors go up.</p>`;
     }
-    sl.oninput=()=>{x=+sl.value;draw()};
+    sl.oninput=()=>{x=+sl.value;unchip(el);draw()};
+    chips(el,c.presets,p=>{x=p.x;draw()});
     draw();
   },
   /* Wavelength from frequency. config {mhz, presets:[{q,mhz}]}. Wavelength m = 300 / MHz; quarter wave inches = 2808 / MHz. */
@@ -549,7 +556,7 @@ const CALCS={
 WIDGETS.calculator=(el,c)=>{el.classList.add('wg');if(!CALCS[c.calc])throw 0;CALCS[c.calc](el,c)};
 
 /* circuit-toggle: a battery and two resistors, switched between series and parallel, with the meter each arrangement shows.
-   config {series:{title,lines}, parallel:{title,lines}, start}. Series shows an ammeter in the path; parallel a voltmeter across a part. */
+   config {series:{title,lines}, parallel:{title,lines}, start, presets:[{q, m}]}. Series shows an ammeter in the path; parallel a voltmeter across a part. */
 WIDGETS['circuit-toggle']=(el,c)=>{
   let m=c.start||'series';
   el.classList.add('wg');
@@ -571,11 +578,13 @@ WIDGETS['circuit-toggle']=(el,c)=>{
     svg.innerHTML=D[m];const t=c[m]||{};svg.setAttribute('aria-label',m==='series'?'Two resistors in series in one loop, with an ammeter in the loop':'Two resistors in parallel across the battery, with a voltmeter across them');
     res.innerHTML=`<div class="eq" style="font-size:clamp(22px,6.5vw,30px)">${esc(t.title||'')}</div>${(t.lines||[]).map(l=>`<p>${esc(l)}</p>`).join('')}`;
   }
-  el.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{m=b.dataset.m;draw()});
+  el.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{m=b.dataset.m;unchip(el);draw()});
+  chips(el,c.presets,p=>{m=p.m;draw()},el.querySelector('.lead').nextElementSibling);
   draw();
 };
 
-/* sort-bins: one card at a time; tap the bin it belongs in. config {bins:[...], cards:[{t, bin, why}]}. */
+/* sort-bins: one card at a time; tap the bin it belongs in. config {bins:[...], cards:[{t, bin, why}], presets:[{q, t}]}.
+   A preset deals card t (its index in cards) next, so you sort it yourself. */
 WIDGETS['sort-bins']=(el,c)=>{
   let deck,i,score,answered;
   el.classList.add('wg');
@@ -591,28 +600,38 @@ WIDGETS['sort-bins']=(el,c)=>{
       if(answered)return;answered=true;const ok=b.dataset.b===k.bin;if(ok)score++;
       box.querySelectorAll('.bins button').forEach(x=>{x.disabled=true;if(x.dataset.b===k.bin)x.classList.add('pri')});
       box.querySelector('.vbox').innerHTML=`<div class="verdict ${ok?'ok':'no'}">${ok?'Right.':'It goes in '+esc(k.bin)+'.'} ${esc(k.why||'')}</div><button class="pri" id="sbnext" style="width:100%;margin-top:10px">${i+1<deck.length?'Next':'See how you did'}</button>`;
-      const n=box.querySelector('#sbnext');n.onclick=()=>{i++;show()};n.focus({preventScroll:true});
+      const n=box.querySelector('#sbnext');n.onclick=()=>{i++;unchip(el);show()};n.focus({preventScroll:true});
     });
   }
+  chips(el,c.presets,p=>{
+    const k=c.cards[p.t];if(answered)i++;const at=deck.indexOf(k);
+    if(i<deck.length&&at>=i)[deck[i],deck[at]]=[deck[at],deck[i]];else{deck=[k,...shuffle(c.cards.filter(x=>x!==k))];i=0;score=0}
+    show();
+  },box);
   deal();
 };
 
-/* match: tap a term on the left, then its partner on the right. config {left, right, pairs:[[term, partner]]}.
-   Partners may repeat (two terms with the same answer): any button with the right text counts. */
+/* match: tap a term on one side, then its partner on the other. config {left, right, pairs:[[term, partner]], presets:[{q, i, from?}]}.
+   Partners may repeat (two terms with the same answer): any button with the right text counts.
+   A preset selects pair i on side from ('l', the default, or 'r'), and you tap its partner. */
 WIDGETS.match=(el,c)=>{
   let sel=null,done=0;
   el.classList.add('wg');
   el.innerHTML=`<h3>Match them up</h3><p class="small mute lead">Tap a ${esc((c.left||'term').toLowerCase())}, then the ${esc((c.right||'match').toLowerCase())} that goes with it.</p><div class="mbox"></div>`;
   const box=el.querySelector('.mbox');
+  chips(el,c.presets,p=>{
+    const q=()=>box.querySelector(`.${p.from==='r'?'r':'l'}[data-i="${p.i}"]`);
+    if(q().disabled)deal();
+    box.querySelectorAll('.l,.r').forEach(x=>x.classList.toggle('sel',x===q()));sel=q();box.querySelector('.mres').innerHTML='';
+  },box);
   function deal(){
     sel=null;done=0;const L=shuffle(c.pairs.map((p,i)=>[p[0],i])),R=shuffle(c.pairs.map((p,i)=>[p[1],i]));
     box.innerHTML=`<div class="mt"><div><p class="small mute" style="margin:0">${esc(c.left||'')}</p>${L.map(([t,i])=>`<button class="l" data-i="${i}">${esc(t)}</button>`).join('')}</div>
     <div><p class="small mute" style="margin:0">${esc(c.right||'')}</p>${R.map(([t,i])=>`<button class="r" data-i="${i}">${esc(t)}</button>`).join('')}</div></div><div class="mres"></div>`;
-    box.querySelectorAll('.l').forEach(b=>b.onclick=()=>{if(b.disabled)return;box.querySelectorAll('.l').forEach(x=>x.classList.toggle('sel',x===b));sel=b});
-    box.querySelectorAll('.r').forEach(b=>b.onclick=()=>{
+    box.querySelectorAll('.l,.r').forEach(b=>b.onclick=()=>{
       if(b.disabled)return;
-      if(!sel){box.querySelector('.mres').innerHTML='<p class="small mute">Pick one on the left first.</p>';return}
-      if(c.pairs[+sel.dataset.i][1]===c.pairs[+b.dataset.i][1]){[sel,b].forEach(x=>{x.classList.remove('sel');x.classList.add('ok');x.disabled=true});sel=null;done++;
+      if(!sel||sel.classList.contains(b.classList.contains('l')?'l':'r')){box.querySelectorAll('.l,.r').forEach(x=>x.classList.toggle('sel',x===b));sel=b;box.querySelector('.mres').innerHTML='';return}
+      if(c.pairs[+sel.dataset.i][1]===c.pairs[+b.dataset.i][1]){unchip(el);[sel,b].forEach(x=>{x.classList.remove('sel');x.classList.add('ok');x.disabled=true});sel=null;done++;
         box.querySelector('.mres').innerHTML=done===c.pairs.length?`<div class="wres"><div class="eq">All ${done} <em>matched</em></div></div><button class="pri" id="mtagain" style="width:100%;margin-top:12px">Shuffle and match again</button>`:'';
         const a=box.querySelector('#mtagain');if(a)a.onclick=deal}
       else{b.classList.add('no');setTimeout(()=>b.classList.remove('no'),700);box.querySelector('.mres').innerHTML=`<p class="small" style="color:var(--red)">Not that one. Try again.</p>`}
