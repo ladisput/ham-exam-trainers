@@ -1,0 +1,146 @@
+{
+ "id": "interference-whose-fix",
+ "exam": "technician",
+ "title": "Interference: whose fix is it?",
+ "idea": "First make sure your own station is clean. When a neighbor's radio or TV picks you up, the fix usually goes at their receiver: a filter at its antenna input, or properly installed connectors.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "The problem",
+    "Where the fix goes"
+   ],
+   [
+    "Your signal gets into a neighbor's radio or TV",
+    "Their receiver: a filter at its antenna input"
+   ],
+   [
+    "Cable TV interference (not fiber)",
+    "Their TV: first check the feed line connectors are installed properly"
+   ],
+   [
+    "A neighbor says you're interfering",
+    "Your station: check it works properly and doesn't bother your own TV on the same channel"
+   ],
+   [
+    "A nearby FM broadcast station gets into your 2 m radio",
+    "Your receiver: a band-reject filter"
+   ],
+   [
+    "A device in a neighbor's home interferes with you",
+    "Together: find the device, mention the FCC rules politely, and check your own station"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "sort-bins",
+  "config": {
+   "bins": [
+    "Their receiver",
+    "Your station",
+    "Together"
+   ],
+   "cards": [
+    {
+     "t": "A filter at the antenna input of the neighbor's radio, to block your signal",
+     "bin": "Their receiver",
+     "why": "Blocking the amateur signal at the affected receiver's antenna input can reduce the interference."
+    },
+    {
+     "t": "Check the TV feed line connectors are installed properly",
+     "bin": "Their receiver",
+     "why": "That's the first step for cable TV interference that isn't fiber optic."
+    },
+    {
+     "t": "Make sure your station works properly and doesn't interfere with your own TV on the same channel",
+     "bin": "Your station",
+     "why": "That's the first thing to do when a neighbor reports interference."
+    },
+    {
+     "t": "A band-reject filter on your 2 m radio, against a nearby commercial FM station",
+     "bin": "Your station",
+     "why": "Here your radio is the one being interfered with, so the filter goes on it."
+    },
+    {
+     "t": "Make sure your station meets the standards of good amateur practice",
+     "bin": "Your station",
+     "why": "Do this when a neighbor's device is interfering with you, too."
+    },
+    {
+     "t": "Work with your neighbor to find the device causing interference to you",
+     "bin": "Together",
+     "why": "When something in their home interferes with you, start by finding it together."
+    },
+    {
+     "t": "Politely tell your neighbor that FCC rules prohibit devices that cause interference",
+     "bin": "Together",
+     "why": "That's part of the right approach, along with finding the device and checking your own station."
+    }
+   ],
+   "presets": [
+    {
+     "q": "T7B05",
+     "t": 0
+    },
+    {
+     "q": "T7B06",
+     "t": 2
+    },
+    {
+     "q": "T7B07",
+     "t": 3
+    },
+    {
+     "q": "T7B09",
+     "t": 1
+    }
+   ]
+  }
+ },
+ "traps": [
+  {
+   "q": "T7B02",
+   "wrong": "The microphone gain of the transmitter is turned up too high",
+   "why": "Mic gain affects your own audio. A broadcast radio picks you up because it can't reject strong signals outside its band."
+  },
+  {
+   "q": "T7B03",
+   "wrong": "Harmonics",
+   "why": "Harmonics are one cause, but so are fundamental overload and spurious emissions. It's all of them."
+  },
+  {
+   "q": "T7B05",
+   "wrong": "Block the interfering signal with a filter on the amateur transmitter",
+   "why": "The fix the pool wants is at the affected receiver: block the amateur signal at its antenna input."
+  },
+  {
+   "q": "T7B06",
+   "wrong": "Immediately turn off your transmitter and contact the nearest FCC office for assistance",
+   "why": "Don't shut down and call the FCC. First check your station works properly and doesn't interfere with your own TV."
+  },
+  {
+   "q": "T7B07",
+   "wrong": "Installing an RF preamplifier",
+   "why": "A preamplifier makes overload worse. A band-reject filter blocks the FM station."
+  },
+  {
+   "q": "T7B08",
+   "wrong": "Work with your neighbor to identify the offending device",
+   "why": "Working with your neighbor is one part. Telling them the rules politely and checking your own station are too."
+  },
+  {
+   "q": "T7B09",
+   "wrong": "Add a preamplifier to the TV antenna input",
+   "why": "A preamplifier doesn't fix interference. First check the TV feed line connectors are installed properly."
+  }
+ ],
+ "questions": [
+  "T7B02",
+  "T7B03",
+  "T7B05",
+  "T7B06",
+  "T7B07",
+  "T7B08",
+  "T7B09"
+ ]
+}

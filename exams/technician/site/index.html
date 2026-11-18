@@ -4,8 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Technician Class Trainer</title>
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<!--fonts--><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet"><!--/fonts-->
+<!--web-head-->
 <style>
 /* VOICE: a focused workbench, encouraging but exact.
    IDEA: the rig's front panel and a ham's logbook: bands on a dial, an S-meter for readiness, signal reports after each run.
@@ -150,7 +151,7 @@ let P={v:1,call:'',h:{},runs:{},exams:[],ts:0};
 let R=null,view='home';
 let FAM={},FAMDOC={},QFAM={},famOpen=null,famPushed=false,famPrev='',famScroll=0;
 /* Exam settings: filled in from exams/<exam>/exam.json by tools/site.py build. */
-const CFG={"title": "Technician Class Trainer", "heading": "Technician class trainer", "element": "Element 2 · 2026–2030 pool", "source": "NCVEC 2026–2030 Element 2 pool, public domain, Feb 19, 2026 revision (in effect July 1, 2026 through June 30, 2030).", "letter": "T", "ex": 35, "pass": 26, "ls": "tech-trainer-v1", "callSize": "20px", "callWidth": "8.2em"};
+const CFG={"title": "Technician Class Trainer", "heading": "Technician class trainer", "element": "Element 2 · 2026–2030 pool", "source": "NCVEC 2026–2030 Element 2 pool, public domain, Feb 19, 2026 revision (in effect July 1, 2026 through June 30, 2030).", "letter": "T", "ex": 35, "pass": 26, "ls": "tech-trainer-v1", "callSize": "20px", "short": "Tech Trainer", "callWidth": "8.2em"};
 const LS=CFG.ls,EX=CFG.ex,PASS=CFG.pass;
 let db=null,docRef=null,saving=false,dirty=false,saveT=null,syncNote='';
 
@@ -195,13 +196,24 @@ function meter(exp){
   <circle cx="160" cy="168" r="10" fill="var(--ink)"/></svg>`;
 }
 
+/* Web build only (CFG.web): how to put the trainer on the phone's home screen. Hidden once installed or dismissed. */
+function installTip(){
+  if(!CFG.web)return'';
+  const solo=matchMedia('(display-mode: standalone)').matches||navigator.standalone;let done=false;try{done=localStorage.getItem(LS+'-tipdone')}catch(e){}
+  if(solo||done)return'';
+  const ios=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  const how=window.__bip?'<button class="pri" id="inst">Install the app</button>':ios?'In Safari, tap the Share button, then <b>Add to Home Screen</b>.':'Open your browser menu and tap <b>Install app</b> or <b>Add to Home screen</b>.';
+  return`<div class="card"><h3>Put it on your home screen</h3><p class="small" style="margin:6px 0 10px">It opens like an app and works with no signal. ${how}</p>
+  <p class="small mute" style="margin:0 0 10px">Progress is saved on this device.${ios?' On iPhone the home screen app keeps its own progress, separate from Safari, so install it before you start (or move progress with the backup code below).':''}</p>
+  <button id="instx">Got it</button></div><div class="sp"></div>`;
+}
 function nextBand(){return BANDS.find(b=>rd(bandQs(b))<.8)}
 function home(){
   view='home';R=null;if(location.hash)history.replaceState(null,'',location.pathname+location.search);
   const o=odds(),nb=nextBand(),hooksN=Object.keys(HOOKS).length,lastEx=P.exams[P.exams.length-1];
   app.innerHTML=`<div class="top"><div><h1>${esc(CFG.heading)}</h1><p class="mute small" style="margin:6px 0 0">${esc(CFG.element)} · ${POOL.qs.length} questions</p></div>
   <input class="call" id="call" placeholder="CALLSIGN" maxlength="10" aria-label="Your call sign" value="${esc(P.call)}"></div>
-  <div class="card meter">${meter(o.exp)}
+  ${installTip()}<div class="card meter">${meter(o.exp)}
   <div class="stats"><div><b>${o.exp.toFixed(1)}</b><span class="small mute">projected / ${EX}</span></div><div><b style="color:var(--red)">${PASS}</b><span class="small mute">to pass</span></div><div><b>${pct(o.pass)}</b><span class="small mute">pass odds</span></div></div>
   <div class="row" style="margin-top:14px"><button class="pri" id="exam" style="flex:1">Mock exam (VE session)</button></div>
   ${lastEx?`<p class="small mute" style="margin:10px 0 0">Last mock exam: ${lastEx.s}/${EX} · ${lastEx.s>=PASS?'pass':'not yet'}</p>`:''}</div>
@@ -215,7 +227,7 @@ function home(){
   ${Object.values(FAM).map(f=>{const r=rd(famQs(f.id));return`<button class="band" data-fam="${esc(f.id)}" style="grid-template-columns:minmax(0,1fr)"><span style="font-weight:500">${esc(f.title)}</span><span><span class="small mute">${famQs(f.id).length} questions · ${pct(r)} ready</span><span class="bar ${r>=.8?'done':''}"><i style="width:${r*100}%"></i><s></s></span></span></button>`}).join('')}</div>`:''}
   <div class="sp"></div>
   <details class="card"><summary class="cond" style="font-size:20px">Backup and notes</summary>
-  <p class="small mute">${syncNote||'Progress is saved in this browser.'} To move it or keep a spare, copy the backup code and paste it back here later.</p>
+  <p class="small mute">${syncNote||'Progress is saved on this device.'} To move it or keep a spare, copy the backup code and paste it back here later.</p>
   <div class="row"><button id="cp">Copy backup code</button><button id="rs">Restore from code</button></div>
   <textarea id="bk" placeholder="Paste a backup code here, then tap Restore" aria-label="Backup code"></textarea>
   <p class="small mute" id="bkmsg"></p>
@@ -226,6 +238,8 @@ function home(){
   app.querySelectorAll('.band[data-b]').forEach(el=>el.onclick=()=>{location.hash='band-'+el.dataset.b});
   $('#cp').onclick=async()=>{const code=btoa(unescape(encodeURIComponent(JSON.stringify(P))));$('#bk').value=code;try{await navigator.clipboard.writeText(code);$('#bkmsg').textContent='Copied. Keep it somewhere safe.'}catch(e){$('#bkmsg').textContent='Select the code above and copy it.'}};
   $('#rs').onclick=()=>{try{const o=JSON.parse(decodeURIComponent(escape(atob($('#bk').value.trim()))));if(!o.h)throw 0;P=Object.assign({v:1,call:'',h:{},runs:{},exams:[]},o);save();home()}catch(e){$('#bkmsg').textContent="That code didn't work. Paste the whole code and try again."}};
+  if($('#inst'))$('#inst').onclick=async()=>{const e=window.__bip;if(!e)return;window.__bip=null;e.prompt();try{await e.userChoice}catch(x){}home()};
+  if($('#instx'))$('#instx').onclick=()=>{try{localStorage.setItem(LS+'-tipdone','1')}catch(e){}home()};
   let armed=false;$('#reset').onclick=e=>{if(!armed){armed=true;e.target.textContent='Tap again to erase everything';return}P={v:1,call:P.call,h:{},runs:{},exams:[]};save();home()};
 }
 
@@ -676,6 +690,7 @@ function famHash(){const m=location.hash.match(/^#family-([a-z0-9-]+)$/);return 
 
 function route(){const fh=famHash();if(fh){const h=location.hash;home();history.replaceState(null,'',h);famPushed=false;showFam(fh);return}
   const m=location.hash.match(new RegExp('^#band-('+CFG.letter+'\\d)$'));if(m&&BANDS.includes(m[1]))band(m[1]);else home()}
+addEventListener('bip',()=>{if(POOL&&view==='home'&&!famOpen)home()});
 addEventListener('hashchange',()=>{const fh=famHash();if(fh){showFam(fh);return}if(famOpen){closeFam();return}if(view==='run'&&R&&R.res.length)return;route()});
 
 Promise.all([fetch('pool.json').then(r=>r.json()),fetch('hooks.json').then(r=>r.ok?r.json():{}).catch(()=>({})),fetch('families/_index.json').then(r=>r.ok?r.json():{families:[]}).catch(()=>({families:[]}))]).then(([p,h,fi])=>{
@@ -702,5 +717,6 @@ Promise.all([fetch('pool.json').then(r=>r.json()),fetch('hooks.json').then(r=>r.
 })();
 }
 </script>
+<!--web-body-->
 </body>
 </html>

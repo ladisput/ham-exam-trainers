@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Technician Class Trainer</title>
+<link rel="stylesheet" href="../fonts/fonts.css">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#e6e9e1" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#111413" media="(prefers-color-scheme: dark)">
+<meta name="description" content="Technician class trainer: practice runs, mock exams and study pages for the US amateur radio exam. Works offline.">
+<link rel="icon" href="icon-192.png" type="image/png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Tech Trainer">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<script>addEventListener('beforeinstallprompt',e=>{e.preventDefault();window.__bip=e;dispatchEvent(new Event('bip'))});addEventListener('appinstalled',()=>{window.__bip=null;dispatchEvent(new Event('bip'))});</script>
+<style>
+/* VOICE: a focused workbench, encouraging but exact.
+   IDEA: the rig's front panel and a ham's logbook: bands on a dial, an S-meter for readiness, signal reports after each run.
+   PICTURE: an analog S-meter whose needle is your projected exam score; S9 sits on the pass line (pass/exam size, set per exam).
+   COLOUR and TYPE: panel grey-green ground, white cards, signal red for the needle and pass line, dial blue for actions; Barlow Condensed like front-panel legends, Barlow body.
+   LAYOUT: one 720px column; meter on top, bands below; runs take the whole column. */
+:root{color-scheme:light dark;--bg:light-dark(#e6e9e1,#111413);--card:light-dark(#fcfcf9,#1a1e1c);--ink:light-dark(#151918,#e8ebe5);--mute:light-dark(#59615c,#9ba49f);--line:light-dark(#c8cdc3,#2e3532);--red:light-dark(#c4301c,#ff6b52);--blue:light-dark(#1d4e8f,#86b4ff);--ok:light-dark(#257238,#6fd08a);--okbg:light-dark(#e3f1e5,#173222);--badbg:light-dark(#f8e4e0,#3a1d18);--face:light-dark(#f3f0e4,#20251f);--tint:light-dark(#eef1ea,#202523)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 Barlow,system-ui,sans-serif;overflow-x:clip}
+.wrap{max-width:720px;margin:0 auto;padding:16px max(4vw,14px) 48px}
+h1,h2,h3,.cond{font-family:"Barlow Condensed",Barlow,sans-serif;font-weight:600;line-height:1.05;margin:0;text-wrap:balance}
+h1{font-size:clamp(32px,7vw,46px)}h2{font-size:28px}h3{font-size:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px}
+.mute{color:var(--mute)}.small{font-size:14px}
+button{font:500 16px/1 Barlow,sans-serif;min-height:44px;padding:0 16px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer}
+button.pri{background:var(--blue);border-color:var(--blue);color:light-dark(#fff,#0d1420)}
+button:focus-visible,.opt:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:14px}
+.call{flex:none;font:700 var(--call-size,20px)/1 "Barlow Condensed",sans-serif;letter-spacing:.04em;background:var(--ink);color:var(--card);border:0;border-radius:8px;padding:8px 12px;min-height:40px;width:var(--call-w,8.2em);text-align:center;text-transform:uppercase}
+.call::placeholder{color:light-dark(#aab,#556)}
+.meter svg{width:100%;height:auto;display:block}
+.needle{transition:transform 1.1s cubic-bezier(.3,1.4,.5,1);transform-origin:160px 168px}
+@media(prefers-reduced-motion:reduce){.needle{transition:none}}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:10px;text-align:center}
+.stats b{display:block;font:600 28px/1.1 "Barlow Condensed",sans-serif}
+.band{display:grid;grid-template-columns:3.2em minmax(0,1fr);gap:4px 12px;align-items:center;padding:12px 4px;border-top:1px solid var(--line);cursor:pointer;background:none;border-left:0;border-right:0;border-bottom:0;width:100%;text-align:left;border-radius:0;min-height:0;font-weight:400}
+.band:first-child{border-top:0}
+.code{font:700 24px/1 "Barlow Condensed",sans-serif;grid-row:span 2}
+.bar{display:block;position:relative;height:8px;border-radius:4px;background:var(--tint);margin-top:6px}
+.bar i{position:absolute;inset:0 auto 0 0;border-radius:4px;background:var(--blue)}
+.bar.done i{background:var(--ok)}
+.bar s{position:absolute;left:80%;top:-4px;bottom:-4px;width:2px;background:var(--red)}
+.tag{font-size:13px;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--tint);color:var(--mute);white-space:nowrap}
+.tag.ok{background:var(--okbg);color:var(--ok)}.tag.next{background:var(--blue);color:light-dark(#fff,#0d1420)}
+.qhead{display:flex;justify-content:space-between;gap:8px;font-size:14px;color:var(--mute);margin-bottom:10px}
+.prog{height:4px;background:var(--tint);border-radius:2px;margin-bottom:14px}.prog i{display:block;height:4px;background:var(--red);border-radius:2px}
+.q{font-size:19px;font-weight:500;line-height:1.45;margin:0 0 14px}
+.opt{display:flex;gap:10px;width:100%;text-align:left;padding:12px;margin:0 0 8px;min-height:52px;line-height:1.4;font-weight:400;align-items:flex-start}
+.opt span{font:700 16px/1.4 "Barlow Condensed",sans-serif;color:var(--mute);flex:none;width:1.1em}
+.opt.right{background:var(--okbg);border-color:var(--ok);color:var(--ok)}
+.opt.wrong{background:var(--badbg);border-color:var(--red);color:var(--red)}
+.opt[disabled]{cursor:default;opacity:1}
+.fig{background:#fff;border-radius:10px;padding:6px;margin:0 0 14px;border:1px solid var(--line)}
+.fig img{width:100%;height:auto;display:block;max-height:60vh;object-fit:contain}
+.note{border-left:4px solid var(--red);background:var(--face);padding:12px 14px;border-radius:0 10px 10px 0;margin:10px 0 0;line-height:1.5}
+.note b{font:700 15px/1 "Barlow Condensed",sans-serif;letter-spacing:.02em;display:block;margin-bottom:6px;color:var(--red)}
+.miss{padding:16px 0;border-top:1px solid var(--line)}.miss:first-child{border-top:0}
+.ans{padding:8px 10px;border-radius:8px;margin:6px 0;font-size:15px}
+.ans.r{background:var(--okbg);color:var(--ok)}.ans.w{background:var(--badbg);color:var(--red);text-decoration:line-through}
+.big{font:700 clamp(56px,16vw,88px)/1 "Barlow Condensed",sans-serif}
+.grp{display:grid;grid-template-columns:3em minmax(0,1fr) auto;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line);font-size:15px}
+.grp:first-child{border-top:0}
+textarea{width:100%;font:14px/1.4 ui-monospace,monospace;min-height:90px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:10px}
+details summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
+.sp{height:14px}
+/* Family pages ("Still confused?") */
+.fambtn{display:flex;flex-direction:column;align-items:flex-start;gap:2px;width:100%;margin-top:8px;padding:10px 14px;text-align:left;line-height:1.25;border-color:var(--blue);color:var(--blue)}
+.fambtn span{font-size:14px;color:var(--mute)}.fambtn b{font:600 19px/1.15 "Barlow Condensed",sans-serif}
+.idea{font-size:19px;line-height:1.45;margin:8px 0 0}
+.core{margin-top:12px;background:var(--face);border:1px solid var(--line);border-radius:10px;padding:14px;overflow-x:auto}
+.core .formula{font:700 clamp(36px,11vw,60px)/1.05 "Barlow Condensed",sans-serif;text-align:center;letter-spacing:.02em}
+.core .sub{text-align:center;margin:8px 0 0}
+.core table{width:100%;border-collapse:collapse;font:600 20px/1.2 "Barlow Condensed",sans-serif}
+.core th,.core td{padding:8px 6px;border-top:1px solid var(--line);text-align:left;vertical-align:top}
+.core tr:first-child th{border-top:0;color:var(--mute);font-size:16px;font-weight:600}
+.core td:first-child,.core th:first-child{color:var(--mute);font-size:16px}
+.cmp{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:8px}
+.cmp div{background:var(--tint);border-radius:10px;padding:10px 12px}.cmp b{display:block;font:600 20px/1.15 "Barlow Condensed",sans-serif;margin-bottom:2px}
+.trap s{color:var(--red)}.trap .tq{font:600 14px/1 "Barlow Condensed",sans-serif;color:var(--mute);margin-right:6px}
+.fq{border-top:1px solid var(--line)}.fq:first-of-type{border-top:0}
+.fq summary{gap:10px;padding:8px 0;line-height:1.4;align-items:flex-start}
+.fq summary .cond{flex:none;font-size:15px;color:var(--mute);padding-top:2px}
+.fq[open]{padding-bottom:12px}
+/* Widgets (S3): shared pieces */
+.wg h3{margin-bottom:4px}.wg .lead{margin:0 0 12px}
+.wg input,.wg select{font:500 18px/1 Barlow,sans-serif;min-height:44px;border-radius:10px;border:1px solid var(--line);background:var(--card);color:var(--ink);padding:0 10px;width:100%}
+.wg label{display:block;font-size:14px;color:var(--mute);margin-bottom:4px}
+.fields{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.chip{font:600 16px/1 "Barlow Condensed",sans-serif;letter-spacing:.03em;padding:0 12px}
+.chip.on{background:var(--blue);border-color:var(--blue);color:light-dark(#fff,#0d1420)}
+.wq{font-size:15px;margin:10px 0 0;padding:8px 10px;border-radius:8px;background:var(--tint)}
+.wres{margin-top:12px;background:var(--face);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.wres .eq{font:700 clamp(26px,8vw,38px)/1.1 "Barlow Condensed",sans-serif;overflow-wrap:anywhere}
+.wres .eq em{font-style:normal;color:var(--red)}
+.wres p{margin:6px 0 0}
+.tri{display:block;width:100%;max-width:260px;margin:0 auto}
+.tri .tk{cursor:pointer;outline:none}.tri .tk polygon{fill:transparent}
+.tri .tk.on polygon{fill:var(--badbg)}.tri .tk.on text{fill:var(--red)}
+.tri .tk:focus-visible polygon{stroke:var(--blue);stroke-width:4}
+.tri text{font:700 46px "Barlow Condensed",sans-serif;fill:var(--ink);text-anchor:middle;pointer-events:none}
+.rungs{margin-top:12px}
+.rung{display:grid;grid-template-columns:4.2em minmax(0,1fr);gap:2px 10px;align-items:center;width:100%;text-align:left;padding:8px 12px;min-height:52px;font-weight:400;line-height:1.2}
+.rung b{font:700 24px/1 "Barlow Condensed",sans-serif;grid-row:span 2}.rung .rv{font:600 19px/1.2 "Barlow Condensed",sans-serif;overflow-wrap:anywhere}
+.rung .rn{color:var(--mute);font-size:14px}
+.rung.from{border-color:var(--blue);box-shadow:inset 4px 0 0 var(--blue)}.rung.to{border-color:var(--red);box-shadow:inset 4px 0 0 var(--red)}
+.gap{font:600 14px/1 "Barlow Condensed",sans-serif;color:var(--mute);padding:5px 0 5px 1.6em}
+.wave{display:block;width:100%;height:auto;margin-top:12px}
+.seg{display:flex;gap:6px;margin-top:4px}.seg button{flex:1}
+.circ{display:block;width:100%;height:auto;margin-top:12px;color:var(--ink)}
+.circ .w{fill:none;stroke:currentColor;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.circ .flow{fill:none;stroke:var(--blue);stroke-width:3;stroke-dasharray:3 11;stroke-linecap:round;animation:flow 1s linear infinite}
+.circ .mtr{fill:var(--card);stroke:var(--red);stroke-width:3}.circ text{font:700 20px "Barlow Condensed",sans-serif;fill:var(--red);text-anchor:middle}
+.circ .lbl{font:600 13px Barlow,sans-serif;fill:var(--mute)}
+@keyframes flow{to{stroke-dashoffset:-28}}@media(prefers-reduced-motion:reduce){.circ .flow{animation:none}}
+.sbcard{font:600 clamp(22px,6vw,28px)/1.2 "Barlow Condensed",sans-serif;text-align:center;padding:22px 12px;margin-top:10px;background:var(--face);border:1px solid var(--line);border-radius:10px}
+.bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin-top:10px}
+.bins button{font:600 18px/1.1 "Barlow Condensed",sans-serif;min-height:52px}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:8px}.verdict.ok{background:var(--okbg);color:var(--ok)}.verdict.no{background:var(--badbg);color:var(--red)}
+.mt{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-top:10px}
+.mt div{display:flex;flex-direction:column;gap:8px}
+.mt button{text-align:left;line-height:1.25;padding:8px 10px;font-size:15px;min-height:48px}
+.mt .l{font:600 18px/1.15 "Barlow Condensed",sans-serif}
+.mt button.sel{border-color:var(--blue);box-shadow:inset 0 0 0 2px var(--blue)}
+.mt button.ok{background:var(--okbg);border-color:var(--ok);color:var(--ok)}
+.mt button.no{background:var(--badbg);border-color:var(--red);color:var(--red)}
+.fx{position:relative;margin-top:12px}.fx .fig{margin:0}
+.fx .ring{position:absolute;width:13%;aspect-ratio:1;border:3px solid var(--red);border-radius:50%;transform:translate(-50%,-50%);pointer-events:none;box-shadow:0 0 0 3px rgba(255,255,255,.7)}
+.nums{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.nums button{font:700 20px/1 "Barlow Condensed",sans-serif;min-width:52px}
+.nums button.on{background:var(--red);border-color:var(--red);color:light-dark(#fff,#1a0d0a)}
+.sc .seg{flex-wrap:wrap}.sc .seg button{flex:1 1 auto;line-height:1.2;padding:8px 12px;text-align:left}
+.meterbar{height:16px;border-radius:8px;background:var(--tint);margin-top:10px;overflow:hidden}.meterbar i{display:block;height:100%;background:var(--blue);transition:width .15s}
+.bc{display:block;width:100%;height:auto;margin-top:12px;color:var(--ink)}.bc text{font:600 12px Barlow,sans-serif;fill:var(--mute)}
+.bc .k-cw{fill:var(--red)}.bc .k-phone{fill:var(--blue)}.bc .k-other{fill:var(--mute)}.bc .k-range{fill:var(--tint);stroke:var(--line)}.bc .k-range.alt{fill:var(--face)}
+.bc .sel{stroke:var(--ink);stroke-width:3}.bc .mk{stroke:var(--ink);stroke-width:2}.bc .bct{fill:var(--ink);font-weight:700}
+.bclist{display:flex;flex-direction:column;gap:6px;margin-top:10px}.bclist button{text-align:left;line-height:1.25;padding:8px 12px;display:flex;gap:10px;align-items:center}
+.bclist i{flex:none;width:14px;height:14px;border-radius:3px;border:1px solid var(--line)}.bclist button.on{border-color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
+</style>
+</head>
+<body style="--call-size:20px;--call-w:8.2em">
+<div class="wrap" id="app"><p class="mute">Loading the question pool…</p></div>
+<div class="wrap" id="fam" hidden></div>
+<script>
+{
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const app=$('#app');
+let POOL,HOOKS={},BY={},GROUPS={},BANDS=[];
+let P={v:1,call:'',h:{},runs:{},exams:[],ts:0};
+let R=null,view='home';
+let FAM={},FAMDOC={},QFAM={},famOpen=null,famPushed=false,famPrev='',famScroll=0;
+/* Exam settings: filled in from exams/<exam>/exam.json by tools/site.py build. */
+const CFG={"title": "Technician Class Trainer", "heading": "Technician class trainer", "element": "Element 2 · 2026–2030 pool", "source": "NCVEC 2026–2030 Element 2 pool, public domain, Feb 19, 2026 revision (in effect July 1, 2026 through June 30, 2030).", "letter": "T", "ex": 35, "pass": 26, "ls": "tech-trainer-v1", "callSize": "20px", "short": "Tech Trainer", "callWidth": "8.2em", "web": true};
+const LS=CFG.ls,EX=CFG.ex,PASS=CFG.pass;
+let db=null,docRef=null,saving=false,dirty=false,saveT=null,syncNote='';
+
+try{const s=localStorage.getItem(LS);if(s)P=Object.assign(P,JSON.parse(s))}catch(e){}
+
+function save(){P.ts=Date.now();try{localStorage.setItem(LS,JSON.stringify(P))}catch(e){}dirty=true;clearTimeout(saveT);saveT=setTimeout(flush,1200)}
+async function flush(){if(!docRef||saving||!dirty)return;saving=true;dirty=false;try{await docRef.set(JSON.parse(JSON.stringify(P)))}catch(e){if(e&&e.code==='unavailable')dirty=true}saving=false;if(dirty)saveT=setTimeout(flush,1500)}
+
+const last=id=>{const s=P.h[id];return s?s[s.length-1]:''};
+const rd=ids=>ids.length?ids.filter(id=>last(id)==='1').length/ids.length:0;
+const bandQs=b=>POOL.qs.filter(q=>q.id.startsWith(b)).map(q=>q.id);
+const grpQs=g=>GROUPS[g];
+const pct=x=>Math.round(x*100)+'%';
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+const hookOf=id=>HOOKS[id]||'';
+
+function odds(){
+  const ps=Object.keys(GROUPS).map(g=>rd(GROUPS[g]));
+  let d=[1];
+  for(const p of ps){const n=new Array(d.length+1).fill(0);d.forEach((v,k)=>{n[k]+=v*(1-p);n[k+1]+=v*p});d=n}
+  const exp=ps.reduce((a,b)=>a+b,0);
+  return{exp,pass:d.slice(PASS).reduce((a,b)=>a+b,0)};
+}
+function record(id,ok){P.h[id]=((P.h[id]||'')+(ok?'1':'0')).slice(-6)}
+
+function meter(exp){
+  const ang=v=>-60+120*Math.min(v,EX)/EX;
+  const pt=(a,r)=>{const t=(a-90)*Math.PI/180;return[160+r*Math.cos(t),168+r*Math.sin(t)]};
+  let ticks='';
+  for(let s=1;s<=9;s++){const v=PASS*s/9,a=ang(v),[x1,y1]=pt(a,118),[x2,y2]=pt(a,s%2?128:132),[tx,ty]=pt(a,145);ticks+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="currentColor" stroke-width="2"/>`+(s%2?`<text x="${tx}" y="${ty+5}" text-anchor="middle" font-size="15" fill="currentColor">${s}</text>`:'')}
+  [[(PASS+EX)/2,'+20'],[EX,'+40']].forEach(([v,l])=>{const a=ang(v),[x1,y1]=pt(a,118),[x2,y2]=pt(a,130),[tx,ty]=pt(a,145);ticks+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="var(--red)" stroke-width="2"/><text x="${tx}" y="${ty+5}" text-anchor="middle" font-size="14" fill="var(--red)">${l}</text>`});
+  const arc=(a0,a1,r)=>{const[x0,y0]=pt(a0,r),[x1,y1]=pt(a1,r);return`M${x0} ${y0}A${r} ${r} 0 0 1 ${x1} ${y1}`};
+  return`<svg viewBox="0 0 320 190" role="img" aria-label="S-meter showing projected exam score ${Math.round(exp)} of ${EX}; S9 is the passing score of ${PASS}">
+  <rect x="2" y="2" width="316" height="186" rx="14" fill="var(--face)" stroke="var(--line)"/>
+  <g style="color:var(--ink);font-family:'Barlow Condensed',sans-serif;font-weight:600">
+  <path d="${arc(-60,ang(PASS),118)}" stroke="currentColor" stroke-width="3" fill="none"/>
+  <path d="${arc(ang(PASS),60,118)}" stroke="var(--red)" stroke-width="6" fill="none"/>${ticks}
+  <text x="24" y="34" font-size="20" fill="currentColor">S</text><text x="296" y="34" font-size="13" text-anchor="end" fill="var(--red)">PASS ZONE</text>
+  <text x="160" y="96" font-size="13" text-anchor="middle" fill="var(--mute)" style="font-family:Barlow,system-ui,sans-serif">projected exam score</text>
+  </g>
+  <g class="needle" style="transform:rotate(${ang(exp)}deg)"><line x1="160" y1="168" x2="160" y2="44" stroke="var(--red)" stroke-width="2.5" stroke-linecap="round"/></g>
+  <circle cx="160" cy="168" r="10" fill="var(--ink)"/></svg>`;
+}
+
+/* Web build only (CFG.web): how to put the trainer on the phone's home screen. Hidden once installed or dismissed. */
+function installTip(){
+  if(!CFG.web)return'';
+  const solo=matchMedia('(display-mode: standalone)').matches||navigator.standalone;let done=false;try{done=localStorage.getItem(LS+'-tipdone')}catch(e){}
+  if(solo||done)return'';
+  const ios=/iP(hone|ad|od)/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  const how=window.__bip?'<button class="pri" id="inst">Install the app</button>':ios?'In Safari, tap the Share button, then <b>Add to Home Screen</b>.':'Open your browser menu and tap <b>Install app</b> or <b>Add to Home screen</b>.';
+  return`<div class="card"><h3>Put it on your home screen</h3><p class="small" style="margin:6px 0 10px">It opens like an app and works with no signal. ${how}</p>
+  <p class="small mute" style="margin:0 0 10px">Progress is saved on this device.${ios?' On iPhone the home screen app keeps its own progress, separate from Safari, so install it before you start (or move progress with the backup code below).':''}</p>
+  <button id="instx">Got it</button></div><div class="sp"></div>`;
+}
+function nextBand(){return BANDS.find(b=>rd(bandQs(b))<.8)}
+function home(){
+  view='home';R=null;if(location.hash)history.replaceState(null,'',location.pathname+location.search);
+  const o=odds(),nb=nextBand(),hooksN=Object.keys(HOOKS).length,lastEx=P.exams[P.exams.length-1];
+  app.innerHTML=`<div class="top"><div><h1>${esc(CFG.heading)}</h1><p class="mute small" style="margin:6px 0 0">${esc(CFG.element)} · ${POOL.qs.length} questions</p></div>
+  <input class="call" id="call" placeholder="CALLSIGN" maxlength="10" aria-label="Your call sign" value="${esc(P.call)}"></div>
+  ${installTip()}<div class="card meter">${meter(o.exp)}
+  <div class="stats"><div><b>${o.exp.toFixed(1)}</b><span class="small mute">projected / ${EX}</span></div><div><b style="color:var(--red)">${PASS}</b><span class="small mute">to pass</span></div><div><b>${pct(o.pass)}</b><span class="small mute">pass odds</span></div></div>
+  <div class="row" style="margin-top:14px"><button class="pri" id="exam" style="flex:1">Mock exam (VE session)</button></div>
+  ${lastEx?`<p class="small mute" style="margin:10px 0 0">Last mock exam: ${lastEx.s}/${EX} · ${lastEx.s>=PASS?'pass':'not yet'}</p>`:''}</div>
+  <div class="sp"></div>
+  <div class="card"><div class="row" style="justify-content:space-between;margin-bottom:4px"><h3>Bands</h3><span class="small mute">clear a band at 80%</span></div>
+  ${BANDS.map(b=>{const ids=bandQs(b),r=rd(ids),runs=(P.runs[b]||[]).length,n=Object.keys(GROUPS).filter(g=>g.startsWith(b)).length;
+   const tag=r>=.8?'<span class="tag ok">Cleared</span>':b===nb?'<span class="tag next">Next up</span>':runs?`<span class="tag">${runs} run${runs>1?'s':''}</span>`:'';
+   return`<button class="band" data-b="${b}"><span class="code">${b}</span><span class="row" style="justify-content:space-between;gap:6px"><span style="font-weight:500">${esc(POOL.subs[b])}</span>${tag}</span>
+   <span><span class="small mute">${n} on the exam · ${ids.length} in pool · ${pct(r)} ready</span><span class="bar ${r>=.8?'done':''}"><i style="width:${r*100}%"></i><s></s></span></span></button>`}).join('')}</div>
+  ${Object.keys(FAM).length?`<div class="sp"></div><div class="card"><div class="row" style="justify-content:space-between;margin-bottom:4px"><h3>Still confused? pages</h3><span class="small mute">one idea, every angle</span></div>
+  ${Object.values(FAM).map(f=>{const r=rd(famQs(f.id));return`<button class="band" data-fam="${esc(f.id)}" style="grid-template-columns:minmax(0,1fr)"><span style="font-weight:500">${esc(f.title)}</span><span><span class="small mute">${famQs(f.id).length} questions · ${pct(r)} ready</span><span class="bar ${r>=.8?'done':''}"><i style="width:${r*100}%"></i><s></s></span></span></button>`}).join('')}</div>`:''}
+  <div class="sp"></div>
+  <details class="card"><summary class="cond" style="font-size:20px">Backup and notes</summary>
+  <p class="small mute">${syncNote||'Progress is saved on this device.'} To move it or keep a spare, copy the backup code and paste it back here later.</p>
+  <div class="row"><button id="cp">Copy backup code</button><button id="rs">Restore from code</button></div>
+  <textarea id="bk" placeholder="Paste a backup code here, then tap Restore" aria-label="Backup code"></textarea>
+  <p class="small mute" id="bkmsg"></p>
+  <p class="small mute">Questions: ${esc(CFG.source)} Study notes written for ${hooksN} of ${POOL.qs.length} questions so far.</p>
+  <button id="reset" style="color:var(--red)">Reset all progress</button></details>`;
+  $('#call').oninput=e=>{P.call=e.target.value.toUpperCase();save()};
+  $('#exam').onclick=startExam;
+  app.querySelectorAll('.band[data-b]').forEach(el=>el.onclick=()=>{location.hash='band-'+el.dataset.b});
+  $('#cp').onclick=async()=>{const code=btoa(unescape(encodeURIComponent(JSON.stringify(P))));$('#bk').value=code;try{await navigator.clipboard.writeText(code);$('#bkmsg').textContent='Copied. Keep it somewhere safe.'}catch(e){$('#bkmsg').textContent='Select the code above and copy it.'}};
+  $('#rs').onclick=()=>{try{const o=JSON.parse(decodeURIComponent(escape(atob($('#bk').value.trim()))));if(!o.h)throw 0;P=Object.assign({v:1,call:'',h:{},runs:{},exams:[]},o);save();home()}catch(e){$('#bkmsg').textContent="That code didn't work. Paste the whole code and try again."}};
+  if($('#inst'))$('#inst').onclick=async()=>{const e=window.__bip;if(!e)return;window.__bip=null;e.prompt();try{await e.userChoice}catch(x){}home()};
+  if($('#instx'))$('#instx').onclick=()=>{try{localStorage.setItem(LS+'-tipdone','1')}catch(e){}home()};
+  let armed=false;$('#reset').onclick=e=>{if(!armed){armed=true;e.target.textContent='Tap again to erase everything';return}P={v:1,call:P.call,h:{},runs:{},exams:[]};save();home()};
+}
+
+function band(b){
+  view='band';R=null;
+  const ids=bandQs(b),r=rd(ids),runs=P.runs[b]||[],missed=ids.filter(id=>last(id)==='0'),gs=Object.keys(GROUPS).filter(g=>g.startsWith(b));
+  const first=!runs.length;
+  app.innerHTML=`<button id="back">← All bands</button><div class="sp"></div>
+  <div class="card"><p class="cond mute" style="font-size:18px;margin:0 0 4px">${b} · ${gs.length} exam question${gs.length>1?'s':''}</p><h2>${esc(POOL.subs[b])}</h2>
+  <div class="row" style="justify-content:space-between;margin-top:12px"><span class="big" style="font-size:56px">${pct(r)}</span><span class="small mute" style="text-align:right">ready<br>target 80%</span></div>
+  <div class="bar ${r>=.8?'done':''}" style="height:12px"><i style="width:${r*100}%"></i><s></s></div>
+  <p class="small mute">${first?`First run: a straight practice test of all ${ids.length} questions. No notes during it. After it, a signal report walks you through every miss.`:`Repeat runs: if you miss, tap the note to see why. Ready = questions you got right the last time you saw them.`}</p>
+  <div class="row"><button class="pri" id="full" style="flex:1">${first?'Start first run':'Run all'} (${ids.length})</button>${!first&&missed.length?`<button id="mo" style="flex:1">Missed only (${missed.length})</button>`:''}</div>
+  ${missed.length?`<div class="row" style="margin-top:10px"><button id="study" style="flex:1">Study ${missed.length} missed question${missed.length>1?'s':''}</button></div>`:''}</div>
+  <div class="sp"></div>
+  <div class="card"><h3 style="margin-bottom:6px">Groups</h3><p class="small mute" style="margin:0 0 6px">The exam pulls one question from each group.</p>
+  ${gs.map(g=>{const gr=rd(GROUPS[g]);return`<div class="grp"><span class="cond" style="font-size:20px">${g}</span><span><span class="small">${esc(POOL.groups[g].split(':')[0].split(';')[0])}</span><span class="bar ${gr>=.8?'done':''}"><i style="width:${gr*100}%"></i><s></s></span></span><button data-g="${g}" class="small">${pct(gr)} · Drill</button></div>`}).join('')}</div>
+  ${runs.length?`<div class="sp"></div><div class="card"><h3>Run log</h3>${runs.slice(-8).reverse().map(x=>`<div class="grp" style="grid-template-columns:minmax(0,1fr) auto"><span class="small">${new Date(x.t).toLocaleDateString(undefined,{month:'short',day:'numeric'})} · ${x.k}</span><b class="cond" style="font-size:20px">${x.s}/${x.n}</b></div>`).join('')}</div>`:''}`;
+  $('#back').onclick=()=>{location.hash=''};
+  $('#full').onclick=()=>startRun(b,ids,first?'First run':'Full run',!first);
+  if($('#mo'))$('#mo').onclick=()=>startRun(b,missed,'Missed only',true);
+  if($('#study'))$('#study').onclick=()=>debrief({band:b,miss:missed.map(id=>({id,pick:-1})),study:true});
+  app.querySelectorAll('[data-g]').forEach(el=>el.onclick=()=>startRun(b,GROUPS[el.dataset.g],'Drill '+el.dataset.g,!!runs.length));
+  scrollTo(0,0);
+}
+
+function startRun(b,ids,kind,hooks){R={mode:'run',band:b,kind,hooks,qs:shuffle(ids),i:0,res:[]};view='run';ask()}
+function startExam(){const qs=Object.keys(GROUPS).sort().map(g=>GROUPS[g][Math.floor(Math.random()*GROUPS[g].length)]);R={mode:'exam',band:null,kind:'Mock exam',hooks:false,qs,i:0,res:[]};view='run';ask()}
+
+function ask(){
+  const id=R.qs[R.i],q=BY[id],ord=shuffle([0,1,2,3]);R.ord=ord;R.done=false;
+  const ok=R.res.filter(x=>x.ok).length,exam=R.mode==='exam';
+  app.innerHTML=`<div class="qhead"><span>${exam?'Mock exam':esc(R.kind)} · ${R.i+1} of ${R.qs.length}</span><span>${exam?'':`${ok} right`}</span></div>
+  <div class="prog"><i style="width:${R.i/R.qs.length*100}%"></i></div>
+  <div class="card"><p class="cond mute" style="font-size:16px;margin:0 0 6px">${id}</p><p class="q">${esc(q.q)}</p>
+  ${q.f?`<div class="fig"><img src="fig/${q.f}" alt="Figure ${esc(q.f.replace('.png','').toUpperCase())} from the question pool"></div>`:''}
+  <div id="opts">${ord.map((k,n)=>`<button class="opt" data-k="${k}"><span>${'ABCD'[n]}</span><em style="font-style:normal">${esc(q.a[k])}</em></button>`).join('')}</div>
+  <div id="after"></div></div>
+  <div class="row" style="margin-top:14px;justify-content:space-between"><button id="quit">${R.i?'End run':'Cancel'}</button><button class="pri" id="next" hidden>${R.i+1<R.qs.length?'Next':'Finish'}</button></div>`;
+  app.querySelectorAll('.opt').forEach(el=>el.onclick=()=>pick(+el.dataset.k));
+  $('#quit').onclick=()=>{if(R.res.length)finish();else back()};
+  $('#next').onclick=adv;
+  scrollTo(0,0);
+}
+function pick(k){
+  if(R.done)return;R.done=true;
+  const id=R.qs[R.i],q=BY[id],ok=k===q.c;
+  R.res.push({id,pick:k,ok});record(id,ok);save();$('#quit').textContent='End run';
+  if(R.mode==='exam'){adv();return}
+  app.querySelectorAll('.opt').forEach(el=>{const kk=+el.dataset.k;el.disabled=true;if(kk===q.c)el.classList.add('right');else if(kk===k)el.classList.add('wrong')});
+  const h=hookOf(id);
+  if(!ok&&R.hooks)$('#after').innerHTML=`<button id="hk" style="margin-top:8px;width:100%">Why? Show the note</button><div id="hkt"></div>`;
+  if($('#hk'))$('#hk').onclick=()=>{$('#hk').remove();$('#hkt').innerHTML=`<div class="note"><b>Elmer's note</b>${h?esc(h):'No note written for this one yet. The correct answer is highlighted above.'}</div>${famBtns(id,R.fam)}`};
+  $('#next').hidden=false;$('#next').focus({preventScroll:true});
+}
+function adv(){R.i++;if(R.i<R.qs.length)ask();else finish()}
+function back(){if(R&&R.band)band(R.band);else if(R&&R.fam){const f=R.fam;home();openFam(f)}else home()}
+
+function finish(){
+  const n=R.res.length,s=R.res.filter(x=>x.ok).length;
+  if(R.mode==='exam'){P.exams.push({t:Date.now(),s,n})}
+  else{const key=R.band||'family-'+R.fam;(P.runs[key]=P.runs[key]||[]).push({t:Date.now(),k:R.kind,s,n})}
+  save();
+  debrief({band:R.band,fam:R.fam,exam:R.mode==='exam',s,n,kind:R.kind,miss:R.res.filter(x=>!x.ok)});
+}
+
+function debrief(d){
+  view='debrief';const b=d.band,fm=d.fam&&FAM[d.fam],o=odds();
+  const head=d.study?`<h2>Missed questions · ${b}</h2><p class="mute">Everything you got wrong the last time you saw it. Read each note, then run the band again.</p>`
+  :d.exam?`<p class="cond mute" style="font-size:18px;margin:0">Mock exam result</p><div class="row" style="align-items:baseline;gap:14px"><span class="big" style="color:${d.s>=PASS?'var(--ok)':'var(--red)'}">${d.s}/${d.n}</span><span class="cond" style="font-size:26px">${d.n<EX?'(ended early)':d.s>=PASS?'Pass':'Not yet · need '+PASS}</span></div>`
+  :`<p class="cond mute" style="font-size:18px;margin:0">Signal report · ${esc(d.kind)}</p><div class="row" style="align-items:baseline;gap:14px"><span class="big">${d.s}/${d.n}</span><span class="cond" style="font-size:26px">${pct(d.n?d.s/d.n:0)}</span></div><p class="mute small" style="margin:6px 0 0">${fm?esc(fm.title):b} is now ${pct(rd(fm?famQs(d.fam):bandQs(b)))} ready · target 80% · pass odds ${pct(o.pass)}</p>`;
+  app.innerHTML=`<div class="card">${head}
+  <div class="row" style="margin-top:14px">${b?`<button class="pri" id="again" style="flex:1">Run ${b} again</button>`:fm?'<button class="pri" id="again" style="flex:1">Drill these again</button>':'<button class="pri" id="again" style="flex:1">New mock exam</button>'}<button id="done" style="flex:1">${b?'Back to band':fm?'Family page':'Home'}</button></div></div>
+  <div class="sp"></div>
+  ${d.miss.length?`<div class="card"><h3 style="margin-bottom:4px">${d.miss.length} to learn</h3>
+  ${d.miss.map(m=>{const q=BY[m.id],h=hookOf(m.id);return`<div class="miss"><p class="cond mute" style="font-size:15px;margin:0 0 4px">${m.id}</p><p style="margin:0 0 6px;font-weight:500">${esc(q.q)}</p>
+  ${q.f?`<div class="fig"><img src="fig/${q.f}" alt="Figure ${esc(q.f.replace('.png','').toUpperCase())}"></div>`:''}
+  ${m.pick>=0?`<div class="ans w">${esc(q.a[m.pick])}</div>`:''}<div class="ans r">${esc(q.a[q.c])}</div>
+  <div class="note"><b>Elmer's note</b>${h?esc(h):'No note written for this one yet.'}</div>${famBtns(m.id,d.fam)}</div>`}).join('')}</div>`
+  :`<div class="card"><h3>Clean copy</h3><p class="mute">No misses. Nothing to study from this run.</p></div>`}`;
+  $('#again').onclick=()=>b?startRun(b,bandQs(b),'Full run',true):fm?startFam(d.fam):startExam();
+  $('#done').onclick=()=>b?band(b):fm?openFam(d.fam):home();
+  scrollTo(0,0);
+}
+
+
+/* ---- Family pages ("Still confused?") ----
+   families/_index.json lists the published families; each page is families/<id>.json (format in SPEC.md).
+   The page is shown over the current view (#fam), so closing it returns to the exact run or debrief state. */
+const famQs=id=>(FAM[id]?FAM[id].questions:[]).filter(q=>BY[q]);
+function famBtns(id,skip){return(QFAM[id]||[]).filter(f=>f!==skip).map(f=>`<button class="fambtn" data-fam="${f}"><span>Still confused?</span><b>${esc(FAM[f].title)}</b></button>`).join('')}
+document.addEventListener('click',e=>{const el=e.target.closest('[data-fam]');if(el&&!el.closest('#fam'))openFam(el.dataset.fam)});
+function openFam(id){if(!FAM[id])return;famScroll=scrollY;famPrev=location.hash;famPushed=true;location.hash='family-'+id}
+function closeFam(){const box=$('#fam');box.hidden=true;box.innerHTML='';app.hidden=false;famOpen=null;if(view==='home')home();scrollTo(0,famScroll)}
+function famBack(){if(famPushed)history.back();else{history.replaceState(null,'',location.pathname+location.search);closeFam()}}
+/* Widgets: WIDGETS[type](el, config, family) fills el. Built in S3 as each type is first needed (types in SPEC.md). */
+const WIDGETS={};
+const fmt=(x,s=6)=>isFinite(x)?x.toLocaleString('en-US',{maximumSignificantDigits:s,useGrouping:Math.abs(x)>=1e4}):'?';
+const num=v=>{const x=parseFloat(String(v).replace(/,/g,''));return isFinite(x)?x:NaN};
+/* Preset chips: one per pool question the widget can work. pick(p) loads preset p; the question text shows under the chips.
+   Every widget type takes presets (see SPEC.md). before: put the chips above that node instead of at the end. */
+function chips(el,presets,pick,before){
+  if(!presets||!presets.length)return;
+  const box=document.createElement('div');box.innerHTML=`<p class="small mute" style="margin:14px 0 0">Try a question from the pool:</p><div class="chips">${presets.map((p,i)=>`<button class="chip" data-i="${i}">${esc(p.q)}</button>`).join('')}</div><p class="wq" hidden></p>`;
+  if(before){box.style.marginBottom='14px';el.insertBefore(box,before)}else el.appendChild(box);
+  box.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{box.querySelectorAll('.chip').forEach(x=>x.classList.toggle('on',x===b));const p=presets[+b.dataset.i],w=box.querySelector('.wq');w.hidden=!BY[p.q];if(BY[p.q])w.textContent=BY[p.q].q;pick(p)});
+}
+const unchip=el=>{el.querySelectorAll('.chip.on').forEach(x=>x.classList.remove('on'));const w=el.querySelector('.wq');if(w)w.hidden=true};
+
+/* formula-triangle: config {top,left,right: {s,n,u}, start, presets:[{q,find,vals:{s:value}}]}. top = left x right. */
+WIDGETS['formula-triangle']=(el,c)=>{
+  const T=c.top,L=c.left,Rt=c.right,all=[T,L,Rt],by=s=>all.find(v=>v.s===s);
+  let find=c.start||Rt.s;const val={};
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Cover the one you want</h3><p class="small mute lead">Tap the letter you need to find. What's left is the math: one over the other means divide, side by side means multiply.</p>
+  <svg class="tri" viewBox="0 0 240 200" role="group" aria-label="${esc(T.s)} over ${esc(L.s)} and ${esc(Rt.s)}">
+  <path d="M120 8 L232 192 L8 192 Z" fill="var(--face)" stroke="currentColor" stroke-width="3" stroke-linejoin="round" style="color:var(--ink)"/>
+  ${[[T,'120,8 176,100 64,100',120,84],[L,'64,100 120,100 120,192 8,192',84,170],[Rt,'120,100 176,100 232,192 120,192',156,170]].map(([v,pts,x,y])=>`<g class="tk" data-s="${esc(v.s)}" role="button" tabindex="0" aria-label="Find ${esc(v.n)}"><polygon points="${pts}"/><text x="${x}" y="${y}">${esc(v.s)}</text></g>`).join('')}
+  <line x1="64" y1="100" x2="176" y2="100" stroke="var(--ink)" stroke-width="3"/><line x1="120" y1="100" x2="120" y2="192" stroke="var(--ink)" stroke-width="3"/></svg>
+  <div class="fields"></div><div class="wres"></div>`;
+  const fields=el.querySelector('.fields'),res=el.querySelector('.wres');
+  function draw(){
+    el.querySelectorAll('.tk').forEach(g=>{const on=g.dataset.s===find;g.classList.toggle('on',on);g.querySelector('text').textContent=on?'?':g.dataset.s;g.setAttribute('aria-pressed',on)});
+    const known=all.filter(v=>v.s!==find);
+    fields.innerHTML=known.map(v=>`<div><label for="ft-${esc(v.s)}">${esc(v.s)} = ${esc(v.n)} (${esc(v.u)})</label><input id="ft-${esc(v.s)}" data-s="${esc(v.s)}" type="text" inputmode="decimal" value="${val[v.s]??''}" placeholder="${esc(v.u)}"></div>`).join('');
+    fields.querySelectorAll('input').forEach(i=>i.oninput=()=>{val[i.dataset.s]=i.value;unchip(el);calc()});
+    calc();
+  }
+  function calc(){
+    const F=by(find);let rule,op,a,b;
+    if(find===T.s){rule=`${T.s} = ${L.s} x ${Rt.s}`;op='x';a=L;b=Rt}
+    else{rule=`${find} = ${T.s} / ${find===L.s?Rt.s:L.s}`;op='/';a=T;b=find===L.s?Rt:L}
+    const x=num(val[a.s]),y=num(val[b.s]);
+    let out=`<div class="eq">${esc(rule)}</div>`;
+    if(isFinite(x)&&isFinite(y)&&!(op==='/'&&y===0)){const r=op==='x'?x*y:x/y;out+=`<p class="eq" style="font-size:clamp(22px,6.5vw,30px)">${esc(find)} = ${fmt(x)} ${op} ${fmt(y)} = <em>${fmt(r,4)} ${esc(r===1?F.u.replace(/s$/,''):F.u)}</em></p>`}
+    else out+=`<p class="small mute">Fill in ${esc(a.n.toLowerCase())} and ${esc(b.n.toLowerCase())} to see the answer.</p>`;
+    res.innerHTML=out;
+  }
+  el.querySelectorAll('.tk').forEach(g=>{const go=()=>{find=g.dataset.s;unchip(el);draw()};g.onclick=go;g.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}}});
+  chips(el,c.presets,p=>{find=p.find;for(const k in val)delete val[k];Object.assign(val,p.vals);draw()});
+  draw();
+};
+
+/* ladder (prefix converter): config {steps:[{p,n,x}] largest first, units:[...], start:{v,p,u}, presets:[{q,v,p,u,to}]}.
+   Every rung shows the same amount in that unit; tap a rung to see the working. */
+WIDGETS.ladder=(el,c)=>{
+  const S=c.steps;let st=Object.assign({v:'1',p:'',u:c.units[0],to:null},c.start);st.v=String(st.v);
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Climb the ladder</h3><p class="small mute lead">Same amount, every rung. Smaller unit = bigger number. Tap a rung to see the working.</p>
+  <div class="fields" style="grid-template-columns:minmax(0,1.4fr) minmax(0,1fr) minmax(0,1fr)"><div><label for="ld-v">Amount</label><input id="ld-v" type="text" inputmode="decimal"></div>
+  <div><label for="ld-p">Prefix</label><select id="ld-p">${S.map(s=>`<option value="${esc(s.p)}">${esc(s.p||'none')}</option>`).join('')}</select></div>
+  <div><label for="ld-u">Unit</label><select id="ld-u">${c.units.map(u=>`<option>${esc(u)}</option>`).join('')}</select></div></div>
+  <div class="rungs"></div><div class="wres"></div>`;
+  const $v=el.querySelector('#ld-v'),$p=el.querySelector('#ld-p'),$u=el.querySelector('#ld-u'),rungs=el.querySelector('.rungs'),res=el.querySelector('.wres');
+  const step=p=>S.find(s=>s.p===p);
+  function draw(){
+    $v.value=st.v;$p.value=st.p;$u.value=st.u;
+    const v=num(st.v),fx=step(st.p).x;
+    rungs.innerHTML=S.map((s,i)=>(i?`<div class="gap">${fmt(10**(S[i-1].x-s.x))} x</div>`:'')+`<button class="rung${s.p===st.p?' from':''}${s.p===st.to?' to':''}" data-p="${esc(s.p)}"><b>${esc(s.p+st.u)}</b><span class="rn">${esc(s.n)}</span><span class="rv">${isFinite(v)?fmt(v*10**(fx-s.x))+' '+esc(s.p+st.u):'?'}</span></button>`).join('');
+    rungs.querySelectorAll('.rung').forEach(b=>b.onclick=()=>{st.to=b.dataset.p;unchip(el);draw()});
+    const t=st.to!=null&&step(st.to);
+    if(!isFinite(v))res.innerHTML='<p class="small mute" style="margin:0">Type an amount.</p>';
+    else if(!t||t.p===st.p)res.innerHTML=`<p class="small mute" style="margin:0">You have ${fmt(v)} ${esc(st.p+st.u)}. Tap another rung to convert.</p>`;
+    else{const d=fx-t.x,f=10**Math.abs(d),r=v*10**d,from=esc(st.p+st.u),to=esc(t.p+st.u);
+      res.innerHTML=`<div class="eq">${fmt(v)} ${from} = <em>${fmt(r)} ${to}</em></div><p>${d>0?`${to} is the smaller unit, so the number gets bigger: multiply by ${fmt(f)}.`:`${to} is the bigger unit, so the number gets smaller: divide by ${fmt(f)}.`}</p><p class="small mute">${fmt(v)} ${d>0?'x':'/'} ${fmt(f)} = ${fmt(r)}</p>`}
+  }
+  $v.oninput=()=>{st.v=$v.value;unchip(el);draw()};$p.onchange=()=>{st.p=$p.value;unchip(el);draw()};$u.onchange=()=>{st.u=$u.value;unchip(el);draw()};
+  chips(el,c.presets,p=>{st={v:String(p.v),p:p.p,u:p.u,to:p.to};draw()});
+  draw();
+};
+
+/* figure-explorer: tap a part number to see what it is. config {figs:[{f, title, parts:[{n, x, y, name, look, job, q}]}]}.
+   x and y place a ring on the figure, as percent of its width and height. Presets come from each part's q (question ids). */
+WIDGETS['figure-explorer']=(el,c)=>{
+  let fi=0,pi=null;
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Read the figure</h3><p class="small mute lead">Tap a number to see that part, what it looks like, and what it is.</p>
+  ${c.figs.length>1?`<div class="seg" role="group" aria-label="Figure">${c.figs.map((f,i)=>`<button data-f="${i}">${esc(f.title)}</button>`).join('')}</div>`:''}
+  <div class="fx"><div class="fig"><img alt=""></div><span class="ring" hidden></span></div><div class="nums"></div><div class="wres"></div>`;
+  const img=el.querySelector('.fx img'),ring=el.querySelector('.ring'),nums=el.querySelector('.nums'),res=el.querySelector('.wres');
+  function draw(){
+    const F=c.figs[fi];
+    el.querySelectorAll('[data-f]').forEach(b=>{const on=+b.dataset.f===fi;b.classList.toggle('pri',on);b.setAttribute('aria-pressed',on)});
+    if(img.getAttribute('src')!=='fig/'+F.f){img.src='fig/'+F.f;img.alt=F.title}
+    nums.innerHTML=F.parts.map((p,i)=>`<button data-p="${i}" class="${i===pi?'on':''}" aria-label="Part ${p.n}">${p.n}</button>`).join('');
+    nums.querySelectorAll('button').forEach(b=>b.onclick=()=>{pi=+b.dataset.p;unchip(el);draw()});
+    const P=pi!=null&&F.parts[pi];ring.hidden=!P;
+    if(P){ring.style.left=P.x+'%';ring.style.top=P.y+'%';
+      res.innerHTML=`<div class="eq">${esc(F.title)}, part ${P.n}: <em>${esc(P.name)}</em></div><p>${esc(P.look)}</p>${P.job?`<p class="small mute">${esc(P.job)}</p>`:''}${P.q?`<p class="small mute">Asked in ${esc(P.q)}.</p>`:''}`}
+    else res.innerHTML=`<p class="small mute" style="margin:0">The exam asks about parts ${F.parts.map(p=>p.n).join(', ')} of ${esc(F.title)}.</p>`;
+  }
+  el.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{fi=+b.dataset.f;pi=null;unchip(el);draw()});
+  chips(el,c.presets||c.figs.flatMap((F,f)=>F.parts.flatMap((P,p)=>(String(P.q||'').match(/T\d[A-Z]\d\d/g)||[]).map(q=>({q,f,p})))),p=>{fi=p.f;pi=p.p;draw()},el.querySelector('.lead').nextElementSibling);
+  draw();
+};
+
+/* scenario: pick a situation, see what applies. config {situations:[{label, title, text, dims?:[{id,label,options}], rules?:[{when:{id:[options]}, title, text}]}],
+   presets:[{q, s, dims?:{id:option}}]}.
+   When a situation has dims, the first rule whose every listed dim matches gives the result. */
+WIDGETS.scenario=(el,c)=>{
+  let si=0;const pick={};
+  el.classList.add('wg','sc');
+  el.innerHTML=`<h3>${esc(c.heading||'What is going on?')}</h3><p class="small mute lead">${esc(c.lead||'Pick what you are hearing to see what is causing it.')}</p>
+  <div class="seg" role="group" aria-label="Situation">${c.situations.map((x,i)=>`<button data-s="${i}">${esc(x.label)}</button>`).join('')}</div><div class="dims"></div><div class="wres"></div>`;
+  const dims=el.querySelector('.dims'),res=el.querySelector('.wres');
+  function draw(){
+    const S=c.situations[si];
+    el.querySelectorAll('[data-s]').forEach(b=>{const on=+b.dataset.s===si;b.classList.toggle('pri',on);b.setAttribute('aria-pressed',on)});
+    dims.innerHTML=(S.dims||[]).map(d=>{if(!(d.id in pick)||!d.options.includes(pick[d.id]))pick[d.id]=d.options[0];
+      return`<p class="small mute" style="margin:12px 0 0">${esc(d.label)}</p><div class="seg">${d.options.map(o=>`<button data-d="${esc(d.id)}" data-o="${esc(o)}" class="${pick[d.id]===o?'pri':''}" aria-pressed="${pick[d.id]===o}">${esc(o)}</button>`).join('')}</div>`}).join('');
+    dims.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{pick[b.dataset.d]=b.dataset.o;unchip(el);draw()});
+    let r=S;
+    if(S.rules)r=S.rules.find(x=>Object.entries(x.when).every(([k,v])=>v.includes(pick[k])))||S;
+    res.innerHTML=`<div class="eq">${esc(r.title||S.title)}</div><p>${esc(r.text||S.text||'')}</p>`;
+  }
+  el.querySelectorAll('[data-s]').forEach(b=>b.onclick=()=>{si=+b.dataset.s;unchip(el);draw()});
+  chips(el,c.presets,p=>{si=p.s;Object.assign(pick,p.dims||{});draw()},el.querySelector('.lead').nextElementSibling);
+  draw();
+};
+
+/* band-chart: tap a band to see it drawn to scale with its segments and marked frequencies; tap any item for details.
+   config {heading, lead, bands:[{name, title?, lo, hi, unit, scale:'lin'|'log', ticks?, segs:[{lo,hi,label,kind,text}], marks:[{f,label,text}], text}]}.
+   kind: cw | phone | other | range. An item's optional `show` replaces its frequency text in the list.
+   presets:[{q, b?, i?}]: band b (default 0), item i (segs first, then marks; leave out for the band itself). */
+WIDGETS['band-chart']=(el,c)=>{
+  let bi=0,ii=null;
+  el.classList.add('wg');
+  el.innerHTML=`<h3>${esc(c.heading||'The band map')}</h3><p class="small mute lead">${esc(c.lead||'Pick a band, then tap anything on it.')}</p>
+  ${c.bands.length>1?`<div class="seg" role="group" aria-label="Band">${c.bands.map((b,i)=>`<button data-b="${i}">${esc(b.name)}</button>`).join('')}</div>`:''}
+  <svg class="bc" viewBox="0 0 320 110" role="img"></svg><div class="bclist"></div><div class="wres"></div>`;
+  const svg=el.querySelector('svg'),list=el.querySelector('.bclist'),res=el.querySelector('.wres');
+  const col={cw:'var(--red)',phone:'var(--blue)',other:'var(--mute)',range:'var(--tint)'};
+  function draw(){
+    const B=c.bands[bi],u=B.unit||'MHz',lg=B.scale==='log',L=lg?Math.log:x=>x;
+    const X=f=>12+296*(L(f)-L(B.lo))/(L(B.hi)-L(B.lo));
+    el.querySelectorAll('[data-b]').forEach(b=>{const on=+b.dataset.b===bi;b.classList.toggle('pri',on);b.setAttribute('aria-pressed',on)});
+    const items=[...(B.segs||[]).map(x=>({...x,t:'s'})),...(B.marks||[]).map(x=>({...x,t:'m'}))];
+    let g=`<rect x="12" y="52" width="296" height="26" rx="4" class="k-range"/>`;
+    (B.segs||[]).forEach((x,i)=>{const on=items[ii]===undefined?false:items[ii].t==='s'&&items[ii].label===x.label;
+      g+=`<rect x="${X(x.lo)}" y="52" width="${Math.max(2,X(x.hi)-X(x.lo))}" height="26" class="k-${esc(x.kind||'range')}${x.kind==='range'&&i%2?' alt':''}${on?' sel':''}"/>`;
+      if(x.kind==='range'||X(x.hi)-X(x.lo)>40)g+=`<text x="${(X(x.lo)+X(x.hi))/2}" y="69" text-anchor="middle" class="bct" style="${x.kind&&x.kind!=='range'?'fill:var(--card)':''}">${esc(x.short||x.label)}</text>`});
+    (B.marks||[]).forEach((m,i)=>{const x=X(m.f),y=18+(i%2)*14;g+=`<line x1="${x}" y1="${y+4}" x2="${x}" y2="80" class="mk"/><text x="${x}" y="${y}" text-anchor="${x>250?'end':x<70?'start':'middle'}" class="bct">${esc(m.short||m.label)}</text>`});
+    (B.ticks||[B.lo,B.hi]).forEach(t=>{g+=`<text x="${Math.min(306,Math.max(14,X(t)))}" y="98" text-anchor="${X(t)<30?'start':X(t)>290?'end':'middle'}">${fmt(t)}</text>`});
+    svg.innerHTML=g;svg.setAttribute('aria-label',`${B.name}, ${fmt(B.lo)} to ${fmt(B.hi)} ${u}`);
+    list.innerHTML=items.map((x,i)=>`<button data-i="${i}" class="${i===ii?'on':''}"><i style="background:${x.t==='m'?'var(--ink)':col[x.kind||'range']};${x.t==='m'?'width:4px':''}"></i><span>${esc(x.label)} <span class="small mute">${x.show?esc(x.show):x.t==='m'?fmt(x.f)+' '+u:fmt(x.lo)+' to '+fmt(x.hi)+' '+u}</span></span></button>`).join('');
+    list.querySelectorAll('button').forEach(b=>b.onclick=()=>{ii=+b.dataset.i;unchip(el);draw()});
+    const I=ii!=null&&items[ii];
+    res.innerHTML=I?`<div class="eq" style="font-size:clamp(22px,6.5vw,30px)">${esc(I.label)}</div><p>${esc(I.text||'')}</p>`:`<div class="eq" style="font-size:clamp(22px,6.5vw,30px)">${esc(B.title||B.name+': '+fmt(B.lo)+' to '+fmt(B.hi)+' '+u)}</div>${B.text?`<p>${esc(B.text)}</p>`:''}`;
+  }
+  el.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{bi=+b.dataset.b;ii=null;unchip(el);draw()});
+  chips(el,c.presets,p=>{bi=p.b||0;ii=p.i??null;draw()},el.querySelector('.lead').nextElementSibling);
+  draw();
+};
+
+/* calculator: config {calc:<name>, ...}; each calc fills el with inputs, a live result and the working. */
+const CALCS={
+  /* dB from a power change. config {from, to, presets:[{q,from,to}]}. Breaks the ratio into x2 (3 dB) and x10 (10 dB) steps. */
+  db(el,c){
+    let a=String(c.from??5),b=String(c.to??10);
+    el.innerHTML=`<h3>Power change to decibels</h3><p class="small mute lead">Doubling the power adds 3 dB. Ten times the power adds 10 dB. Halving takes 3 dB away.</p>
+    <div class="fields"><div><label for="db-a">From (watts)</label><input id="db-a" type="text" inputmode="decimal"></div><div><label for="db-b">To (watts)</label><input id="db-b" type="text" inputmode="decimal"></div></div><div class="wres"></div>`;
+    const $a=el.querySelector('#db-a'),$b=el.querySelector('#db-b'),res=el.querySelector('.wres');
+    function steps(r){for(let t=-1;t<=2;t++)for(let h=-4;h<=4;h++){if(Math.abs(10**t*2**h/r-1)<.03)return[t,h]}return null}
+    function draw(){
+      $a.value=a;$b.value=b;const x=num(a),y=num(b);
+      if(!(x>0&&y>0)){res.innerHTML='<p class="small mute" style="margin:0">Type two power levels above zero.</p>';return}
+      const r=y/x,d=10*Math.log10(r),k=steps(r);let how='';
+      if(k){const[t,h]=k,parts=[];
+        if(t)parts.push(`${t>0?'x':'/'}${fmt(10**Math.abs(t))} (${t>0?'+':'-'}${10*Math.abs(t)} dB)`);
+        if(h)parts.push(`${h>0?'doubled':'halved'}${Math.abs(h)>1?' '+Math.abs(h)+' times':''} (${h>0?'+':'-'}${3*Math.abs(h)} dB)`);
+        how=`<p>${parts.length?'Power '+parts.join(', then ')+'.':'No change in power, 0 dB.'}</p>`}
+      const near=k?10*k[0]+3*k[1]:Math.round(d);
+      res.innerHTML=`<div class="eq">${fmt(x)} W to ${fmt(y)} W = <em>${near>0?'+':''}${near} dB</em></div><p class="small mute">${fmt(y)} / ${fmt(x)} = ${fmt(r,4)} times the power</p>${how}<p class="small mute">Exact: 10 x log(${fmt(r,4)}) = ${fmt(d,3)} dB</p>`;
+    }
+    $a.oninput=()=>{a=$a.value;unchip(el);draw()};$b.oninput=()=>{b=$b.value;unchip(el);draw()};
+    chips(el,c.presets,p=>{a=String(p.from);b=String(p.to);draw()});
+    draw();
+  },
+  /* Multipath: a direct and a reflected copy of a signal. Moving the antenna changes how they line up.
+     config {feet, presets:[{q, x}]}. Purely an illustration: no real distances are claimed. x is the slider position, 0 to 100. */
+  multipath(el,c){
+    let x=c.feet??0;
+    el.innerHTML=`<h3>Move the antenna</h3><p class="small mute lead">Two copies of the same signal arrive: one direct, one bounced off something. Slide the antenna a few feet and watch them add up or cancel.</p>
+    <label for="mp-s">Antenna position</label><input id="mp-s" type="range" min="0" max="100" style="padding:0">
+    <svg class="wave" viewBox="0 0 320 150" aria-hidden="true"><path class="d" fill="none" stroke="var(--mute)" stroke-width="2"/><path class="r" fill="none" stroke="var(--mute)" stroke-width="2" stroke-dasharray="5 4"/><path class="s" fill="none" stroke="var(--blue)" stroke-width="3.5"/></svg>
+    <p class="small mute" style="margin:2px 0 0">Thin lines: direct and bounced copies. Thick line: what your receiver gets.</p>
+    <div class="meterbar"><i></i></div><div class="wres"></div>`;
+    const sl=el.querySelector('#mp-s'),res=el.querySelector('.wres'),bar=el.querySelector('.meterbar i');
+    const P=k=>el.querySelector('path.'+k);
+    function draw(){
+      sl.value=x;const ph=x/100*4*Math.PI,amp=Math.hypot(1+.85*Math.cos(ph),.85*Math.sin(ph))/1.85;
+      const line=(f,y0,a)=>{let d='';for(let i=0;i<=320;i+=2)d+=(i?' L':'M')+i+' '+(y0-a*f(i/320*4*Math.PI)).toFixed(1);return d};
+      P('d').setAttribute('d',line(t=>Math.sin(t),30,14));P('r').setAttribute('d',line(t=>.85*Math.sin(t+ph),30,14));
+      P('s').setAttribute('d',line(t=>Math.sin(t)+.85*Math.sin(t+ph),100,22));
+      bar.style.width=Math.round(amp*100)+'%';
+      const t=amp>.75?['Reinforcing','The copies line up and add together: a strong signal.']:amp<.25?['Cancelling','The copies are out of step and cancel: the signal nearly disappears.']:['Partly cancelling','The copies are partly out of step: a weaker signal.'];
+      res.innerHTML=`<div class="eq"><em>${t[0]}</em></div><p>${t[1]}</p><p class="small mute">Drive through this and it flickers fast: picket fencing. Send data through it and errors go up.</p>`;
+    }
+    sl.oninput=()=>{x=+sl.value;unchip(el);draw()};
+    chips(el,c.presets,p=>{x=p.x;draw()});
+    draw();
+  },
+  /* Wavelength from frequency. config {mhz, presets:[{q,mhz}]}. Wavelength m = 300 / MHz; quarter wave inches = 2808 / MHz. */
+  wavelength(el,c){
+    let f=String(c.mhz??146);
+    el.innerHTML=`<h3>Frequency to wavelength</h3><p class="small mute lead">Slide the frequency up and watch the waves get shorter, and the antenna with them.</p>
+    <div class="fields"><div><label for="wl-f">Frequency (MHz)</label><input id="wl-f" type="text" inputmode="decimal"></div></div>
+    <input id="wl-s" type="range" min="0" max="1000" aria-label="Frequency" style="margin-top:10px;padding:0">
+    <svg class="wave" viewBox="0 0 320 70" aria-hidden="true"><path fill="none" stroke="var(--blue)" stroke-width="3"/></svg><div class="wres"></div>`;
+    const $f=el.querySelector('#wl-f'),$s=el.querySelector('#wl-s'),path=el.querySelector('.wave path'),res=el.querySelector('.wres');
+    const lo=Math.log(1),hi=Math.log(3000),toS=m=>Math.round((Math.log(m)-lo)/(hi-lo)*1000),fromS=s=>Math.exp(lo+(hi-lo)*s/1000);
+    function draw(fromSlider){
+      const m=num(f);if(!fromSlider)$f.value=f;
+      if(!(m>0)){res.innerHTML='<p class="small mute" style="margin:0">Type a frequency in MHz.</p>';path.setAttribute('d','');return}
+      if(!fromSlider)$s.value=toS(Math.min(3000,Math.max(1,m)));
+      const cyc=1+(toS(Math.min(3000,Math.max(1,m)))/1000)*11;let d='M0 35';
+      for(let x=1;x<=320;x++)d+=` L${x} ${(35-26*Math.sin(x/320*cyc*2*Math.PI)).toFixed(1)}`;
+      path.setAttribute('d',d);
+      const w=300/m,q=2808/m;
+      res.innerHTML=`<div class="eq">300 / ${fmt(m)} = <em>${fmt(w,3)} m</em></div><p>One wavelength at ${fmt(m)} MHz is about ${fmt(w,3)} meters${w<1?` (${fmt(w*100,3)} cm)`:''}.</p><p class="small mute">Quarter-wave antenna: 2808 / ${fmt(m)} = ${fmt(q,3)} inches</p>`;
+    }
+    $f.oninput=()=>{f=$f.value;unchip(el);draw()};
+    $s.oninput=()=>{f=String(+fromS(+$s.value).toPrecision(3));$f.value=f;unchip(el);draw(true)};
+    chips(el,c.presets,p=>{f=String(p.mhz);draw()});
+    draw();
+  }
+};
+WIDGETS.calculator=(el,c)=>{el.classList.add('wg');if(!CALCS[c.calc])throw 0;CALCS[c.calc](el,c)};
+
+/* circuit-toggle: a battery and two resistors, switched between series and parallel, with the meter each arrangement shows.
+   config {series:{title,lines}, parallel:{title,lines}, start, presets:[{q, m}]}. Series shows an ammeter in the path; parallel a voltmeter across a part. */
+WIDGETS['circuit-toggle']=(el,c)=>{
+  let m=c.start||'series';
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Flip the circuit</h3><p class="small mute lead">Same battery, same two resistors. Switch how they are connected and watch where the current goes.</p>
+  <div class="seg" role="group" aria-label="Arrangement"><button data-m="series">Series</button><button data-m="parallel">Parallel</button></div>
+  <svg class="circ" viewBox="0 0 300 190" role="img"></svg><div class="wres"></div>`;
+  const svg=el.querySelector('svg'),res=el.querySelector('.wres');
+  const zh=(x,y)=>`M${x} ${y} l6 -9 l8 18 l8 -18 l8 18 l8 -18 l8 18 l4 -9`,zv=(x,y)=>`M${x} ${y} l-9 6 l18 8 l-18 8 l18 8 l-18 8 l18 8 l-9 4`;
+  const batt=`<line x1="20" y1="88" x2="60" y2="88" class="w"/><line x1="28" y1="100" x2="52" y2="100" class="w" style="stroke-width:5"/><text x="40" y="78" class="lbl" style="font-size:12px">+</text>`;
+  const D={
+    series:`${batt}<path class="w" d="M40 88 V30 H95 M145 30 H175 M225 30 H262 V72 M262 108 V160 H40 V100"/><path class="w" d="${zh(95,30)}"/><path class="w" d="${zh(175,30)}"/>
+      <path class="flow" d="M40 88 V30 H95 M145 30 H175 M225 30 H262 V72 M262 108 V160 H40 V100"/><circle class="mtr" cx="262" cy="90" r="18"/><text x="262" y="97">A</text>
+      <text class="lbl" x="150" y="182" style="text-anchor:middle">same current through each resistor</text>`,
+    parallel:`${batt}<path class="w" d="M40 88 V30 H275 M40 100 V160 H275 M150 30 V70 M150 120 V160 M220 30 V70 M220 120 V160 M275 30 V72 M275 108 V160"/><path class="w" d="${zv(150,70)}"/><path class="w" d="${zv(220,70)}"/>
+      <path class="flow" d="M40 88 V30 H150 V70 M150 120 V160 H40 V100"/><path class="flow" d="M150 30 H220 V70 M220 120 V160 H150"/><circle class="mtr" cx="275" cy="90" r="18"/><text x="275" y="97">V</text>
+      <text class="lbl" x="185" y="182" style="text-anchor:middle">same voltage across each resistor</text>`};
+  function draw(){
+    el.querySelectorAll('.seg button').forEach(b=>{const on=b.dataset.m===m;b.classList.toggle('pri',on);b.setAttribute('aria-pressed',on)});
+    svg.innerHTML=D[m];const t=c[m]||{};svg.setAttribute('aria-label',m==='series'?'Two resistors in series in one loop, with an ammeter in the loop':'Two resistors in parallel across the battery, with a voltmeter across them');
+    res.innerHTML=`<div class="eq" style="font-size:clamp(22px,6.5vw,30px)">${esc(t.title||'')}</div>${(t.lines||[]).map(l=>`<p>${esc(l)}</p>`).join('')}`;
+  }
+  el.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{m=b.dataset.m;unchip(el);draw()});
+  chips(el,c.presets,p=>{m=p.m;draw()},el.querySelector('.lead').nextElementSibling);
+  draw();
+};
+
+/* sort-bins: one card at a time; tap the bin it belongs in. config {bins:[...], cards:[{t, bin, why}], presets:[{q, t}]}.
+   A preset deals card t (its index in cards) next, so you sort it yourself. */
+WIDGETS['sort-bins']=(el,c)=>{
+  let deck,i,score,answered;
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Sort them</h3><p class="small mute lead">Tap where each one belongs: ${c.bins.map(esc).join(', ').replace(/, ([^,]*)$/,' or $1')}.</p><div class="sb"></div>`;
+  const box=el.querySelector('.sb');
+  function deal(){deck=shuffle(c.cards);i=0;score=0;show()}
+  function show(){
+    answered=false;
+    if(i>=deck.length){box.innerHTML=`<div class="wres"><div class="eq">${score} of ${deck.length} <em>${score===deck.length?'all sorted':'sorted'}</em></div><p>${score===deck.length?'Nice. You have the split.':'Go again until they all land on the first try.'}</p></div><button class="pri" id="sbagain" style="width:100%;margin-top:12px">Shuffle and sort again</button>`;box.querySelector('#sbagain').onclick=deal;return}
+    const k=deck[i];
+    box.innerHTML=`<p class="small mute" style="margin:0">${i+1} of ${deck.length}</p><div class="sbcard">${esc(k.t)}</div><div class="bins">${c.bins.map(b=>`<button data-b="${esc(b)}">${esc(b)}</button>`).join('')}</div><div class="vbox"></div>`;
+    box.querySelectorAll('.bins button').forEach(b=>b.onclick=()=>{
+      if(answered)return;answered=true;const ok=b.dataset.b===k.bin;if(ok)score++;
+      box.querySelectorAll('.bins button').forEach(x=>{x.disabled=true;if(x.dataset.b===k.bin)x.classList.add('pri')});
+      box.querySelector('.vbox').innerHTML=`<div class="verdict ${ok?'ok':'no'}">${ok?'Right.':'It goes in '+esc(k.bin)+'.'} ${esc(k.why||'')}</div><button class="pri" id="sbnext" style="width:100%;margin-top:10px">${i+1<deck.length?'Next':'See how you did'}</button>`;
+      const n=box.querySelector('#sbnext');n.onclick=()=>{i++;unchip(el);show()};n.focus({preventScroll:true});
+    });
+  }
+  chips(el,c.presets,p=>{
+    const k=c.cards[p.t];if(answered)i++;const at=deck.indexOf(k);
+    if(i<deck.length&&at>=i)[deck[i],deck[at]]=[deck[at],deck[i]];else{deck=[k,...shuffle(c.cards.filter(x=>x!==k))];i=0;score=0}
+    show();
+  },box);
+  deal();
+};
+
+/* match: tap a term on one side, then its partner on the other. config {left, right, pairs:[[term, partner]], presets:[{q, i, from?}]}.
+   Partners may repeat (two terms with the same answer): any button with the right text counts.
+   A preset selects pair i on side from ('l', the default, or 'r'), and you tap its partner. */
+WIDGETS.match=(el,c)=>{
+  let sel=null,done=0;
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Match them up</h3><p class="small mute lead">Tap a ${esc((c.left||'term').toLowerCase())}, then the ${esc((c.right||'match').toLowerCase())} that goes with it.</p><div class="mbox"></div>`;
+  const box=el.querySelector('.mbox');
+  chips(el,c.presets,p=>{
+    const q=()=>box.querySelector(`.${p.from==='r'?'r':'l'}[data-i="${p.i}"]`);
+    if(q().disabled)deal();
+    box.querySelectorAll('.l,.r').forEach(x=>x.classList.toggle('sel',x===q()));sel=q();box.querySelector('.mres').innerHTML='';
+  },box);
+  function deal(){
+    sel=null;done=0;const L=shuffle(c.pairs.map((p,i)=>[p[0],i])),R=shuffle(c.pairs.map((p,i)=>[p[1],i]));
+    box.innerHTML=`<div class="mt"><div><p class="small mute" style="margin:0">${esc(c.left||'')}</p>${L.map(([t,i])=>`<button class="l" data-i="${i}">${esc(t)}</button>`).join('')}</div>
+    <div><p class="small mute" style="margin:0">${esc(c.right||'')}</p>${R.map(([t,i])=>`<button class="r" data-i="${i}">${esc(t)}</button>`).join('')}</div></div><div class="mres"></div>`;
+    box.querySelectorAll('.l,.r').forEach(b=>b.onclick=()=>{
+      if(b.disabled)return;
+      if(!sel||sel.classList.contains(b.classList.contains('l')?'l':'r')){box.querySelectorAll('.l,.r').forEach(x=>x.classList.toggle('sel',x===b));sel=b;box.querySelector('.mres').innerHTML='';return}
+      if(c.pairs[+sel.dataset.i][1]===c.pairs[+b.dataset.i][1]){unchip(el);[sel,b].forEach(x=>{x.classList.remove('sel');x.classList.add('ok');x.disabled=true});sel=null;done++;
+        box.querySelector('.mres').innerHTML=done===c.pairs.length?`<div class="wres"><div class="eq">All ${done} <em>matched</em></div></div><button class="pri" id="mtagain" style="width:100%;margin-top:12px">Shuffle and match again</button>`:'';
+        const a=box.querySelector('#mtagain');if(a)a.onclick=deal}
+      else{b.classList.add('no');setTimeout(()=>b.classList.remove('no'),700);box.querySelector('.mres').innerHTML=`<p class="small" style="color:var(--red)">Not that one. Try again.</p>`}
+    });
+  }
+  deal();
+};
+function coreHtml(c){
+  if(!c)return'';
+  if(c.type==='rule-table'){const[h,...rows]=c.rows;return`<table><tr>${h.map(x=>`<th>${esc(x)}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(x=>`<td>${esc(x)}</td>`).join('')}</tr>`).join('')}</table>`}
+  if(c.type==='formula')return`<div class="formula">${esc(c.text)}</div>${(c.lines||[]).map(l=>`<p class="sub mute">${esc(l)}</p>`).join('')}`;
+  if(c.type==='list')return`<table>${c.items.map(([k,v])=>`<tr><td>${esc(k)}</td><td>${esc(v)}</td></tr>`).join('')}</table>`;
+  return c.text?`<div class="formula">${esc(c.text)}</div>`:'';
+}
+async function showFam(id){
+  const box=$('#fam');famOpen=id;app.hidden=true;box.hidden=false;
+  box.innerHTML='<p class="mute">Loading…</p>';
+  let f=FAMDOC[id];
+  if(!f){try{f=FAMDOC[id]=await fetch('families/'+id+'.json').then(r=>{if(!r.ok)throw 0;return r.json()})}catch(e){f=null}}
+  if(famOpen!==id)return;
+  if(!f){box.innerHTML=`<button id="fback">← Back</button><div class="sp"></div><div class="card"><p>This page didn't load. Check your connection and try again.</p></div>`;$('#fback').onclick=famBack;return}
+  const ids=famQs(id),r=rd(ids);
+  box.innerHTML=`<button id="fback">← Back</button><div class="sp"></div>
+  <div class="card"><p class="cond mute" style="font-size:18px;margin:0 0 4px">Still confused?</p><h2>${esc(f.title)}</h2><p class="idea">${esc(f.idea)}</p>
+  <div class="core">${coreHtml(f.core)}</div></div>
+  ${f.widget&&WIDGETS[f.widget.type]?`<div class="sp"></div><div class="card" id="widget"></div>`:''}
+  ${f.compare&&f.compare.length?`<div class="sp"></div><div class="card"><h3>Side by side</h3><div class="cmp">${f.compare.map(c=>`<div><b>${esc(c.term)}</b>${esc(c.how)}</div>`).join('')}</div></div>`:''}
+  ${f.traps&&f.traps.length?`<div class="sp"></div><div class="card"><h3>Traps the exam sets</h3>${f.traps.map(t=>`<div class="note trap"><b><span class="tq">${esc(t.q)}</span>Wrong: <s>${esc(t.wrong)}</s></b>${esc(t.why)}</div>`).join('')}</div>`:''}
+  <div class="sp"></div><div class="card"><h3 style="margin-bottom:4px">The ${ids.length} questions</h3><p class="small mute" style="margin:0 0 6px">Tap one to see the answer and its note.</p>
+  ${ids.map(q=>{const Q=BY[q],h=hookOf(q);return`<details class="fq"><summary><span class="cond">${q}</span><span>${esc(Q.q)}</span></summary>
+  ${Q.f?`<div class="fig"><img src="fig/${Q.f}" alt="Figure ${esc(Q.f.replace('.png','').toUpperCase())}"></div>`:''}<div class="ans r">${esc(Q.a[Q.c])}</div>
+  <div class="note"><b>Elmer's note</b>${h?esc(h):'No note written for this one yet.'}</div></details>`}).join('')}</div>
+  <div class="sp"></div><div class="card"><div class="row" style="justify-content:space-between"><span class="small mute">${pct(r)} ready</span></div><div class="bar ${r>=.8?'done':''}" style="margin:6px 0 14px"><i style="width:${r*100}%"></i><s></s></div>
+  <button class="pri" id="fdrill" style="width:100%">Drill these ${ids.length} questions</button></div>`;
+  $('#fback').onclick=famBack;
+  $('#fdrill').onclick=()=>{history.replaceState(null,'',location.pathname+location.search+(famPushed?famPrev:''));const box=$('#fam');box.hidden=true;box.innerHTML='';app.hidden=false;famOpen=null;startFam(id)};
+  if($('#widget'))try{WIDGETS[f.widget.type]($('#widget'),f.widget.config||{},f)}catch(e){$('#widget').remove()}
+  scrollTo(0,0);
+}
+function startFam(id){R={mode:'run',band:null,fam:id,kind:'Drill: '+FAM[id].title,hooks:true,qs:shuffle(famQs(id)),i:0,res:[]};view='run';ask()}
+function famHash(){const m=location.hash.match(/^#family-([a-z0-9-]+)$/);return m&&FAM[m[1]]?m[1]:null}
+
+function route(){const fh=famHash();if(fh){const h=location.hash;home();history.replaceState(null,'',h);famPushed=false;showFam(fh);return}
+  const m=location.hash.match(new RegExp('^#band-('+CFG.letter+'\\d)$'));if(m&&BANDS.includes(m[1]))band(m[1]);else home()}
+addEventListener('bip',()=>{if(POOL&&view==='home'&&!famOpen)home()});
+addEventListener('hashchange',()=>{const fh=famHash();if(fh){showFam(fh);return}if(famOpen){closeFam();return}if(view==='run'&&R&&R.res.length)return;route()});
+
+Promise.all([fetch('pool.json').then(r=>r.json()),fetch('hooks.json').then(r=>r.ok?r.json():{}).catch(()=>({})),fetch('families/_index.json').then(r=>r.ok?r.json():{families:[]}).catch(()=>({families:[]}))]).then(([p,h,fi])=>{
+  POOL=p;HOOKS=h;POOL.qs.forEach(q=>{BY[q.id]=q;(GROUPS[q.id.slice(0,3)]=GROUPS[q.id.slice(0,3)]||[]).push(q.id)});
+  BANDS=Object.keys(POOL.subs).sort();
+  (fi.families||[]).forEach(f=>{FAM[f.id]=f;f.questions.forEach(q=>(QFAM[q]=QFAM[q]||[]).push(f.id))});
+  route();
+}).catch(()=>{app.innerHTML='<p>The question pool failed to load. Reload the page to try again.</p>'});
+
+(async()=>{
+  try{
+    if(!window.claude||!claude.use)return;
+    const [d,u]=await Promise.all([claude.use('db'),claude.use('user')]);if(!d||!u)return;
+    const id=await u.id();if(!id)return;
+    db=d;docRef=db.doc('data/users/'+id+'/progress');
+    const tm=new Promise(r=>setTimeout(()=>r(null),10000));
+    const snap=await Promise.race([docRef.get(),tm]);
+    if(snap&&snap.exists){const o=snap.data();if((o.ts||0)>(P.ts||0)){P=Object.assign({v:1,call:'',h:{},runs:{},exams:[]},JSON.parse(JSON.stringify(o)));try{localStorage.setItem(LS,JSON.stringify(P))}catch(e){}if(POOL&&view!=='run'&&!famOpen)route()}}
+    else if(snap&&P.ts)dirty=true;
+    syncNote=snap?'Progress syncs to your Claude account, so it follows you across devices.':'';
+    if(dirty)flush();
+    if(POOL&&view==='home'&&!famOpen)home();
+  }catch(e){}
+})();
+}
+</script>
+<script>
+if('serviceWorker' in navigator)addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}));
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(()=>{});
+</script>
+</body>
+</html>

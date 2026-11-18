@@ -1,0 +1,233 @@
+{
+ "id": "schematic-symbols",
+ "exam": "technician",
+ "title": "Schematic symbols (Figures T-1, T-2, T-3)",
+ "idea": "Each symbol is a little drawing of the part. Learn the shape and the number on the figure won't matter.",
+ "core": {
+  "type": "list",
+  "items": [
+   [
+    "Zigzag",
+    "Resistor"
+   ],
+   [
+    "Zigzag with an arrow",
+    "Variable resistor"
+   ],
+   [
+    "Circle with a bar and an arrow",
+    "Transistor"
+   ],
+   [
+    "Dome",
+    "Lamp"
+   ],
+   [
+    "Long and short lines",
+    "Battery"
+   ],
+   [
+    "Straight plate and curved plate",
+    "Capacitor"
+   ],
+   [
+    "Diode with arrows pointing out",
+    "Light emitting diode"
+   ],
+   [
+    "Two coils with a core between",
+    "Transformer"
+   ],
+   [
+    "Coil with an arrow",
+    "Variable inductor"
+   ],
+   [
+    "Triangle on a stick",
+    "Antenna"
+   ],
+   [
+    "One arm, one contact",
+    "Single-pole single-throw switch"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "figure-explorer",
+  "config": {
+   "figs": [
+    {
+     "f": "t-1.png",
+     "title": "Figure T-1",
+     "parts": [
+      {
+       "n": 1,
+       "x": 40.3,
+       "y": 49.2,
+       "name": "Resistor",
+       "look": "The zigzag line.",
+       "q": "T6C02"
+      },
+      {
+       "n": 2,
+       "x": 53.1,
+       "y": 49.2,
+       "name": "Transistor",
+       "look": "A circle with a bar inside and an arrow on one lead.",
+       "job": "It controls the flow of current. Here it switches the lamp on and off.",
+       "q": "T6C03 and T6D10"
+      },
+      {
+       "n": 3,
+       "x": 62.2,
+       "y": 32.1,
+       "name": "Lamp",
+       "look": "The dome shape with a loop inside.",
+       "q": "T6C04"
+      },
+      {
+       "n": 4,
+       "x": 67.1,
+       "y": 45.8,
+       "name": "Battery",
+       "look": "Long and short parallel lines, stacked.",
+       "q": "T6C05"
+      }
+     ]
+    },
+    {
+     "f": "t-2.png",
+     "title": "Figure T-2",
+     "parts": [
+      {
+       "n": 3,
+       "x": 27.8,
+       "y": 36.7,
+       "name": "Single-pole single-throw switch",
+       "look": "One arm that opens or closes one connection: a plain on/off switch.",
+       "q": "T6A09"
+      },
+      {
+       "n": 4,
+       "x": 39.6,
+       "y": 53.3,
+       "name": "Transformer",
+       "look": "Two coils facing each other with straight lines (the core) between them.",
+       "q": "T6C09"
+      },
+      {
+       "n": 6,
+       "x": 60.8,
+       "y": 55.4,
+       "name": "Capacitor",
+       "look": "One straight plate and one curved plate.",
+       "q": "T6C06"
+      },
+      {
+       "n": 8,
+       "x": 69.7,
+       "y": 57.5,
+       "name": "Light emitting diode",
+       "look": "A diode symbol with small arrows pointing away from it: light coming out.",
+       "q": "T6C07"
+      },
+      {
+       "n": 9,
+       "x": 75.8,
+       "y": 38.3,
+       "name": "Variable resistor",
+       "look": "A zigzag with an arrow touching it.",
+       "q": "T6C08"
+      }
+     ]
+    },
+    {
+     "f": "t-3.png",
+     "title": "Figure T-3",
+     "parts": [
+      {
+       "n": 3,
+       "x": 48.9,
+       "y": 50.8,
+       "name": "Variable inductor",
+       "look": "A coil with an arrow tapping into it.",
+       "q": "T6C10"
+      },
+      {
+       "n": 4,
+       "x": 66.7,
+       "y": 17.5,
+       "name": "Antenna",
+       "look": "A triangle on a stick.",
+       "q": "T6C11"
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Resistor",
+   "how": "Zigzag."
+  },
+  {
+   "term": "Variable resistor",
+   "how": "Zigzag plus an arrow."
+  },
+  {
+   "term": "Transformer",
+   "how": "Two coils with a core between them."
+  },
+  {
+   "term": "Variable inductor",
+   "how": "One coil plus an arrow."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T6C03",
+   "wrong": "Indicator lamp",
+   "why": "The lamp is component 3, the dome. Component 2, the circle with a bar and arrow, is the transistor."
+  },
+  {
+   "q": "T6C05",
+   "wrong": "Ground symbol",
+   "why": "Ground is the short slanted lines at the bottom. Long and short parallel lines are a battery."
+  },
+  {
+   "q": "T6C08",
+   "wrong": "Variable inductor",
+   "why": "An inductor is drawn as a coil. A zigzag with an arrow is a variable resistor."
+  },
+  {
+   "q": "T6C09",
+   "wrong": "Variable inductor",
+   "why": "There's no arrow, and there are two coils with a core between them: a transformer."
+  },
+  {
+   "q": "T6C10",
+   "wrong": "Variable capacitor",
+   "why": "The variable capacitors are the plates with a slanted arrow (component 2). Component 3 is a coil: a variable inductor."
+  },
+  {
+   "q": "T6D10",
+   "wrong": "Give off light when current flows through it",
+   "why": "That's the lamp's job. The transistor controls the flow of current that lights it."
+  }
+ ],
+ "questions": [
+  "T6A09",
+  "T6C02",
+  "T6C03",
+  "T6C04",
+  "T6C05",
+  "T6C06",
+  "T6C07",
+  "T6C08",
+  "T6C09",
+  "T6C10",
+  "T6C11",
+  "T6D10"
+ ]
+}

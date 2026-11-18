@@ -1,0 +1,196 @@
+{
+ "id": "repeater-alphabet-soup",
+ "exam": "technician",
+ "title": "Repeater alphabet soup",
+ "idea": "Most repeater terms are a key for getting in: the right offset, tone or code. On DMR, a talkgroup ID picks who you hear.",
+ "core": {
+  "type": "list",
+  "items": [
+   [
+    "Can hear the repeater but can't get in",
+    "Check the offset, the CTCSS tone and the DCS code. Any of them can be wrong"
+   ],
+   [
+    "Reverse",
+    "Listen on the repeater's input frequency"
+   ],
+   [
+    "CTCSS",
+    "A sub-audible tone sent with your voice to open the squelch"
+   ],
+   [
+    "DTMF",
+    "Two audio tones at the same time, like a phone keypad"
+   ],
+   [
+    "Linked repeater network",
+    "What one repeater receives, every repeater in the network transmits"
+   ],
+   [
+    "DMR talkgroup",
+    "An ID that organizes traffic, so you only hear the group you want. Join by programming the group's ID"
+   ],
+   [
+    "DMR color code",
+    "An access code programmed into your radio to reach a specific repeater"
+   ],
+   [
+    "DMR code plug",
+    "Configuration data loaded onto your radio for repeaters and talkgroups"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "match",
+  "config": {
+   "left": "Term",
+   "right": "Answer",
+   "pairs": [
+    [
+     "Reverse",
+     "Listen on the repeater's input"
+    ],
+    [
+     "CTCSS",
+     "A sub-audible tone that opens the squelch"
+    ],
+    [
+     "DTMF",
+     "Two audio tones at once"
+    ],
+    [
+     "Linked repeater network",
+     "Every repeater transmits what one receives"
+    ],
+    [
+     "Talkgroup",
+     "An ID that organizes DMR traffic"
+    ],
+    [
+     "Color code",
+     "An access code for a specific DMR repeater"
+    ],
+    [
+     "Code plug",
+     "Configuration data loaded onto the radio"
+    ],
+    [
+     "Can't get into a repeater you can hear",
+     "Offset, tone or code is wrong"
+    ]
+   ],
+   "presets": [
+    {
+     "q": "T2B01",
+     "i": 0
+    },
+    {
+     "q": "T2B02",
+     "i": 1,
+     "from": "r"
+    },
+    {
+     "q": "T2B03",
+     "i": 3
+    },
+    {
+     "q": "T2B04",
+     "i": 7
+    },
+    {
+     "q": "T2B06",
+     "i": 2,
+     "from": "r"
+    },
+    {
+     "q": "T2B12",
+     "i": 5
+    },
+    {
+     "q": "T2B14",
+     "i": 4
+    },
+    {
+     "q": "T4B07",
+     "i": 6
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "CTCSS",
+   "how": "One tone, below what you can hear, sent with your voice."
+  },
+  {
+   "term": "DTMF",
+   "how": "Two audible tones at once, from the keypad. Used to send commands."
+  },
+  {
+   "term": "Talkgroup",
+   "how": "Which group of stations you hear. Pick it by entering its ID code."
+  },
+  {
+   "term": "Color code",
+   "how": "Which repeater you can get into."
+  },
+  {
+   "term": "Code plug",
+   "how": "The file of settings that holds the repeaters and talkgroups."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T2B01",
+   "wrong": "To listen on a repeater’s output frequency",
+   "why": "You can already hear the output. Reverse switches you to the input, so you hear the station talking into the repeater."
+  },
+  {
+   "q": "T2B02",
+   "wrong": "DTMF",
+   "why": "DTMF is the keypad's two audible tones. The sub-audible tone with your voice is CTCSS."
+  },
+  {
+   "q": "T2B06",
+   "wrong": "CTCSS",
+   "why": "CTCSS is a single sub-audible tone. Two tones at once is DTMF."
+  },
+  {
+   "q": "T2B04",
+   "wrong": "Improper transceiver offset",
+   "why": "A wrong offset is one reason, but so is a wrong CTCSS tone or DCS code. The answer is all of them."
+  },
+  {
+   "q": "T2B07",
+   "wrong": "Program your radio with the DTMF tone used by the talkgroup",
+   "why": "Talkgroups use an ID or code programmed into the radio, not a DTMF tone."
+  },
+  {
+   "q": "T4B09",
+   "wrong": "By enabling the group’s CTCSS tone",
+   "why": "On DMR you select a group by entering its identification code, not a CTCSS tone."
+  },
+  {
+   "q": "T2B12",
+   "wrong": "A code which automatically programs the repeater offset to a frequency chosen by the user",
+   "why": "The color code doesn't set the offset. It's the access code for a specific repeater."
+  },
+  {
+   "q": "T4B07",
+   "wrong": "An adapter cable used to connect a DMR radio to a computer for internet access",
+   "why": "A code plug isn't a cable or a plug. It's configuration data loaded onto the radio."
+  }
+ ],
+ "questions": [
+  "T2B01",
+  "T2B02",
+  "T2B03",
+  "T2B04",
+  "T2B06",
+  "T2B07",
+  "T2B12",
+  "T2B14",
+  "T4B07",
+  "T4B09"
+ ]
+}

@@ -1,0 +1,205 @@
+{
+ "id": "only-when-exceptions",
+ "exam": "technician",
+ "title": "\"Only when...\" exceptions",
+ "idea": "Most of these are banned, with one narrow exception each. Learn the exception and the rest follows.",
+ "core": {
+  "type": "list",
+  "items": [
+   [
+    "Music",
+    "Only when incidental to retransmitting manned spacecraft communications"
+   ],
+   [
+    "Coded messages",
+    "Only control commands to space stations or model craft"
+   ],
+   [
+    "No ID",
+    "Only when sending signals to control model craft"
+   ],
+   [
+    "Getting paid",
+    "Allowed for classroom instruction at a school"
+   ],
+   [
+    "Selling gear",
+    "Amateur equipment, not on a regular basis"
+   ],
+   [
+    "Helping news gathering",
+    "Only for immediate safety of life or property, with no other means"
+   ],
+   [
+    "Outside your privileges",
+    "Only for immediate safety of life or property"
+   ],
+   [
+    "One-way transmissions",
+    "Broadcasting is prohibited. Code practice, event announcements and telemetry are fine"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "sort-bins",
+  "config": {
+   "bins": [
+    "Allowed",
+    "Not allowed"
+   ],
+   "cards": [
+    {
+     "t": "Music, incidental to retransmitting manned spacecraft communications",
+     "bin": "Allowed",
+     "why": "That's the one case music is allowed."
+    },
+    {
+     "t": "Music, kept under three minutes an hour",
+     "bin": "Not allowed",
+     "why": "There's no time allowance. Music is only for retransmitting manned spacecraft."
+    },
+    {
+     "t": "Coded commands to control a space station",
+     "bin": "Allowed",
+     "why": "Control commands to space stations or model craft may be encoded."
+    },
+    {
+     "t": "Approved digital codes used to hide a message's meaning",
+     "bin": "Not allowed",
+     "why": "Obscuring meaning is only for control commands to space stations or model craft."
+    },
+    {
+     "t": "Broadcasting to the general public",
+     "bin": "Not allowed",
+     "why": "One-way broadcasting is prohibited."
+    },
+    {
+     "t": "Morse code practice transmissions",
+     "bin": "Allowed",
+     "why": "Code practice is an allowed one-way transmission."
+    },
+    {
+     "t": "Mentioning your ham gear for sale, now and then",
+     "bin": "Allowed",
+     "why": "Amateur equipment, not on a regular basis, is fine."
+    },
+    {
+     "t": "Getting paid to operate as part of classroom instruction",
+     "bin": "Allowed",
+     "why": "Compensation is allowed for classroom instruction at a school."
+    },
+    {
+     "t": "Getting paid to gather emergency info for a broadcast station",
+     "bin": "Not allowed",
+     "why": "Classroom instruction is the compensation exception, not this."
+    },
+    {
+     "t": "Helping news gathering when life is in immediate danger and there's no other way",
+     "bin": "Allowed",
+     "why": "Allowed when directly related to the immediate safety of life or property."
+    },
+    {
+     "t": "Skipping your ID during brief station adjustments",
+     "bin": "Not allowed",
+     "why": "Only model craft control signals skip ID."
+    },
+    {
+     "t": "Skipping your ID while controlling a model craft",
+     "bin": "Allowed",
+     "why": "Model craft control signals don't need ID."
+    },
+    {
+     "t": "Going outside your privileges to protect someone's life",
+     "bin": "Allowed",
+     "why": "Allowed only for the immediate safety of life or property."
+    },
+    {
+     "t": "Going outside your privileges as part of a RACES plan",
+     "bin": "Not allowed",
+     "why": "A plan doesn't do it. Only an immediate threat to life or property."
+    }
+   ],
+   "presets": [
+    {
+     "q": "T1D02",
+     "t": 4
+    },
+    {
+     "q": "T1D03",
+     "t": 3
+    },
+    {
+     "q": "T1D04",
+     "t": 1
+    },
+    {
+     "q": "T1D05",
+     "t": 6
+    },
+    {
+     "q": "T1D08",
+     "t": 8
+    },
+    {
+     "q": "T1D09",
+     "t": 9
+    },
+    {
+     "q": "T1D11",
+     "t": 10
+    },
+    {
+     "q": "T2C09",
+     "t": 13
+    }
+   ]
+  }
+ },
+ "traps": [
+  {
+   "q": "T1D02",
+   "wrong": "International Morse Code Practice",
+   "why": "Code practice is allowed. Broadcasting is what's prohibited."
+  },
+  {
+   "q": "T1D03",
+   "wrong": "Only when transmitting certain approved digital codes",
+   "why": "Encoding to hide meaning is only for control commands to space stations or model craft."
+  },
+  {
+   "q": "T1D04",
+   "wrong": "When transmissions are limited to less than three minutes per hour",
+   "why": "No time limit makes music OK. Only when incidental to retransmitting manned spacecraft."
+  },
+  {
+   "q": "T1D05",
+   "wrong": "Never",
+   "why": "You may mention amateur equipment for sale or trade, as long as it's not on a regular basis."
+  },
+  {
+   "q": "T1D08",
+   "wrong": "When the communication is made to obtain emergency information for a local broadcast station",
+   "why": "The paid exception is classroom instruction."
+  },
+  {
+   "q": "T1D11",
+   "wrong": "When the transmissions are of a brief nature to make station adjustments",
+   "why": "Brief adjustments still need ID. Only model craft control signals don't."
+  },
+  {
+   "q": "T2C09",
+   "wrong": "Yes, but only when part of a RACES emergency plan",
+   "why": "Only immediate safety of life or protection of property allows it."
+  }
+ ],
+ "questions": [
+  "T1D02",
+  "T1D03",
+  "T1D04",
+  "T1D05",
+  "T1D08",
+  "T1D09",
+  "T1D11",
+  "T2C09"
+ ]
+}

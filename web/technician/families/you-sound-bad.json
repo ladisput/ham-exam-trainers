@@ -1,0 +1,149 @@
+{
+ "id": "you-sound-bad",
+ "exam": "technician",
+ "title": "\"You sound bad\" fixes",
+ "idea": "Most bad-audio reports come down to how you talk into the mic: too loud, too close, or too much gain. Being off frequency or in a bad spot can do it too.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "The report",
+    "Cause, then fix"
+   ],
+   [
+    "FM audio drops out on voice peaks",
+    "Talking too loudly. Talk more quietly"
+   ],
+   [
+    "Over-deviating on FM",
+    "Too loud or too close. Talk farther away from the mic"
+   ],
+   [
+    "Distorted through a repeater",
+    "Off frequency, too loud or too close, or a bad location. Check all three"
+   ],
+   [
+    "Distorted SSB",
+    "Too much mic gain. Turn it down"
+   ],
+   [
+    "Distorted voice from RF feedback",
+    "Your signal is getting into the mic cable. Clip a ferrite choke onto it"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "match",
+  "config": {
+   "left": "Report",
+   "right": "Answer",
+   "pairs": [
+    [
+     "FM audio drops out on voice peaks",
+     "You're talking too loudly"
+    ],
+    [
+     "You're over-deviating on FM",
+     "Talk farther from the mic"
+    ],
+    [
+     "SSB audio sounds distorted",
+     "Too much mic gain"
+    ],
+    [
+     "An FM station is slightly off frequency",
+     "The audio becomes distorted"
+    ],
+    [
+     "Your signal feeds back into the mic cable",
+     "A clip-on ferrite choke"
+    ],
+    [
+     "Distorted through the repeater",
+     "Off frequency, too loud, or a bad spot"
+    ]
+   ],
+   "presets": [
+    {
+     "q": "T2B05",
+     "i": 0
+    },
+    {
+     "q": "T4B01",
+     "i": 2,
+     "from": "r"
+    },
+    {
+     "q": "T4B04",
+     "i": 3
+    },
+    {
+     "q": "T7B01",
+     "i": 1
+    },
+    {
+     "q": "T7B10",
+     "i": 5
+    },
+    {
+     "q": "T7B11",
+     "i": 4
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Over-deviating (FM)",
+   "how": "Too much audio. Back away from the mic."
+  },
+  {
+   "term": "Too much mic gain (SSB)",
+   "how": "Distorted audio. Turn the gain down."
+  },
+  {
+   "term": "Off frequency (FM)",
+   "how": "The audio sounds distorted, not higher or lower in pitch."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T2B05",
+   "wrong": "Your FM deviation is too low",
+   "why": "Low deviation makes you quiet. Dropouts on voice peaks come from talking too loudly."
+  },
+  {
+   "q": "T4B01",
+   "wrong": "Increased SWR",
+   "why": "Mic gain affects your audio, not the antenna match. Too much gives distorted audio."
+  },
+  {
+   "q": "T4B04",
+   "wrong": "The audio increases in pitch",
+   "why": "The pitch doesn't change. FM received slightly off frequency sounds distorted."
+  },
+  {
+   "q": "T7B01",
+   "wrong": "Talk louder into the microphone",
+   "why": "Louder makes over-deviation worse. Talk farther away from the mic."
+  },
+  {
+   "q": "T7B10",
+   "wrong": "You are speaking too loudly or too close to the microphone",
+   "why": "Speaking too loudly or too close is one cause, but so are being off frequency and a bad location. It's all of them."
+  },
+  {
+   "q": "T7B11",
+   "wrong": "Adding extra feedline to the antenna to lower SWR",
+   "why": "Extra feedline doesn't fix distortion. A ferrite choke keeps your signal out of the mic cable."
+  }
+ ],
+ "questions": [
+  "T2B05",
+  "T4B01",
+  "T4B04",
+  "T7B01",
+  "T7B10",
+  "T7B11"
+ ]
+}

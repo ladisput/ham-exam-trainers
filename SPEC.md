@@ -6,7 +6,9 @@ trainers look, behave, and are checked. If a decision changes, update this file 
 ## What this is
 
 Radio-themed study games for the three US amateur radio license exams, built for Brooke (General
-licensee, studying for Extra). One page per exam, published as Claude artifacts, used mostly on a phone.
+licensee, studying for Extra). One page per exam, used mostly on a phone. Each page is published two ways from the
+same template: as a Claude artifact (Brooke's own copy, progress synced to her Claude account) and on the public
+website (anyone with the link, installable to the home screen, works offline, progress saved on each device).
 
 | Exam | Element | Pool in force | Exam size | Pass | Status |
 |---|---|---|---|---|---|
@@ -140,12 +142,25 @@ Radio front panel and logbook. Keep it consistent with the live pages (copy thei
 - `tools/test_app.py` = headless walk-through of an exam site (first run, debrief, repeat run with note, mock exam,
   and the family page flow using a test family). Set `CHROME=` to a Chromium binary if not at /usr/bin/google-chrome.
 - Never change a live exam's `ls` key or the db path, or saved progress is lost.
+- `tools/web.py build` writes `web/` (the public website) from each exam's built `site/`: a hub page, shared fonts
+  (`app/web/fonts/`, self-hosted so nothing loads from Google), and `web/<exam>/` with a manifest, service worker
+  (offline copy of every file; its version changes when any file does) and icons. Exams on the website are listed in
+  `WEB_EXAMS` in `tools/web.py`; each needs `short` in `exam.json` (the name under the home screen icon). Commit `web/`:
+  the host serves it as is, with no build step. Never hand-edit it.
+- The template's `<!--fonts-->`, `<!--web-head-->` and `<!--web-body-->` markers are filled only by the web build, which
+  also sets `CFG.web` (shows the "Put it on your home screen" card). The artifact build leaves them as comments.
+- `tools/test_web.py` = headless check of `web/`: hub, manifest and icons, service worker, fonts, then offline: opens,
+  answers, family page with figures, progress kept across a reload. `SITE=web/<exam> tools/test_app.py <exam>` walks the
+  web build with the normal test.
 
 ## Saved progress
 
 Each artifact declares `db` and `user`. Progress is one document per person at
 `data/users/<id>/progress` (private to them), mirrored to localStorage, plus a copy/paste backup code.
 Declared rules: root read/write `owner`; `data/users/{self}` read/write `interact`.
+On the website there is no account: progress lives only in that browser's localStorage under the exam's `ls` key
+(the page asks the browser to keep it, `navigator.storage.persist()`), and the backup code moves it between devices.
+On iPhone the home screen app and Safari keep separate storage, so the install card says to install first.
 
 ## Checks before publishing (all required)
 
@@ -155,6 +170,8 @@ Declared rules: root read/write `owner`; `data/users/{self}` read/write `interac
    every formula result recomputed in code; scope rule re-read against the family's questions.
 4. `python3 tools/site.py build <exam>`, then `python3 tools/test_app.py <exam>`: no page errors; look at the screenshots at 390px wide.
 5. Publish with `publish_files` (mode `patch`) to the slug in `ARTIFACTS.md`, then update `TRACKER.md`.
+6. Website: `python3 tools/web.py build`, then `python3 tools/test_web.py` (all checks pass), and commit `web/`.
+   Merging to `main` updates the public site; every PR branch gets its own preview link from Cloudflare Pages.
 
 ## Session workflow
 

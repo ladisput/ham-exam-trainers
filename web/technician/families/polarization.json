@@ -1,0 +1,196 @@
+{
+ "id": "polarization",
+ "exam": "technician",
+ "title": "Polarization",
+ "idea": "A radio wave is an electric field and a magnetic field at right angles. Polarization is the direction the electric field points.",
+ "core": {
+  "type": "list",
+  "items": [
+   [
+    "A radio wave is",
+    "Electric and magnetic fields, at right angles"
+   ],
+   [
+    "Polarization is",
+    "The orientation of the electric field"
+   ],
+   [
+    "Long-distance CW and SSB on VHF/UHF",
+    "Horizontal"
+   ],
+   [
+    "Cross-polarized, line of sight",
+    "Received signal strength is reduced"
+   ],
+   [
+    "Via the ionosphere",
+    "Elliptical: either antenna works"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "scenario",
+  "config": {
+   "heading": "Line up the antennas",
+   "lead": "Pick the path, then set each antenna.",
+   "situations": [
+    {
+     "label": "Line of sight on VHF or UHF",
+     "dims": [
+      {
+       "id": "mine",
+       "label": "Your antenna",
+       "options": [
+        "Vertical",
+        "Horizontal"
+       ]
+      },
+      {
+       "id": "theirs",
+       "label": "Their antenna",
+       "options": [
+        "Vertical",
+        "Horizontal"
+       ]
+      }
+     ],
+     "title": "Line of sight",
+     "rules": [
+      {
+       "when": {
+        "mine": [
+         "Vertical"
+        ],
+        "theirs": [
+         "Vertical"
+        ]
+       },
+       "title": "Matched: full strength",
+       "text": "Both electric fields point the same way, so the signal comes through at full strength."
+      },
+      {
+       "when": {
+        "mine": [
+         "Horizontal"
+        ],
+        "theirs": [
+         "Horizontal"
+        ]
+       },
+       "title": "Matched: full strength",
+       "text": "Both electric fields point the same way, so the signal comes through at full strength."
+      },
+      {
+       "when": {
+        "mine": [
+         "Vertical"
+        ],
+        "theirs": [
+         "Horizontal"
+        ]
+       },
+       "title": "Cross-polarized: weaker",
+       "text": "One antenna is vertical and the other horizontal, so received signal strength is reduced."
+      },
+      {
+       "when": {
+        "mine": [
+         "Horizontal"
+        ],
+        "theirs": [
+         "Vertical"
+        ]
+       },
+       "title": "Cross-polarized: weaker",
+       "text": "One antenna is vertical and the other horizontal, so received signal strength is reduced."
+      }
+     ]
+    },
+    {
+     "label": "Bounced off the ionosphere",
+     "title": "Either antenna works",
+     "text": "Signals come back from the ionosphere elliptically polarized, so vertical or horizontal antennas both work for sending and receiving."
+    },
+    {
+     "label": "Long-distance CW and SSB on VHF or UHF",
+     "title": "Use horizontal",
+     "text": "Horizontal polarization is normal for long-distance CW and SSB contacts on VHF and UHF."
+    }
+   ],
+   "presets": [
+    {
+     "q": "T3A04",
+     "s": 0,
+     "dims": {
+      "mine": "Vertical",
+      "theirs": "Horizontal"
+     }
+    },
+    {
+     "q": "T3A03",
+     "s": 2
+    },
+    {
+     "q": "T3A09",
+     "s": 1
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Electric field",
+   "how": "Its direction is the polarization."
+  },
+  {
+   "term": "Magnetic field",
+   "how": "At right angles to the electric field. Not what defines polarization."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T3B02",
+   "wrong": "The orientation of the magnetic field",
+   "why": "Close, but polarization is set by the electric field."
+  },
+  {
+   "q": "T9A03",
+   "wrong": "By the orientation of the magnetic field",
+   "why": "Antenna polarization is the orientation of the electric field."
+  },
+  {
+   "q": "T3B01",
+   "wrong": "They are in parallel",
+   "why": "The two fields are at right angles to each other."
+  },
+  {
+   "q": "T3A03",
+   "wrong": "Vertical",
+   "why": "Vertical is for FM and repeaters. Long-distance CW and SSB on VHF/UHF use horizontal."
+  },
+  {
+   "q": "T3A04",
+   "wrong": "Nothing significant will happen",
+   "why": "Cross-polarized antennas on a line-of-sight path give a weaker received signal."
+  },
+  {
+   "q": "T3A09",
+   "wrong": "Both the transmitting and receiving antennas must be of the same polarization",
+   "why": "Ionospheric signals are elliptically polarized, so either antenna works."
+  },
+  {
+   "q": "T3B03",
+   "wrong": "Voltage and current",
+   "why": "A radio wave's two parts are the electric and magnetic fields."
+  }
+ ],
+ "questions": [
+  "T3A03",
+  "T3A04",
+  "T3A09",
+  "T3B01",
+  "T3B02",
+  "T3B03",
+  "T9A03"
+ ]
+}
