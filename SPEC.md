@@ -116,6 +116,10 @@ Build order: all Technician families first, then the General site and its famili
 - `fm-spectrum`: FM sidebands (Bessel) with Carson's bandwidth box, deviation and audio sliders, and an oscillator → multiplier → transmitter chain (presets: `dev`, `af` kHz, optional `osc`, `out` MHz, `hi`).
 - `link-budget`: dBm staircase from transmitter to receiver with the sensitivity line and margin; receiver sensitivity from front-end gain, noise figure and bandwidth (presets: any of `w`, `tl`, `ta`, `path`, `ra`, `rl`, `bw`, `nf`, `g`, `focus: "rx"`).
 - `mixer`: three modes on a spectrum: receiver mixer (RF, LO, IF filter, image), balanced modulator (sideband filter), product detector (BFO error) (presets: `mode` rx/mod/det, `rf`, `lo`, `img`, `af`, `filt`, `bfo`).
+- `two-tone`: two audio tones into an SSB transmitter on a spectrum, with drive; odd-order products appear beside the tones when overdriven (presets: `a1`, `a2` Hz, `drive` 0-100, optional `hi`).
+- `sun-timeline`: flare, CME, coronal hole or the Sun's rotation, with a log time slider and band-condition tiles at Earth (presets: `ev` flare/cme/hole/rot, `t` minutes).
+- `sun-indices`: sunspot slider (solar flux and which bands 160-10 m are open by day) and a tappable 3-hour K chart with the day's A index (presets: `ssn`, `k` quiet/storm, `focus` sfi/20/k/a).
+- `ionosphere`: layer cross-section with frequency, takeoff angle and day/night/flare; ray absorbed, refracted (with hop distance) or through; LUF, MUF, critical frequency and angle (presets: `f` MHz or `snap` muf/fc/ca, `el` degrees, `tod`; config `mode` muf/regions sets the lead text).
 Brooke prefers hands-on widgets (sliders, live graphs, meters, simulators) to match, sort or text quizzes: use those only when nothing in
 the idea can be varied, and say why. Widgets must work by tap on a 360px-wide screen, with 44px targets and no hover-only behavior.
 Every widget ties in the pool: `config.presets` lists the family's questions the widget can work, shown as "Try a

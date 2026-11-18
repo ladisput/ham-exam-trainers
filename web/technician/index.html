@@ -173,6 +173,15 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
 .chain{display:flex;align-items:center;gap:4px}.chain div{flex:1;min-width:0;background:var(--tint);border-radius:8px;padding:8px 6px;text-align:center}.chain i{font-style:normal;color:var(--mute)}
 .chain span{display:block;font-size:12px;color:var(--mute)}.chain b{display:block;font:700 19px/1.1 "Barlow Condensed",sans-serif}.chain small{display:block;font-size:13px;color:var(--red)}.chain.hi .mul{box-shadow:inset 0 0 0 2px var(--blue)}
 .sens{stroke:var(--red);stroke-width:2;stroke-dasharray:6 4}.mgok{fill:var(--okbg);stroke:var(--ok)}.mgbad{fill:var(--badbg);stroke:var(--red)}
+.circ .sun{fill:#f2b33d;stroke:#d9861c;stroke-width:2}.circ .earth{fill:var(--blue)}.circ .spot{fill:#7a3d0c}
+.circ .ray{stroke:#f2b33d;stroke-width:4;stroke-dasharray:2 5;stroke-linecap:round}.circ .front{fill:none;stroke:var(--red);stroke-width:4;stroke-linecap:round}.circ .trail{stroke:var(--red);stroke-width:1.5;stroke-dasharray:3 5;opacity:.6}.circ .mag{fill:none;stroke:var(--red);stroke-width:2;stroke-dasharray:4 3}
+.stb{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;margin-top:10px}.stb div{border-radius:8px;padding:6px 8px;background:var(--tint)}.stb span{display:block;font-size:12px;color:var(--mute);line-height:1.25}.stb b{font:700 17px/1.2 "Barlow Condensed",sans-serif}
+.stb .ok b{color:var(--ok)}.stb .mid b{color:var(--ink)}.stb .bad{background:var(--badbg)}.stb .bad b{color:var(--red)}.stb .off b{color:var(--mute)}
+.sibands{display:grid;grid-template-columns:repeat(9,minmax(0,1fr));gap:4px;height:110px;align-items:end;margin-top:12px}.sibands div{display:flex;flex-direction:column;justify-content:flex-end;height:100%;text-align:center}
+.sibands i{display:block;border-radius:4px 4px 0 0;background:var(--ok);transition:height .2s}.sibands .mid i{background:#c99a2e}.sibands .bad i{background:var(--red);opacity:.5}.sibands b{font:700 15px/1.4 "Barlow Condensed",sans-serif}.sibands .hi b{color:var(--blue);text-decoration:underline}
+.circ .kq{fill:var(--ok)}.circ .kun{fill:#c99a2e}.circ .kst{fill:var(--red)}.circ .kb{cursor:pointer;outline:none}.circ .kb:focus-visible rect:first-child{stroke:var(--blue);stroke-width:3}
+.circ .gnd2{fill:var(--face);stroke:var(--line)}.circ .lay{opacity:.55}.circ .lD{fill:#c99a2e}.circ .lD.hot{fill:var(--red)}.circ .lE{fill:var(--okbg)}.circ .lF{fill:light-dark(#d5e1f2,#1d2b40)}
+.circ .ray2{fill:none;stroke:var(--red);stroke-width:3;stroke-linejoin:round}.circ .xmark{font:700 18px Barlow,sans-serif;fill:var(--red);text-anchor:middle}.circ .land{fill:var(--red)}
 </style>
 </head>
 <body style="--call-size:20px;--call-w:8.2em">
@@ -1192,6 +1201,176 @@ WIDGETS.mixer=(el,c)=>{
   el.querySelectorAll('.mxm button').forEach(b=>b.onclick=()=>{st.mode=b.dataset.m;controls();unchip(el);draw()});
   chips(el,c.presets,p=>{st={mode:p.mode||'rx',rf:p.rf??14.2,lo:p.lo??20,img:!!p.img,af:p.af??1,filt:p.filt||'none',bfo:p.bfo??0};controls();draw()},svg);
   controls();draw();
+};
+/* ---- General batch 3 widgets ---- */
+/* two-tone: config {a1, a2 Hz, drive 0..100, presets:[{q,a1,a2,drive,hi:'odd'|'even'}]}. Two audio tones into an SSB transmitter; odd-order IMD lands beside them. */
+WIDGETS['two-tone']=(el,c)=>{
+  let st={a1:c.a1??700,a2:c.a2??1900,drive:c.drive??90,hi:''};
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Two tones in, what comes out?</h3><p class="small mute lead">A two-tone test feeds two audio tones into a single sideband transmitter. A linear amplifier sends out just those two. Push it too hard and new signals appear right beside them.</p>
+  <svg class="circ tt" viewBox="0 0 300 170" role="img"></svg>
+  <label for="tt-1" style="margin-top:10px">Tone 1: <b class="tt1v"></b></label><input id="tt-1" type="range" min="300" max="2500" step="50">
+  <label for="tt-2" style="margin-top:8px">Tone 2: <b class="tt2v"></b></label><input id="tt-2" type="range" min="300" max="3000" step="50">
+  <label for="tt-d" style="margin-top:8px">Drive: <b class="ttdv"></b></label><input id="tt-d" type="range" min="0" max="100">
+  <div class="wres"></div>`;
+  const svg=el.querySelector('svg'),s1=el.querySelector('#tt-1'),s2=el.querySelector('#tt-2'),sd=el.querySelector('#tt-d'),res=el.querySelector('.wres');
+  const hz=x=>fmt(x/1000,3)+' kHz';
+  function draw(){
+    s1.value=st.a1;s2.value=st.a2;sd.value=st.drive;
+    el.querySelector('.tt1v').textContent=fmt(st.a1)+' Hz';el.querySelector('.tt2v').textContent=fmt(st.a2)+' Hz';el.querySelector('.ttdv').textContent=st.drive+'%'+(st.drive>70?' (overdriven)':st.drive>50?' (near the limit)':' (linear)');
+    const f1=Math.min(st.a1,st.a2),f2=Math.max(st.a1,st.a2),sp=f2-f1;
+    const im3=-60+Math.max(0,st.drive-40)*0.75,im5=im3-12,H=db=>Math.max(0,(db+60)/60);
+    const lines=[{f:f1,h:.9,cls:'rf',lab:'F1'},{f:f2,h:.9,cls:'rf',lab:'F2'}];
+    const odd=[[2*f1-f2,'2F1−F2',im3],[2*f2-f1,'2F2−F1',im3],[3*f1-2*f2,'3F1−2F2',im5],[3*f2-2*f1,'3F2−2F1',im5]];
+    odd.forEach(([f,l,d],i)=>{if(H(d)>0.02)lines.push({f,h:Math.max(.04,H(d)*.9),cls:'out',lab:i<2&&H(d)>.25?l:''})});
+    spectrum(svg,{x0:-3000,x1:6000,ticks:[-2000,0,2000,4000],tl:t=>t?(t>0?'+':'−')+Math.abs(t/1000)+' kHz':'carrier',H:170,lines,boxes:[{a:0,b:3000,cls:'',lab:'the SSB channel'}]});
+    svg.setAttribute('aria-label',`Two tones at ${f1} and ${f2} hertz with intermodulation products`);
+    const harm=[2,3,4].some(k=>Math.abs(f2-k*f1)<30)||sp<50;
+    const lin=st.drive<=50;
+    res.innerHTML=`<div class="eq">${lin?'Clean: <em>just two tones</em>':'Overdriven: <em>odd-order products</em>'}</div>
+    <p class="small mute">The tones are ${fmt(sp)} Hz apart. Third-order products: 2F1 − F2 = ${hz(2*f1-f2)} and 2F2 − F1 = ${hz(2*f2-f1)}, also ${fmt(sp)} Hz away. Fifth-order (3F1 − 2F2 and 3F2 − 2F1) sit one more step out. Scale: offset from the suppressed carrier.</p>
+    <p>${lin?`The amplifier is <b>linear</b>: what comes out is a bigger copy of what went in. The two-tone test checks exactly this: linearity.`:`Too much drive makes the amplifier <b>non-linear</b>, and the two tones mix inside it. That's <b>intermodulation</b>. The products to worry about are the <b>odd-order</b> ones (2F1 − F2: 2 + 1 = 3, odd), because they land right next to your signal where no filter can remove them.`}</p>
+    <p class="small">Even-order products (F1 + F2, F2 − F1, 2F1) land far away from the band, where filters remove them easily.${st.hi==='even'?' That is why the odd ones are the closest.':''}</p>
+    ${harm?'<div class="note"><b>Harmonically related tones</b>One tone is a multiple of the other, so a harmonic would sit on top of a real tone and spoil the test. A two-tone test uses two tones that are not harmonically related.</div>':''}`;
+  }
+  s1.oninput=()=>{st.a1=+s1.value;unchip(el);draw()};s2.oninput=()=>{st.a2=+s2.value;unchip(el);draw()};sd.oninput=()=>{st.drive=+sd.value;unchip(el);draw()};
+  chips(el,c.presets,p=>{st={a1:p.a1??700,a2:p.a2??1900,drive:p.drive??90,hi:p.hi||''};draw()},svg);
+  draw();
+};
+
+/* sun-timeline: config {ev flare|cme|hole|rot, t minutes since the event, presets:[{q,ev,t}]}. */
+WIDGETS['sun-timeline']=(el,c)=>{
+  const TA=1,TB=40*1440,EV={
+    flare:{n:'Solar flare',arr:8.3,dur:120,what:'X-rays and ultraviolet light',how:'travel at the speed of light'},
+    cme:{n:'Coronal mass ejection',arr:36*60,dur:2*1440,what:'a cloud of charged particles',how:'takes 15 hours to several days'},
+    hole:{n:'Coronal hole',arr:3*1440,dur:2*1440,what:'a fast stream of charged particles',how:'takes a few days'},
+    rot:{n:'The Sun turns',arr:27*1440,dur:0,what:'the same active region',how:'faces Earth again about every 27 days'}};
+  let st={ev:c.ev||'flare',t:c.t??10};
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Launch something from the Sun</h3><p class="small mute lead">Pick an event, then slide time forward to see when it reaches Earth and what it does to the bands.</p>
+  <div class="seg stv" role="group" aria-label="Event" style="flex-wrap:wrap">${Object.entries(EV).map(([k,v])=>`<button data-e="${k}">${v.n}</button>`).join('')}</div>
+  <svg class="circ st" viewBox="0 0 300 120" role="img"></svg>
+  <label for="st-t" style="margin-top:6px">Time since it left the Sun: <b class="sttv"></b></label><input id="st-t" type="range" min="0" max="1000">
+  <div class="stx"></div><div class="wres"></div>`;
+  const svg=el.querySelector('svg'),sl=el.querySelector('#st-t'),bars=el.querySelector('.stx'),res=el.querySelector('.wres');
+  const dur=m=>m<60?fmt(m,2)+' min':m<2880?fmt(m/60,2)+' hours':fmt(m/1440,2)+' days';
+  function draw(){
+    segOn(el,'.stv','e',st.ev);sl.value=LOGI(TA,TB,st.t);el.querySelector('.sttv').textContent=dur(st.t);
+    const E=EV[st.ev],SX=34,EX=268,on=st.ev!=='rot'&&st.t>=E.arr&&st.t<E.arr+E.dur,past=st.ev!=='rot'&&st.t>=E.arr+E.dur;
+    let g=`<circle cx="${SX}" cy="56" r="24" class="sun"/><circle cx="${EX}" cy="56" r="10" class="earth"/><text class="lbl" x="${SX}" y="102" style="text-anchor:middle">Sun</text><text class="lbl" x="${EX}" y="102" style="text-anchor:middle">Earth</text>`;
+    if(st.ev==='rot'){const a=(st.t/(27*1440))*360%360,rad=(a-180)*Math.PI/180,x=SX+18*Math.cos(rad),vis=Math.cos(rad)>0;
+      g+=vis?`<circle cx="${x}" cy="50" r="5" class="spot"/>`:'';g+=`<text class="lbl" x="150" y="20" style="text-anchor:middle">${vis?'the active region faces Earth':'the active region is round the back'}</text>`}
+    else{const fr=Math.min(1,st.t/E.arr),x=SX+24+(EX-10-SX-24)*fr;
+      if(st.ev==='flare')g+=`<path d="M${SX+24} 56 H${x}" class="ray"/>`;
+      else g+=`<path d="M${x} 30 q10 26 0 52" class="front"/><path d="M${SX+24} 56 H${x}" class="trail"/>`;
+      if(on&&st.ev!=='flare')g+=`<ellipse cx="${EX}" cy="56" rx="18" ry="20" class="mag"/>`}
+    svg.innerHTML=g;svg.setAttribute('aria-label',`${E.n}, ${dur(st.t)} after it left the Sun`);
+    const rows=[['Low bands by day (160–40 m)','ok'],['High bands (20–10 m)','ok'],['HF paths over the poles','ok'],['VHF off the aurora','none']];
+    let say;
+    if(st.ev==='flare'){if(on){rows[0][1]='gone';rows[1][1]='weak';say='The X-rays reached Earth about <b>8 minutes</b> after the flare. They supercharge the lowest layer on the daylit side: a <b>sudden ionospheric disturbance</b>. It soaks up the <b>lower frequencies more than the higher ones</b>, so the low bands fade out first.'}
+      else if(past)say='The flare\'s X-rays have passed. The daylit side is back to normal within an hour or two.';
+      else say=`The X-rays are on their way. Light takes about 8 minutes to cross from the Sun, so nothing has happened yet.`}
+    else if(st.ev==='cme'||st.ev==='hole'){if(on){rows[2][1]='gone';rows[1][1]='weak';rows[3][1]='open';say=`The particles have reached Earth and shake its magnetic field: a <b>geomagnetic storm</b>, a temporary disturbance in Earth's magnetic field. HF is disturbed, worst on <b>high-latitude</b> paths over the poles. The one bonus: <b>auroras</b> that can reflect VHF signals.`}
+      else if(past)say='The storm has passed and the field settles back down over the next day or so.';
+      else say=`${E.what[0].toUpperCase()+E.what.slice(1)} is on its way. It ${E.how}, much slower than light.`}
+    else say=`The Sun spins once about every 27 days (its surface layers take 26 to 28). An active region that's facing us now will face us again then, which is why HF conditions repeat in a <b>26 to 28 day cycle</b>.`;
+    const W={ok:['fine','ok'],weak:['weaker','mid'],gone:['blacked out','bad'],none:['nothing','off'],open:['aurora: possible','ok']};
+    bars.innerHTML=st.ev==='rot'?'':`<div class="stb">${rows.map(([n,s])=>`<div class="${W[s][1]}"><span>${n}</span><b>${W[s][0]}</b></div>`).join('')}</div>`;
+    res.innerHTML=`<div class="eq">${E.n}: <em>${st.ev==='rot'?'every ~27 days':st.ev==='flare'?'8 minutes':st.ev==='cme'?'15 h to days':'a few days'}</em></div><p class="small mute">It sends ${E.what}, which ${E.how}.</p><p>${say}</p>`;
+  }
+  el.querySelectorAll('.stv button').forEach(b=>b.onclick=()=>{st.ev=b.dataset.e;st.t=Math.max(TA,Math.min(TB,EV[st.ev].arr*(st.ev==='rot'?1:1.2)));unchip(el);draw()});
+  sl.oninput=()=>{st.t=LOGS(TA,TB,+sl.value);unchip(el);draw()};
+  chips(el,c.presets,p=>{st={ev:p.ev||'flare',t:p.t??10};draw()},svg);
+  draw();
+};
+
+/* sun-indices: config {ssn, k:[8 values], presets:[{q, ssn, k, focus:'sfi'|'k'|'a'|'20'}]}. */
+WIDGETS['sun-indices']=(el,c)=>{
+  const BANDS=[[1.9,'160'],[3.7,'80'],[7.15,'40'],[10.1,'30'],[14.2,'20'],[18.1,'17'],[21.2,'15'],[24.9,'12'],[28.5,'10']],KA=[0,3,7,15,27,48,80,140,240,400];
+  const QUIET=[1,1,2,1,2,2,1,1],STORM=[3,4,6,7,7,5,4,3];
+  let st={ssn:c.ssn??100,k:(c.k||QUIET).slice(),focus:''};
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Turn up the sunspots</h3><p class="small mute lead">More sunspots, more ultraviolet, a denser ionosphere, and the higher bands open up. Slide it and watch the daytime long-distance bands.</p>
+  <label for="si-s">Sunspot number: <b class="sisv"></b></label><input id="si-s" type="range" min="0" max="250">
+  <div class="sib"></div><div class="wres sir"></div>
+  <h3 style="margin-top:18px">K and A: is Earth's magnetic field calm?</h3><p class="small mute lead">The K index rates each 3 hours, 0 (calm) to 9 (big storm). The A index is the whole day's average. Tap a bar to raise it.</p>
+  <div class="seg sik"><button data-k="q">Quiet day</button><button data-k="s">Storm day</button></div>
+  <svg class="circ ka" viewBox="0 0 300 150" role="img"></svg><div class="wres sia"></div>`;
+  const sl=el.querySelector('#si-s'),bx=el.querySelector('.sib'),r1=el.querySelector('.sir'),svg=el.querySelector('.ka'),r2=el.querySelector('.sia');
+  function draw(){
+    sl.value=st.ssn;el.querySelector('.sisv').textContent=st.ssn;
+    const sfi=63.7+0.728*st.ssn+0.00089*st.ssn*st.ssn,muf=16+(sfi-65)*0.12;
+    bx.innerHTML=`<div class="sibands">${BANDS.map(([f,n])=>{const s=f<0.85*muf?'ok':f<muf?'mid':'bad',hi=st.focus==='20'&&n==='20';return`<div class="${s}${hi?' hi':''}"><i style="height:${s==='ok'?100:s==='mid'?55:12}%"></i><b>${n}</b></div>`}).join('')}</div><p class="small mute" style="margin:4px 0 0">Daytime long-distance, meters. Tall = reliable, short = closed.</p>`;
+    const closed=BANDS.filter(([f])=>f>=muf).map(([,n])=>n);
+    r1.innerHTML=`<div class="eq">Solar flux ≈ <em>${fmt(sfi,3)}</em></div>
+    <p class="small mute">The solar flux index measures the Sun's radio noise at a wavelength of <b>10.7 centimeters</b> (2800 MHz). It rises and falls with the sunspots and is easier to measure than counting them.</p>
+    <p>${closed.length?`Closed for long distance now: ${closed.join(', ')} meters. ${st.ssn<40?'At low solar activity <b>15, 12 and 10 meters</b> are the least reliable bands.':''}`:'Everything up to 10 meters is open: a solar maximum day.'} ${st.focus==='20'||st.ssn<40?'Notice <b>20 meters</b>: it stays open by day at <b>any point</b> in the cycle.':'Higher sunspot numbers mean a better chance of good propagation on the higher frequencies.'}</p>`;
+    const a=st.k.map(k=>KA[k]),A=a.reduce((x,y)=>x+y,0)/8;let g='';
+    st.k.forEach((k,i)=>{const x=24+i*34,h=k*12;g+=`<g class="kb" data-i="${i}" role="button" tabindex="0" aria-label="K ${k} for hours ${i*3} to ${i*3+3}"><rect x="${x}" y="${120-h}" width="28" height="${Math.max(2,h)}" class="${k>=5?'kst':k>=4?'kun':'kq'}"/><rect x="${x}" y="10" width="28" height="110" fill="transparent"/><text class="lbl" x="${x+14}" y="${116-h}" style="text-anchor:middle;fill:var(--ink)">${k}</text><text class="lbl" x="${x+14}" y="136" style="text-anchor:middle;font-size:11px">${String(i*3).padStart(2,'0')}h</text></g>`});
+    svg.innerHTML=g;svg.setAttribute('aria-label','K index for each 3 hours of the day');
+    svg.querySelectorAll('.kb').forEach(b=>{const go=()=>{const i=+b.dataset.i;st.k[i]=(st.k[i]+1)%10;unchip(el);draw()};b.onclick=go;b.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go()}}});
+    const mx=Math.max(...st.k);
+    r2.innerHTML=`<div class="eq">A index <em>${fmt(A,3)}</em> · highest K <em>${mx}</em></div>
+    <p class="small mute">Each K converts to an amplitude (K ${mx} = ${KA[mx]}); A is the average of the day's 8 amplitudes.</p>
+    <p><b>K</b> = the <b>short-term</b> stability of Earth's magnetic field (each 3 hours). <b>A</b> = its <b>long-term</b> stability (the whole day). ${A>=30?'This is a storm day: expect poor HF, especially over the poles.':A>=15?'Unsettled: some disturbance.':'Quiet: good for HF.'}</p>
+    <p class="small mute">Neither one counts sunspots or measures the Sun's own field. They measure Earth's.</p>`;
+  }
+  sl.oninput=()=>{st.ssn=+sl.value;unchip(el);draw()};
+  el.querySelectorAll('.sik button').forEach(b=>b.onclick=()=>{st.k=(b.dataset.k==='s'?STORM:QUIET).slice();unchip(el);draw()});
+  chips(el,c.presets,p=>{st={ssn:p.ssn??st.ssn,k:(p.k==='storm'?STORM:p.k==='quiet'?QUIET:st.k).slice(),focus:p.focus||''};draw();if(p.focus==='k'||p.focus==='a')r2.scrollIntoView({block:'nearest',behavior:'smooth'})},sl.previousElementSibling);
+  draw();
+};
+
+/* ionosphere: cross-section with frequency, takeoff angle and day/night/flare. config {f MHz, el degrees, tod day|night|flare, mode muf|regions,
+   presets:[{q, f or snap:'muf'|'fc'|'ca', el, tod}]}. Simplified model: foF2 8 MHz day / 4 night, foE 3.5 day, secant law capped at 3.5, D absorption by day. */
+WIDGETS.ionosphere=(el,c)=>{
+  const FA=1.8,FB=50,R=6371,TOD={day:'Day',night:'Night',flare:'Solar flare'};
+  let st={f:c.f??14.2,el:c.el??15,tod:c.tod||'day'};
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Send a signal up</h3><p class="small mute lead">${c.mode==='regions'?'The ionosphere has layers. The low D layer soaks up low frequencies by day; the higher the layer that bends your signal back, the farther it lands.':'Slide the frequency and the takeoff angle. Too low and the signal is soaked up. Too high and it punches through into space. In between, it bends back to Earth.'}</p>
+  <div class="seg iot" role="group" aria-label="Conditions">${Object.entries(TOD).map(([k,v])=>`<button data-t="${k}">${v}</button>`).join('')}</div>
+  <svg class="circ io" viewBox="0 0 300 190" role="img"></svg>
+  <label for="io-f" style="margin-top:8px">Frequency: <b class="iofv"></b></label><input id="io-f" type="range" min="0" max="1000">
+  <label for="io-e" style="margin-top:8px">Takeoff angle: <b class="ioev"></b></label><input id="io-e" type="range" min="1" max="90">
+  <div class="wres"></div>`;
+  const svg=el.querySelector('svg'),sf=el.querySelector('#io-f'),se=el.querySelector('#io-e'),res=el.querySelector('.wres');
+  const P=()=>{const d=st.tod!=='night';return{foF2:d?8:4,foE:d?3.5:0,hF:d?330:300,hE:105,Ld:st.tod==='flare'?15:st.tod==='day'?5:0}};
+  const sec=e=>Math.min(3.5,1/Math.sin(e*Math.PI/180));
+  const luf=(e,p)=>p.Ld?p.Ld/Math.pow(Math.sin(e*Math.PI/180),0.15):0;
+  const hop=(e,h)=>{const r=e*Math.PI/180;return 2*R*(Math.PI/2-r-Math.asin(R*Math.cos(r)/(R+h)))*0.621};
+  function draw(){
+    segOn(el,'.iot','t',st.tod);sf.value=LOGI(FA,FB,st.f);se.value=Math.round(st.el);
+    el.querySelector('.iofv').textContent=fmt(st.f,3)+' MHz';el.querySelector('.ioev').textContent=fmt(st.el,3)+'° above the horizon';
+    const p=P(),muf=p.foF2*sec(st.el),mufE=p.foE*sec(st.el),L=luf(st.el,p);
+    const out=st.f<L?'abs':st.f<=mufE?'E':st.f<=muf?'F':'thru',h=out==='E'?p.hE:p.hF,mi=out==='E'||out==='F'?hop(st.el,h):0;
+    const X0=20,XW=260,GY=170,Y=k=>GY-k*0.42,dmax=Math.max(600,Math.min(2600,mi*1.15||0)),Xd=m=>X0+XW*m/dmax;
+    let g=`<rect x="0" y="${GY}" width="300" height="20" class="gnd2"/>`;
+    const lay=[['D',60,90,p.Ld>0],['E',100,125,p.foE>0],['F1',170,220,st.tod!=='night'],[st.tod==='night'?'F':'F2',260,360,true]];
+    lay.forEach(([n,a,b,show])=>{if(!show)return;g+=`<rect x="0" y="${Y(b)}" width="300" height="${Y(a)-Y(b)}" class="lay l${n[0]}${n==='D'&&st.tod==='flare'?' hot':''}"/><text class="lbl" x="296" y="${(Y(a)+Y(b))/2+4}" style="text-anchor:end">${n}</text>`});
+    if(st.tod==='night')g+=`<text class="lbl" x="296" y="${Y(75)+4}" style="text-anchor:end">D gone at night</text>`;
+    const r=st.el*Math.PI/180;
+    if(out==='abs'){const yh=75,dx=Math.min(250,(GY-Y(yh))/Math.tan(r)*1);g+=`<path d="M${X0} ${GY} L${X0+dx} ${Y(yh)}" class="ray2"/><text x="${X0+dx}" y="${Y(yh)+5}" class="xmark">✕</text>`}
+    else if(out==='thru'){const dx=(GY-4)/Math.tan(r);const x=Math.min(296,X0+dx),y=dx>276?GY-276*Math.tan(r):4;g+=`<path d="M${X0} ${GY} L${x} ${y}" class="ray2"/>`}
+    else{const xm=Xd(mi/2),xe=Xd(mi);g+=`<path d="M${X0} ${GY} L${xm} ${Y(h)} L${xe} ${GY}" class="ray2"/><circle cx="${xe}" cy="${GY}" r="4" class="land"/>${mi>=50?`<text class="lbl" x="${Math.min(290,xe)}" y="${GY+14}" style="text-anchor:${xe>250?'end':'middle'};fill:var(--ink)">${fmt(Math.round(mi/10)*10)} mi</text>`:''}`}
+    g+=`<text class="lbl" x="${X0}" y="${GY+14}" style="text-anchor:middle;fill:var(--ink)">you</text>`;
+    svg.innerHTML=g;svg.setAttribute('aria-label',`Ray at ${fmt(st.f,3)} MHz, ${fmt(st.el,3)} degrees: ${out}`);
+    const ca=st.f>p.foF2?Math.asin(Math.min(1,p.foF2/st.f))*180/Math.PI:90;
+    const tag={abs:'Absorbed',E:'Back to Earth off the E layer',F:'Back to Earth off the F'+(st.tod==='night'?'':'2')+' layer',thru:'Through into space'}[out];
+    let say;
+    if(out==='abs')say=st.tod==='flare'&&L>muf?`The flare has made the D layer so dense that the <b>LUF (${fmt(L,3)} MHz) is above the MUF (${fmt(muf,3)} MHz)</b>. No frequency works: ordinary skywave over this path is not possible.`
+      :`Below the LUF (${fmt(L,3)} MHz at this angle). The signal is <b>attenuated</b> in the D layer before it gets anywhere. By day the D layer absorbs signals below about 10 MHz, which is why 160, 80, 60 and 40 meters struggle for long distance in daylight.`;
+    else if(out==='thru')say=`Above the MUF (${fmt(muf,3)} MHz at this angle), so it <b>passes through</b> the ionosphere and is lost. ${st.f>p.foF2?`At ${fmt(st.f,3)} MHz the critical angle is ${fmt(ca,3)}°: lower the takeoff angle below that and it comes back.`:''}`;
+    else{const best=st.f>0.85*muf&&out==='F'&&st.el<70,nv=st.el>=70,crit=st.el>=89&&Math.abs(st.f-p.foF2)<0.05,cang=st.f>p.foF2&&ca-st.el<1.5;say=`Between the LUF and the MUF, so it's <b>refracted back to Earth</b>, ${nv?'almost straight back down':`about ${fmt(Math.round(mi/10)*10)} miles away`}.${crit?' Sent straight up, this is the <b>critical frequency</b>: the highest frequency that still comes back. Any higher and it goes through.':''}${cang?` ${fmt(st.el,3)}° is just under the <b>critical angle</b> for ${fmt(st.f,3)} MHz (${fmt(ca,3)}°): the highest takeoff angle that still comes back. Any steeper and it escapes.`:''}${best?' Just below the MUF: the least attenuation for long-distance skip.':''}${nv&&!crit?' Nearly straight up and back down: <b>NVIS</b>, short-range coverage at a high angle. A horizontal dipole only 1/10 to 1/4 wavelength high sends its energy this way.':''}${out==='E'?' The E layer is lower, so its hop is shorter: about 1,200 miles at most.':st.el<=3?' The F2 layer is the highest, so its hop is the longest: about 2,500 miles at most.':''}`}
+    res.innerHTML=`<div class="eq">${tag}</div>
+    <div class="swr" style="margin-top:8px"><div><span>LUF here</span><b>${L?fmt(L,3)+' MHz':'none'}</b></div><div><span>MUF here</span><b>${fmt(muf,3)} MHz</b></div><div><span>Critical freq.</span><b>${p.foF2} MHz</b></div></div>
+    <p>${say}</p>
+    <p class="small mute">MUF and LUF are for this path: they change with distance and location, time of day, season, solar radiation and disturbances. The critical frequency is the highest one that comes back when sent straight up; the critical angle is the highest takeoff angle that still comes back.</p>`;
+  }
+  el.querySelectorAll('.iot button').forEach(b=>b.onclick=()=>{st.tod=b.dataset.t;unchip(el);draw()});
+  sf.oninput=()=>{st.f=LOGS(FA,FB,+sf.value);unchip(el);draw()};se.oninput=()=>{st.el=+se.value;unchip(el);draw()};
+  chips(el,c.presets,p=>{st={f:p.f??14.2,el:p.el??15,tod:p.tod||'day'};const q=P();
+    if(p.snap==='muf')st.f=0.95*q.foF2*sec(st.el);if(p.snap==='fc'){st.el=90;st.f=q.foF2}if(p.snap==='ca')st.el=Math.asin(q.foF2/st.f)*180/Math.PI-0.5;draw()},svg);
+  draw();
 };
 function coreHtml(c){
   if(!c)return'';

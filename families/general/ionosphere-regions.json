@@ -1,0 +1,151 @@
+{
+ "id": "ionosphere-regions",
+ "exam": "general",
+ "title": "D, E and F regions",
+ "idea": "D is lowest and soaks up low bands by day. E bends signals back for hops up to 1,200 miles; F2, the highest, up to 2,500.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Region",
+    "Height",
+    "What it does"
+   ],
+   [
+    "D",
+    "Lowest, about 40–55 miles",
+    "By day, absorbs signals below about 10 MHz. Gone at night."
+   ],
+   [
+    "E",
+    "About 70 miles",
+    "Hops up to about 1,200 miles"
+   ],
+   [
+    "F2",
+    "Highest, about 200 miles",
+    "Hops up to about 2,500 miles"
+   ],
+   [
+    "NVIS",
+    "Straight up",
+    "Short range at high angles, from a low dipole"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "ionosphere",
+  "config": {
+   "mode": "regions",
+   "f": 14.2,
+   "el": 10,
+   "tod": "day",
+   "presets": [
+    {
+     "q": "G3B09",
+     "f": 14.2,
+     "el": 1,
+     "tod": "day"
+    },
+    {
+     "q": "G3B10",
+     "f": 10.1,
+     "el": 2,
+     "tod": "day"
+    },
+    {
+     "q": "G3C01",
+     "f": 7.1,
+     "el": 3,
+     "tod": "day"
+    },
+    {
+     "q": "G3C03",
+     "f": 14.2,
+     "el": 1,
+     "tod": "day"
+    },
+    {
+     "q": "G3C05",
+     "f": 7.1,
+     "el": 3,
+     "tod": "day"
+    },
+    {
+     "q": "G3C11",
+     "f": 3.6,
+     "el": 20,
+     "tod": "day"
+    },
+    {
+     "q": "G3C10",
+     "f": 7.1,
+     "el": 85,
+     "tod": "day"
+    },
+    {
+     "q": "G9D01",
+     "f": 7.1,
+     "el": 85,
+     "tod": "day"
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Day",
+   "how": "D layer present: low bands absorbed for long distance. F splits into F1 and F2."
+  },
+  {
+   "term": "Night",
+   "how": "D layer gone: 160, 80 and 40 meters go long distance."
+  },
+  {
+   "term": "NVIS",
+   "how": "Short-distance MF or HF at high elevation angles."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G3B09",
+   "wrong": "12,000 miles",
+   "why": "One F2 hop is about 2,500 miles. Farther needs more hops."
+  },
+  {
+   "q": "G3B10",
+   "wrong": "2,500 miles",
+   "why": "That's F2. The lower E region hops about 1,200 miles."
+  },
+  {
+   "q": "G3C03",
+   "wrong": "Because it is the densest",
+   "why": "It's about height: the highest layer gives the longest hop."
+  },
+  {
+   "q": "G3C05",
+   "wrong": "The F region absorbs signals at these frequencies during daylight hours",
+   "why": "It's the D region that absorbs the low bands by day."
+  },
+  {
+   "q": "G3C10",
+   "wrong": "Propagation near the MUF",
+   "why": "NVIS is short-distance propagation at high elevation angles."
+  },
+  {
+   "q": "G9D01",
+   "wrong": "A horizontal dipole placed at approximately 1/2 wavelength above the ground",
+   "why": "Half a wavelength up sends energy at lower angles. For NVIS, mount it low: 1/10 to 1/4 wavelength."
+  }
+ ],
+ "questions": [
+  "G3B09",
+  "G3B10",
+  "G3C01",
+  "G3C03",
+  "G3C05",
+  "G3C10",
+  "G3C11",
+  "G9D01"
+ ]
+}

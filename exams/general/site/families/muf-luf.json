@@ -1,0 +1,144 @@
+{
+ "id": "muf-luf",
+ "exam": "general",
+ "title": "MUF, LUF and the usable window",
+ "idea": "Between the lowest usable frequency and the maximum usable frequency, a signal bends back to Earth. Below, it's soaked up; above, it escapes.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Frequency",
+    "What happens"
+   ],
+   [
+    "Below the LUF",
+    "Attenuated (absorbed) on the way"
+   ],
+   [
+    "Between LUF and MUF",
+    "Refracted back to Earth"
+   ],
+   [
+    "Just below the MUF",
+    "Least attenuation: the best for long skip"
+   ],
+   [
+    "Above the MUF",
+    "Passes through the ionosphere"
+   ],
+   [
+    "LUF above MUF",
+    "No ordinary skywave on that path"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "ionosphere",
+  "config": {
+   "mode": "muf",
+   "f": 14.2,
+   "el": 15,
+   "tod": "day",
+   "presets": [
+    {
+     "q": "G3B05",
+     "f": 14.2,
+     "el": 15,
+     "tod": "day"
+    },
+    {
+     "q": "G3B06",
+     "f": 3.6,
+     "el": 10,
+     "tod": "day"
+    },
+    {
+     "q": "G3B03",
+     "snap": "muf",
+     "el": 10,
+     "tod": "day"
+    },
+    {
+     "q": "G3B08",
+     "f": 21.2,
+     "el": 10,
+     "tod": "day"
+    },
+    {
+     "q": "G3B11",
+     "f": 14.2,
+     "el": 60,
+     "tod": "flare"
+    },
+    {
+     "q": "G3C02",
+     "snap": "fc",
+     "tod": "day"
+    },
+    {
+     "q": "G3C04",
+     "f": 14.2,
+     "snap": "ca",
+     "tod": "day"
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "MUF",
+   "how": "Maximum usable frequency between two specific points."
+  },
+  {
+   "term": "LUF",
+   "how": "Lowest usable frequency between two specific points."
+  },
+  {
+   "term": "Critical frequency",
+   "how": "The highest frequency that comes back. Critical angle: the highest takeoff angle that comes back."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G3B03",
+   "wrong": "Just above the LUF",
+   "why": "Near the LUF a signal is barely surviving absorption. The least loss is just below the MUF."
+  },
+  {
+   "q": "G3B05",
+   "wrong": "They pass through the ionosphere",
+   "why": "That's above the MUF. Between LUF and MUF they're refracted back."
+  },
+  {
+   "q": "G3B07",
+   "wrong": "The Lowest Usable Frequency during a 24-hour period",
+   "why": "It's for communication between two specific points, not a time period."
+  },
+  {
+   "q": "G3B08",
+   "wrong": "The Minimum Usable Frequency for communications between two points",
+   "why": "M is Maximum."
+  },
+  {
+   "q": "G3C02",
+   "wrong": "The lowest frequency which is refracted back to Earth",
+   "why": "Critical frequency is the highest one that comes back."
+  },
+  {
+   "q": "G3C04",
+   "wrong": "The lowest takeoff angle that will return a radio wave to Earth under specific ionospheric conditions",
+   "why": "Low angles come back most easily. The critical angle is the highest that still returns."
+  }
+ ],
+ "questions": [
+  "G3B02",
+  "G3B03",
+  "G3B05",
+  "G3B06",
+  "G3B07",
+  "G3B08",
+  "G3B11",
+  "G3C02",
+  "G3C04"
+ ]
+}
