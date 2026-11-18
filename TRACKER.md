@@ -41,11 +41,11 @@ Status: `todo`, `doing`, `done`. Update this file at the end of every session, t
 | 23 | "Only when..." exceptions (`only-when-exceptions`) | Rules and numbers to memorize | 8 | done |
 | 24 | RACES vs. ARES (`races-vs-ares`) | Rules and numbers to memorize | 5 | done |
 | 25 | Bandwidth ladder (`bandwidth-ladder`) | Operating and equipment | 7 | done |
-| 26 | Repeater alphabet soup (`repeater-alphabet-soup`) | Operating and equipment | 10 | todo |
-| 27 | Internet linking (`internet-linking`) | Operating and equipment | 7 | todo |
-| 28 | "You sound bad" fixes (`you-sound-bad`) | Operating and equipment | 6 | todo |
-| 29 | SWR family (`swr`) | Operating and equipment | 8 | todo |
-| 30 | Interference: whose fix is it? (`interference-whose-fix`) | Operating and equipment | 7 | todo |
+| 26 | Repeater alphabet soup (`repeater-alphabet-soup`) | Operating and equipment | 10 | done |
+| 27 | Internet linking (`internet-linking`) | Operating and equipment | 7 | done |
+| 28 | "You sound bad" fixes (`you-sound-bad`) | Operating and equipment | 6 | done |
+| 29 | SWR family (`swr`) | Operating and equipment | 8 | done |
+| 30 | Interference: whose fix is it? (`interference-whose-fix`) | Operating and equipment | 7 | done |
 | 31 | Coax and connectors (`coax-connectors`) | Operating and equipment | 10 | todo |
 | 32 | Antenna length rules (`antenna-length`) | Operating and equipment | 5 | todo |
 | 33 | Grounding and lightning (`grounding-lightning`) | Safety | 8 | todo |
@@ -70,6 +70,7 @@ Status: `todo`, `doing`, `done`. Update this file at the end of every session, t
 
 ## Log
 
+- 2026-11-18 (Technician families 26-30): Repeater alphabet soup, internet linking, "you sound bad" fixes, SWR, interference: whose fix is it? No new widgets: `match` (repeater terms, bad-audio reports), `scenario` (internet linking, SWR) and `sort-bins` (where the interference fix goes). Families 21-25 were republished to Technician on 2026-11-18 (v8). Next batch: families 31-34 (coax and connectors, antenna length, grounding and lightning, RF exposure).
 - 2026-11-18 (Technician families 21-25): Who's responsible, control types, only-when exceptions, RACES vs. ARES, bandwidth ladder. `match` now accepts repeated answers (matches by text); `band-chart` items take `show` (list text) and bands take `title`. Control types: the pool never asks about local control, so the page covers remote, automatic, control point and auxiliary only (scope rule). Families 16-20 were republished to Technician on 2026-11-18 (v7). Next batch: families 26-30 (repeater alphabet soup, internet linking, you sound bad, SWR, interference).
 - 2026-11-18 (Technician families 16-20): Polarization, weather and terrain, HF vs. VHF vs. UHF, privileges map, the numbers. New widget: `band-chart` (bands drawn to scale, linear or log, with segments and marked frequencies; details on tap). Only edges and spots the pool tests are drawn. Families 11-15 were republished to Technician on 2026-11-18 (v6). Next batch: families 21-25 (who's responsible, control types, only-when exceptions, RACES vs. ARES, bandwidth ladder).
 - 2026-11-18 (Technician families 11-15): Lead names, schematic symbols, radio building blocks, which propagation when, multipath and fading. New widgets: `figure-explorer` (numbered buttons under a pool figure, a ring marks the part; ring positions are percent of the 1800x1200 figure), `scenario` (situations, optional dims with first-match rules), calc `multipath` (illustration only, no real distances). Families 6-10 were republished to Technician on 2026-11-18 (v5). Next batch: families 16-20 (polarization, weather and terrain, HF vs. VHF vs. UHF, privileges map needs `band-chart`, the numbers).

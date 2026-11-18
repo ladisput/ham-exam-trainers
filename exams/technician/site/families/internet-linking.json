@@ -1,0 +1,129 @@
+{
+ "id": "internet-linking",
+ "exam": "technician",
+ "title": "Internet linking",
+ "idea": "VoIP carries ham voice over the internet. IRLP links repeaters, and you reach it from your radio with DTMF. EchoLink lets you get in from a computer, with no radio.",
+ "core": {
+  "type": "list",
+  "items": [
+   [
+    "VoIP",
+    "Voice delivered over the internet using digital techniques"
+   ],
+   [
+    "IRLP",
+    "Connects ham systems such as repeaters over the internet. Reach a node over the air with DTMF tones"
+   ],
+   [
+    "EchoLink",
+    "Lets you transmit through a repeater without a radio. Register your call sign and show proof of license first"
+   ],
+   [
+    "Gateway",
+    "A ham station that connects other ham stations to the internet"
+   ],
+   [
+    "Hotspot",
+    "Lets nearby transceivers reach a digital voice or data network"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "scenario",
+  "config": {
+   "heading": "Which one do you need?",
+   "lead": "Pick what you want to do.",
+   "situations": [
+    {
+     "label": "Talk through a repeater from my computer, no radio",
+     "title": "EchoLink",
+     "text": "EchoLink lets a station transmit through a repeater without using a radio. Before you use it, register your call sign and provide proof of license. Any license class works, and there's no fee or training."
+    },
+    {
+     "label": "Reach an internet-linked node from my radio",
+     "title": "IRLP, using DTMF",
+     "text": "IRLP connects repeaters and other ham systems over the internet. Over the air, you access a node with DTMF tones, not a password or a CTCSS tone."
+    },
+    {
+     "label": "Get my digital radio onto a network from home",
+     "title": "A hotspot",
+     "text": "A digital mode hotspot lets nearby transceivers communicate with a digital voice or data network."
+    },
+    {
+     "label": "Connect other hams' stations to the internet",
+     "title": "A gateway",
+     "text": "An amateur station that connects other amateur stations to the internet is a gateway."
+    },
+    {
+     "label": "Carry voice over the internet",
+     "title": "VoIP",
+     "text": "Voice Over Internet Protocol delivers voice over the internet using digital techniques."
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "IRLP",
+   "how": "Links repeaters over the internet. You get in from your radio with DTMF."
+  },
+  {
+   "term": "EchoLink",
+   "how": "You can get in from a computer, with no radio. Register with proof of license."
+  },
+  {
+   "term": "Gateway",
+   "how": "A station that connects other hams to the internet."
+  },
+  {
+   "term": "Hotspot",
+   "how": "Puts your nearby digital radio on a digital network."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T8C06",
+   "wrong": "By using Continuous Tone-Coded Squelch System (CTCSS) tone codes",
+   "why": "CTCSS opens a repeater's squelch. IRLP nodes are accessed with DTMF tones."
+  },
+  {
+   "q": "T8C07",
+   "wrong": "A set of rules specifying how to identify your station when linked over the internet to another station",
+   "why": "VoIP isn't an ID rule. It's how voice travels over the internet, digitally."
+  },
+  {
+   "q": "T8C08",
+   "wrong": "A system for providing access to websites via amateur radio",
+   "why": "IRLP links radio systems such as repeaters. It isn't web access over the air."
+  },
+  {
+   "q": "T8C09",
+   "wrong": "IRLP",
+   "why": "IRLP is reached over the air with DTMF, so you need a radio. EchoLink is the one that works without one."
+  },
+  {
+   "q": "T8C10",
+   "wrong": "At least a General Class license",
+   "why": "Any licensed ham can use EchoLink. You register your call sign and show proof of license."
+  },
+  {
+   "q": "T8C11",
+   "wrong": "A digipeater",
+   "why": "The station that connects other amateur stations to the internet is called a gateway."
+  },
+  {
+   "q": "T4A10",
+   "wrong": "FT8 digital communications via AFSK using a smartphone connected to the internet",
+   "why": "A hotspot links nearby digital radios to a digital voice or data network. It isn't an FT8 tool."
+  }
+ ],
+ "questions": [
+  "T8C06",
+  "T8C07",
+  "T8C08",
+  "T8C09",
+  "T8C10",
+  "T8C11",
+  "T4A10"
+ ]
+}

@@ -405,7 +405,7 @@
     "T4B07",
     "T4B09"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "internet-linking",
@@ -420,7 +420,7 @@
     "T8C11",
     "T4A10"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "you-sound-bad",
@@ -434,7 +434,7 @@
     "T7B10",
     "T7B11"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "swr",
@@ -450,7 +450,7 @@
     "T9B09",
     "T9B12"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "interference-whose-fix",
@@ -465,7 +465,7 @@
     "T7B08",
     "T7B09"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "coax-connectors",

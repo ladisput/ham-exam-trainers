@@ -1,0 +1,144 @@
+{
+ "id": "swr",
+ "exam": "technician",
+ "title": "SWR family",
+ "idea": "SWR tells you how well the antenna system matches the feed line. 1:1 is perfect. The higher it goes, the worse the match, and a solid-state radio turns its power down to protect itself.",
+ "core": {
+  "type": "list",
+  "items": [
+   [
+    "What SWR is",
+    "A measure of how well a load is matched to a transmission line"
+   ],
+   [
+    "1:1",
+    "A perfect impedance match"
+   ],
+   [
+    "4:1",
+    "An impedance mismatch"
+   ],
+   [
+    "High SWR",
+    "A solid-state radio reduces power to protect its output transistors, so you see low power"
+   ],
+   [
+    "SWR jumping around",
+    "A loose connection in the antenna or feed line"
+   ],
+   [
+    "Measure it with",
+    "A directional wattmeter"
+   ],
+   [
+    "Antenna tuner",
+    "Matches the antenna system impedance to the transceiver's output impedance"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "scenario",
+  "config": {
+   "heading": "What is the SWR telling you?",
+   "lead": "Pick what you see on the meter or the radio.",
+   "situations": [
+    {
+     "label": "The meter reads 1:1",
+     "title": "A perfect match",
+     "text": "1:1 means the antenna and the feed line are perfectly matched in impedance. Not zero, and not 50:50."
+    },
+    {
+     "label": "The meter reads 4:1",
+     "title": "An impedance mismatch",
+     "text": "A high reading like 4:1 means the impedances don't match. It isn't a gain or loss in dB."
+    },
+    {
+     "label": "My solid-state radio's power dropped",
+     "title": "Probably high SWR",
+     "text": "Past a certain SWR, most solid-state transmitters reduce output power to protect the RF output amplifier transistors. Low SWR doesn't cause low power."
+    },
+    {
+     "label": "The SWR keeps jumping around",
+     "title": "A loose connection",
+     "text": "Erratic changes in SWR point to a loose connection in the antenna or the feed line."
+    },
+    {
+     "label": "The radio and antenna don't match",
+     "title": "An antenna tuner",
+     "text": "An antenna tuner, or coupler, matches the antenna system's impedance to the transceiver's output impedance."
+    },
+    {
+     "label": "I want to measure SWR",
+     "title": "A directional wattmeter",
+     "text": "A directional wattmeter can be used to determine SWR. A voltmeter or ohmmeter can't."
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Low SWR (near 1:1)",
+   "how": "Good match. Full power."
+  },
+  {
+   "term": "High SWR (like 4:1)",
+   "how": "Mismatch. A solid-state radio cuts its power."
+  },
+  {
+   "term": "Erratic SWR",
+   "how": "Something is loose in the antenna or feed line."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T7B04",
+   "wrong": "Low SWR",
+   "why": "Low SWR is good. It's high SWR that makes a solid-state radio cut power."
+  },
+  {
+   "q": "T7C04",
+   "wrong": "Zero",
+   "why": "SWR is a ratio. A perfect match reads 1:1, not zero."
+  },
+  {
+   "q": "T7C05",
+   "wrong": "To lower the SWR on the transmission line",
+   "why": "Cutting power doesn't change the SWR. It protects the output transistors."
+  },
+  {
+   "q": "T7C06",
+   "wrong": "Gain of +4 dB",
+   "why": "SWR isn't measured in dB. 4:1 just means a mismatch."
+  },
+  {
+   "q": "T7C08",
+   "wrong": "Voltmeter",
+   "why": "A voltmeter can't tell forward from reflected power. Use a directional wattmeter."
+  },
+  {
+   "q": "T9B04",
+   "wrong": "It automatically selects the proper antenna for the frequency band being used",
+   "why": "A tuner doesn't pick the antenna. It matches the antenna system to the radio's impedance."
+  },
+  {
+   "q": "T9B09",
+   "wrong": "Local thunderstorm",
+   "why": "Weather doesn't make SWR jump around. A loose connection does."
+  },
+  {
+   "q": "T9B12",
+   "wrong": "An indication of the quality of your station’s ground connection",
+   "why": "SWR is about the match between the load and the line, not your ground."
+  }
+ ],
+ "questions": [
+  "T7B04",
+  "T7C04",
+  "T7C05",
+  "T7C06",
+  "T7C08",
+  "T9B04",
+  "T9B09",
+  "T9B12"
+ ]
+}

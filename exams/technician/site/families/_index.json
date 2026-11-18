@@ -75,6 +75,32 @@
    ]
   },
   {
+   "id": "interference-whose-fix",
+   "title": "Interference: whose fix is it?",
+   "questions": [
+    "T7B02",
+    "T7B03",
+    "T7B05",
+    "T7B06",
+    "T7B07",
+    "T7B08",
+    "T7B09"
+   ]
+  },
+  {
+   "id": "internet-linking",
+   "title": "Internet linking",
+   "questions": [
+    "T8C06",
+    "T8C07",
+    "T8C08",
+    "T8C09",
+    "T8C10",
+    "T8C11",
+    "T4A10"
+   ]
+  },
+  {
    "id": "lead-names",
    "title": "Transistor and diode lead names",
    "questions": [
@@ -213,6 +239,22 @@
    ]
   },
   {
+   "id": "repeater-alphabet-soup",
+   "title": "Repeater alphabet soup",
+   "questions": [
+    "T2B01",
+    "T2B02",
+    "T2B03",
+    "T2B04",
+    "T2B06",
+    "T2B07",
+    "T2B12",
+    "T2B14",
+    "T4B07",
+    "T4B09"
+   ]
+  },
+  {
    "id": "resistance-vs-impedance",
    "title": "Resistance vs. impedance",
    "questions": [
@@ -249,6 +291,20 @@
     "T7D03",
     "T0A08",
     "T6D11"
+   ]
+  },
+  {
+   "id": "swr",
+   "title": "SWR family",
+   "questions": [
+    "T7B04",
+    "T7C04",
+    "T7C05",
+    "T7C06",
+    "T7C08",
+    "T9B04",
+    "T9B09",
+    "T9B12"
    ]
   },
   {
@@ -337,6 +393,18 @@
     "T0C13",
     "T1A08",
     "T1A09"
+   ]
+  },
+  {
+   "id": "you-sound-bad",
+   "title": "\"You sound bad\" fixes",
+   "questions": [
+    "T2B05",
+    "T4B01",
+    "T4B04",
+    "T7B01",
+    "T7B10",
+    "T7B11"
    ]
   }
  ]
