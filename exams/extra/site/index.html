@@ -443,8 +443,8 @@ WIDGETS.scenario=(el,c)=>{
 };
 
 /* band-chart: tap a band to see it drawn to scale with its segments and marked frequencies; tap any item for details.
-   config {heading, lead, bands:[{name, lo, hi, unit, scale:'lin'|'log', ticks?, segs:[{lo,hi,label,kind,text}], marks:[{f,label,text}], text}]}.
-   kind: cw | phone | other | range. */
+   config {heading, lead, bands:[{name, title?, lo, hi, unit, scale:'lin'|'log', ticks?, segs:[{lo,hi,label,kind,text}], marks:[{f,label,text}], text}]}.
+   kind: cw | phone | other | range. An item's optional `show` replaces its frequency text in the list. */
 WIDGETS['band-chart']=(el,c)=>{
   let bi=0,ii=null;
   el.classList.add('wg');
@@ -462,13 +462,13 @@ WIDGETS['band-chart']=(el,c)=>{
     (B.segs||[]).forEach((x,i)=>{const on=items[ii]===undefined?false:items[ii].t==='s'&&items[ii].label===x.label;
       g+=`<rect x="${X(x.lo)}" y="52" width="${Math.max(2,X(x.hi)-X(x.lo))}" height="26" class="k-${esc(x.kind||'range')}${x.kind==='range'&&i%2?' alt':''}${on?' sel':''}"/>`;
       if(x.kind==='range'||X(x.hi)-X(x.lo)>40)g+=`<text x="${(X(x.lo)+X(x.hi))/2}" y="69" text-anchor="middle" class="bct" style="${x.kind&&x.kind!=='range'?'fill:var(--card)':''}">${esc(x.short||x.label)}</text>`});
-    (B.marks||[]).forEach((m,i)=>{const x=X(m.f),y=18+(i%2)*14;g+=`<line x1="${x}" y1="${y+4}" x2="${x}" y2="80" class="mk"/><text x="${Math.min(300,Math.max(20,x))}" y="${y}" text-anchor="middle" class="bct">${esc(m.short||m.label)}</text>`});
+    (B.marks||[]).forEach((m,i)=>{const x=X(m.f),y=18+(i%2)*14;g+=`<line x1="${x}" y1="${y+4}" x2="${x}" y2="80" class="mk"/><text x="${x}" y="${y}" text-anchor="${x>250?'end':x<70?'start':'middle'}" class="bct">${esc(m.short||m.label)}</text>`});
     (B.ticks||[B.lo,B.hi]).forEach(t=>{g+=`<text x="${Math.min(306,Math.max(14,X(t)))}" y="98" text-anchor="${X(t)<30?'start':X(t)>290?'end':'middle'}">${fmt(t)}</text>`});
     svg.innerHTML=g;svg.setAttribute('aria-label',`${B.name}, ${fmt(B.lo)} to ${fmt(B.hi)} ${u}`);
-    list.innerHTML=items.map((x,i)=>`<button data-i="${i}" class="${i===ii?'on':''}"><i style="background:${x.t==='m'?'var(--ink)':col[x.kind||'range']};${x.t==='m'?'width:4px':''}"></i><span>${esc(x.label)} <span class="small mute">${x.t==='m'?fmt(x.f)+' '+u:fmt(x.lo)+' to '+fmt(x.hi)+' '+u}</span></span></button>`).join('');
+    list.innerHTML=items.map((x,i)=>`<button data-i="${i}" class="${i===ii?'on':''}"><i style="background:${x.t==='m'?'var(--ink)':col[x.kind||'range']};${x.t==='m'?'width:4px':''}"></i><span>${esc(x.label)} <span class="small mute">${x.show?esc(x.show):x.t==='m'?fmt(x.f)+' '+u:fmt(x.lo)+' to '+fmt(x.hi)+' '+u}</span></span></button>`).join('');
     list.querySelectorAll('button').forEach(b=>b.onclick=()=>{ii=+b.dataset.i;draw()});
     const I=ii!=null&&items[ii];
-    res.innerHTML=I?`<div class="eq" style="font-size:clamp(22px,6.5vw,30px)">${esc(I.label)}</div><p>${esc(I.text||'')}</p>`:`<div class="eq" style="font-size:clamp(22px,6.5vw,30px)">${esc(B.name)}: ${fmt(B.lo)} to ${fmt(B.hi)} ${esc(u)}</div>${B.text?`<p>${esc(B.text)}</p>`:''}`;
+    res.innerHTML=I?`<div class="eq" style="font-size:clamp(22px,6.5vw,30px)">${esc(I.label)}</div><p>${esc(I.text||'')}</p>`:`<div class="eq" style="font-size:clamp(22px,6.5vw,30px)">${esc(B.title||B.name+': '+fmt(B.lo)+' to '+fmt(B.hi)+' '+u)}</div>${B.text?`<p>${esc(B.text)}</p>`:''}`;
   }
   el.querySelectorAll('[data-b]').forEach(b=>b.onclick=()=>{bi=+b.dataset.b;ii=null;draw()});
   draw();
@@ -597,7 +597,8 @@ WIDGETS['sort-bins']=(el,c)=>{
   deal();
 };
 
-/* match: tap a term on the left, then its partner on the right. config {left, right, pairs:[[term, partner]]}. */
+/* match: tap a term on the left, then its partner on the right. config {left, right, pairs:[[term, partner]]}.
+   Partners may repeat (two terms with the same answer): any button with the right text counts. */
 WIDGETS.match=(el,c)=>{
   let sel=null,done=0;
   el.classList.add('wg');
@@ -611,7 +612,7 @@ WIDGETS.match=(el,c)=>{
     box.querySelectorAll('.r').forEach(b=>b.onclick=()=>{
       if(b.disabled)return;
       if(!sel){box.querySelector('.mres').innerHTML='<p class="small mute">Pick one on the left first.</p>';return}
-      if(sel.dataset.i===b.dataset.i){[sel,b].forEach(x=>{x.classList.remove('sel');x.classList.add('ok');x.disabled=true});sel=null;done++;
+      if(c.pairs[+sel.dataset.i][1]===c.pairs[+b.dataset.i][1]){[sel,b].forEach(x=>{x.classList.remove('sel');x.classList.add('ok');x.disabled=true});sel=null;done++;
         box.querySelector('.mres').innerHTML=done===c.pairs.length?`<div class="wres"><div class="eq">All ${done} <em>matched</em></div></div><button class="pri" id="mtagain" style="width:100%;margin-top:12px">Shuffle and match again</button>`:'';
         const a=box.querySelector('#mtagain');if(a)a.onclick=deal}
       else{b.classList.add('no');setTimeout(()=>b.classList.remove('no'),700);box.querySelector('.mres').innerHTML=`<p class="small" style="color:var(--red)">Not that one. Try again.</p>`}

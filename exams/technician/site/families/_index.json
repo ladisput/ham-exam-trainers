@@ -2,6 +2,19 @@
  "exam": "technician",
  "families": [
   {
+   "id": "bandwidth-ladder",
+   "title": "Bandwidth ladder",
+   "questions": [
+    "T8A05",
+    "T8A07",
+    "T8A08",
+    "T8A09",
+    "T8A10",
+    "T8A11",
+    "T4B10"
+   ]
+  },
+  {
    "id": "capacitor-vs-inductor",
    "title": "Capacitor vs. inductor",
    "questions": [
@@ -26,6 +39,17 @@
     "T6D05",
     "T6D06",
     "T6D09"
+   ]
+  },
+  {
+   "id": "control-types",
+   "title": "Local vs. remote vs. automatic control",
+   "questions": [
+    "T1E05",
+    "T1E08",
+    "T1E09",
+    "T1E10",
+    "T1D07"
    ]
   },
   {
@@ -108,6 +132,20 @@
    ]
   },
   {
+   "id": "only-when-exceptions",
+   "title": "\"Only when...\" exceptions",
+   "questions": [
+    "T1D02",
+    "T1D03",
+    "T1D04",
+    "T1D05",
+    "T1D08",
+    "T1D09",
+    "T1D11",
+    "T2C09"
+   ]
+  },
+  {
    "id": "polarization",
    "title": "Polarization",
    "questions": [
@@ -148,6 +186,17 @@
     "T2A01",
     "T2A02",
     "T2A03"
+   ]
+  },
+  {
+   "id": "races-vs-ares",
+   "title": "RACES vs. ARES",
+   "questions": [
+    "T1A10",
+    "T2C01",
+    "T2C04",
+    "T2C06",
+    "T2C12"
    ]
   },
   {
@@ -270,6 +319,24 @@
     "T3C08",
     "T3C09",
     "T3C10"
+   ]
+  },
+  {
+   "id": "whos-responsible",
+   "title": "Who's responsible",
+   "questions": [
+    "T1E01",
+    "T1E02",
+    "T1E03",
+    "T1E04",
+    "T1E05",
+    "T1E06",
+    "T1E07",
+    "T1E11",
+    "T1F10",
+    "T0C13",
+    "T1A08",
+    "T1A09"
    ]
   }
  ]

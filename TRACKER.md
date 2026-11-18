@@ -36,11 +36,11 @@ Status: `todo`, `doing`, `done`. Update this file at the end of every session, t
 | 18 | HF vs. VHF vs. UHF (`hf-vhf-uhf`) | Propagation | 7 | done |
 | 19 | Technician privileges map (`privileges-map`) | Rules and numbers to memorize | 12 | done |
 | 20 | The numbers to memorize (`the-numbers`) | Rules and numbers to memorize | 9 | done |
-| 21 | Who's responsible (`whos-responsible`) | Rules and numbers to memorize | 12 | todo |
-| 22 | Local vs. remote vs. automatic control (`control-types`) | Rules and numbers to memorize | 5 | todo |
-| 23 | "Only when..." exceptions (`only-when-exceptions`) | Rules and numbers to memorize | 8 | todo |
-| 24 | RACES vs. ARES (`races-vs-ares`) | Rules and numbers to memorize | 5 | todo |
-| 25 | Bandwidth ladder (`bandwidth-ladder`) | Operating and equipment | 7 | todo |
+| 21 | Who's responsible (`whos-responsible`) | Rules and numbers to memorize | 12 | done |
+| 22 | Local vs. remote vs. automatic control (`control-types`) | Rules and numbers to memorize | 5 | done |
+| 23 | "Only when..." exceptions (`only-when-exceptions`) | Rules and numbers to memorize | 8 | done |
+| 24 | RACES vs. ARES (`races-vs-ares`) | Rules and numbers to memorize | 5 | done |
+| 25 | Bandwidth ladder (`bandwidth-ladder`) | Operating and equipment | 7 | done |
 | 26 | Repeater alphabet soup (`repeater-alphabet-soup`) | Operating and equipment | 10 | todo |
 | 27 | Internet linking (`internet-linking`) | Operating and equipment | 7 | todo |
 | 28 | "You sound bad" fixes (`you-sound-bad`) | Operating and equipment | 6 | todo |
@@ -70,6 +70,7 @@ Status: `todo`, `doing`, `done`. Update this file at the end of every session, t
 
 ## Log
 
+- 2026-11-18 (Technician families 21-25): Who's responsible, control types, only-when exceptions, RACES vs. ARES, bandwidth ladder. `match` now accepts repeated answers (matches by text); `band-chart` items take `show` (list text) and bands take `title`. Control types: the pool never asks about local control, so the page covers remote, automatic, control point and auxiliary only (scope rule). Families 16-20 were republished to Technician on 2026-11-18 (v7). Next batch: families 26-30 (repeater alphabet soup, internet linking, you sound bad, SWR, interference).
 - 2026-11-18 (Technician families 16-20): Polarization, weather and terrain, HF vs. VHF vs. UHF, privileges map, the numbers. New widget: `band-chart` (bands drawn to scale, linear or log, with segments and marked frequencies; details on tap). Only edges and spots the pool tests are drawn. Families 11-15 were republished to Technician on 2026-11-18 (v6). Next batch: families 21-25 (who's responsible, control types, only-when exceptions, RACES vs. ARES, bandwidth ladder).
 - 2026-11-18 (Technician families 11-15): Lead names, schematic symbols, radio building blocks, which propagation when, multipath and fading. New widgets: `figure-explorer` (numbered buttons under a pool figure, a ring marks the part; ring positions are percent of the 1800x1200 figure), `scenario` (situations, optional dims with first-match rules), calc `multipath` (illustration only, no real distances). Families 6-10 were republished to Technician on 2026-11-18 (v5). Next batch: families 16-20 (polarization, weather and terrain, HF vs. VHF vs. UHF, privileges map needs `band-chart`, the numbers).
 - 2026-11-18 (Technician families 6-10): Series vs. parallel, units, capacitor vs. inductor, resistance vs. impedance, what each component does. New widgets: `circuit-toggle` (series/parallel with ammeter or voltmeter; text from config), `sort-bins` (one card at a time, tap the bin), `match` (tap a term, then its partner). Families 1-5 were republished to Technician on 2026-11-18 (v4), and PR #2 was closed. Flow now: build, publish a preview copy (Technician Trainer Preview, https://claude.ai/artifact/JVa74CyW5j9ktfCoZp2u1o, no db), Brooke tries it, merges, then republish the real one. Next batch: families 11-15 (lead names, schematic symbols need `figure-explorer`, radio building blocks, which propagation needs `scenario`, multipath).

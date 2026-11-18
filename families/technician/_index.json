@@ -330,7 +330,7 @@
     "T1A08",
     "T1A09"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "control-types",
@@ -343,7 +343,7 @@
     "T1E10",
     "T1D07"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "only-when-exceptions",
@@ -359,7 +359,7 @@
     "T1D11",
     "T2C09"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "races-vs-ares",
@@ -372,7 +372,7 @@
     "T2C06",
     "T2C12"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "bandwidth-ladder",
@@ -387,7 +387,7 @@
     "T8A11",
     "T4B10"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "repeater-alphabet-soup",
