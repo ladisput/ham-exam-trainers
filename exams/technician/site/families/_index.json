@@ -38,6 +38,17 @@
    ]
   },
   {
+   "id": "lead-names",
+   "title": "Transistor and diode lead names",
+   "questions": [
+    "T6B05",
+    "T6B06",
+    "T6B08",
+    "T6B09",
+    "T6B12"
+   ]
+  },
+  {
    "id": "metric-prefixes",
    "title": "Metric prefixes and unit abbreviations",
    "questions": [
@@ -53,6 +64,16 @@
     "T5B13",
     "T5C06",
     "T5C07"
+   ]
+  },
+  {
+   "id": "multipath-fading",
+   "title": "Multipath and fading",
+   "questions": [
+    "T3A01",
+    "T3A06",
+    "T3A08",
+    "T3A10"
    ]
   },
   {
@@ -86,12 +107,43 @@
    ]
   },
   {
+   "id": "radio-building-blocks",
+   "title": "Radio building blocks",
+   "questions": [
+    "T7A01",
+    "T7A03",
+    "T7A04",
+    "T7A05",
+    "T7A06",
+    "T7A08",
+    "T7A11"
+   ]
+  },
+  {
    "id": "resistance-vs-impedance",
    "title": "Resistance vs. impedance",
    "questions": [
     "T5C12",
     "T5A11",
     "T6A01"
+   ]
+  },
+  {
+   "id": "schematic-symbols",
+   "title": "Schematic symbols (Figures T-1, T-2, T-3)",
+   "questions": [
+    "T6A09",
+    "T6C02",
+    "T6C03",
+    "T6C04",
+    "T6C05",
+    "T6C06",
+    "T6C07",
+    "T6C08",
+    "T6C09",
+    "T6C10",
+    "T6C11",
+    "T6D10"
    ]
   },
   {
@@ -136,6 +188,20 @@
     "T3B12",
     "T9A05",
     "T9A08"
+   ]
+  },
+  {
+   "id": "which-propagation",
+   "title": "Which propagation, when",
+   "questions": [
+    "T3C03",
+    "T3C04",
+    "T3C05",
+    "T3C06",
+    "T3C07",
+    "T3C08",
+    "T3C09",
+    "T3C10"
    ]
   }
  ]

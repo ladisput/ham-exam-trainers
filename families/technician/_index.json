@@ -169,7 +169,7 @@
     "T6B09",
     "T6B12"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "schematic-symbols",
@@ -189,7 +189,7 @@
     "T6C11",
     "T6D10"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "radio-building-blocks",
@@ -204,7 +204,7 @@
     "T7A08",
     "T7A11"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "which-propagation",
@@ -220,7 +220,7 @@
     "T3C09",
     "T3C10"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "multipath-fading",
@@ -232,7 +232,7 @@
     "T3A08",
     "T3A10"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "polarization",

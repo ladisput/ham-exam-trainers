@@ -92,7 +92,7 @@ async def main():
                 doc = json.load(open(os.path.join(site, "families", f["id"] + ".json")))
                 await pg.goto("about:blank"); await pg.goto(f"http://localhost:8790/index.html#family-{f['id']}"); await pg.wait_for_selector("#fdrill")
                 wt = doc["widget"]["type"]
-                if wt in ("formula-triangle", "ladder", "calculator", "circuit-toggle", "sort-bins", "match"):
+                if wt in ("formula-triangle", "ladder", "calculator", "circuit-toggle", "sort-bins", "match", "figure-explorer", "scenario"):
                     assert await pg.locator("#widget").count() == 1, f"{f['id']}: widget card missing"
                     for i in range(await pg.locator("#widget .chip").count()):
                         await pg.locator("#widget .chip").nth(i).click(); assert await pg.is_visible("#widget .wres .eq"), f"{f['id']}: no result"
@@ -104,6 +104,18 @@ async def main():
                         for _ in cards:
                             await pg.click(f'#widget .bins button[data-b="{cards[(await pg.text_content("#widget .sbcard")).strip()]}"]'); await pg.click("#sbnext")
                         assert (await pg.text_content("#widget .wres .eq")).startswith(f"{len(cards)} of {len(cards)}")
+                    if wt == "figure-explorer":  # every figure, every part number shows a name and the ring
+                        for fi, F in enumerate(doc["widget"]["config"]["figs"]):
+                            if len(doc["widget"]["config"]["figs"]) > 1: await pg.click(f'#widget [data-f="{fi}"]')
+                            for pi, part in enumerate(F["parts"]):
+                                await pg.click(f'#widget .nums [data-p="{pi}"]')
+                                assert part["name"] in await pg.text_content("#widget .wres .eq") and await pg.is_visible("#widget .ring")
+                    if wt == "scenario":  # every situation shows a result; every option of every dim too
+                        for si, S in enumerate(doc["widget"]["config"]["situations"]):
+                            await pg.click(f'#widget [data-s="{si}"]'); assert await pg.is_visible("#widget .wres .eq")
+                            for d in S.get("dims", []):
+                                for o in d["options"]:
+                                    await pg.click(f'#widget [data-d="{d["id"]}"][data-o="{o}"]'); assert (await pg.text_content("#widget .wres .eq")).strip()
                     if wt == "match":  # one wrong tap, then every right pair; expect all matched
                         pairs = doc["widget"]["config"]["pairs"]
                         await pg.locator("#widget .l").first.click()

@@ -8,7 +8,7 @@ Status: `todo`, `doing`, `done`. Update this file at the end of every session, t
 |---|---|---|
 | S1 | Merge the Technician and Extra `index.html` into one template plus per-exam config; keep each live `LS` key and db path; retest both and republish | done |
 | S2 | Add family support to the app: `#family-<id>` route, "Still confused?" button, family page renderer, "Drill these N" | done |
-| S3 | Build the reusable widgets listed in SPEC.md as they're first needed | doing (built: `formula-triangle`, `ladder`, `calculator` with `db` and `wavelength`, `circuit-toggle`, `sort-bins`, `match`) |
+| S3 | Build the reusable widgets listed in SPEC.md as they're first needed | doing (built: `formula-triangle`, `ladder`, `calculator` with `db` and `wavelength`, `circuit-toggle`, `sort-bins`, `match`, `figure-explorer`, `scenario`, calc `multipath`) |
 
 ## Technician families (34)
 
@@ -26,11 +26,11 @@ Status: `todo`, `doing`, `done`. Update this file at the end of every session, t
 | 8 | Capacitor vs. inductor (`capacitor-vs-inductor`) | Commonly confused terms | 7 | done |
 | 9 | Resistance vs. impedance (`resistance-vs-impedance`) | Commonly confused terms | 3 | done |
 | 10 | What each component does (`component-jobs`) | Commonly confused terms | 8 | done |
-| 11 | Transistor and diode lead names (`lead-names`) | Commonly confused terms | 5 | todo |
-| 12 | Schematic symbols (Figures T-1, T-2, T-3) (`schematic-symbols`) | Commonly confused terms | 12 | todo |
-| 13 | Radio building blocks (`radio-building-blocks`) | Commonly confused terms | 7 | todo |
-| 14 | Which propagation, when (`which-propagation`) | Propagation | 8 | todo |
-| 15 | Multipath and fading (`multipath-fading`) | Propagation | 4 | todo |
+| 11 | Transistor and diode lead names (`lead-names`) | Commonly confused terms | 5 | done |
+| 12 | Schematic symbols (Figures T-1, T-2, T-3) (`schematic-symbols`) | Commonly confused terms | 12 | done |
+| 13 | Radio building blocks (`radio-building-blocks`) | Commonly confused terms | 7 | done |
+| 14 | Which propagation, when (`which-propagation`) | Propagation | 8 | done |
+| 15 | Multipath and fading (`multipath-fading`) | Propagation | 4 | done |
 | 16 | Polarization (`polarization`) | Propagation | 7 | todo |
 | 17 | What weather and terrain do (`weather-terrain`) | Propagation | 3 | todo |
 | 18 | HF vs. VHF vs. UHF (`hf-vhf-uhf`) | Propagation | 7 | todo |
@@ -70,6 +70,7 @@ Status: `todo`, `doing`, `done`. Update this file at the end of every session, t
 
 ## Log
 
+- 2026-11-18 (Technician families 11-15): Lead names, schematic symbols, radio building blocks, which propagation when, multipath and fading. New widgets: `figure-explorer` (numbered buttons under a pool figure, a ring marks the part; ring positions are percent of the 1800x1200 figure), `scenario` (situations, optional dims with first-match rules), calc `multipath` (illustration only, no real distances). Families 6-10 were republished to Technician on 2026-11-18 (v5). Next batch: families 16-20 (polarization, weather and terrain, HF vs. VHF vs. UHF, privileges map needs `band-chart`, the numbers).
 - 2026-11-18 (Technician families 6-10): Series vs. parallel, units, capacitor vs. inductor, resistance vs. impedance, what each component does. New widgets: `circuit-toggle` (series/parallel with ammeter or voltmeter; text from config), `sort-bins` (one card at a time, tap the bin), `match` (tap a term, then its partner). Families 1-5 were republished to Technician on 2026-11-18 (v4), and PR #2 was closed. Flow now: build, publish a preview copy (Technician Trainer Preview, https://claude.ai/artifact/JVa74CyW5j9ktfCoZp2u1o, no db), Brooke tries it, merges, then republish the real one. Next batch: families 11-15 (lead names, schematic symbols need `figure-explorer`, radio building blocks, which propagation needs `scenario`, multipath).
 - 2026-11-17 (Technician families 1-5): Ohm's law, power and batteries, metric prefixes, decibels, wavelength and frequency pages written. New widgets in `app/template.html`: `formula-triangle` (tap the unknown, fill two values, see the working), `ladder` (prefix converter; every rung shows the same amount), `calculator` (named calcs in `CALCS`: `db`, `wavelength`). Widgets take `presets` of pool questions as chips. Every preset result was checked against the pool's correct answer headless. `tools/test_app.py` now also opens every published family page and clicks each preset chip. Republish Technician after the PR merges. Next batch: families 6-10 (series vs. parallel needs `circuit-toggle`, units needs `match` or `sort-bins`).
 - 2026-11-17 (S1, S2): Both exam pages now come from `app/template.html` plus `exams/<exam>/exam.json`; run `tools/site.py build <exam>` after any change and never hand-edit a site's `index.html`. Storage keys and db path unchanged. Family support is in: "Still confused?" button under notes (runs and debriefs), family page over the current view with back returning to the same spot, deep links `#family-<id>`, "Drill these N". Pages are published only once `families/<exam>/<id>.json` exists; `tools/site.py check <exam>` validates them. No widgets exist yet (S3): the first family session builds its widget into the `WIDGETS` registry. Both sites tested headless with no page errors. Both artifacts republished after the merge (Technician v3, Extra v4); capabilities and saved progress carried over.

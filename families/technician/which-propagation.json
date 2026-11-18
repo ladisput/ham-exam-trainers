@@ -1,0 +1,222 @@
+{
+ "id": "which-propagation",
+ "exam": "technician",
+ "title": "Which propagation, when",
+ "idea": "Each kind of over-the-horizon propagation has a giveaway: how often it happens, how it sounds, or what causes it.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "You notice",
+    "It's"
+   ],
+   [
+    "Occasional strong signals beyond the horizon on 10, 6 and 2 m",
+    "Sporadic E"
+   ],
+   [
+    "Regular VHF/UHF contacts out to about 300 miles",
+    "Tropospheric ducting (caused by temperature inversions)"
+   ],
+   [
+    "Distorted, raspy VHF signals",
+    "Auroral backscatter"
+   ],
+   [
+    "Signals getting past a ridge or other obstruction",
+    "Knife-edge diffraction"
+   ],
+   [
+    "Short bursts off meteor trails",
+    "Meteor scatter, best on 6 m"
+   ],
+   [
+    "Long-distance 10 or 6 m at the sunspot peak",
+    "The F region, from dawn to just after sunset"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "scenario",
+  "config": {
+   "heading": "What's carrying the signal?",
+   "lead": "Pick what you're hearing. For F-region openings, set the band, sunspots and time.",
+   "situations": [
+    {
+     "label": "Sudden strong signals beyond the horizon",
+     "title": "Sporadic E",
+     "text": "Occasional strong signals from beyond the radio horizon on the 10, 6 and 2 meter bands."
+    },
+    {
+     "label": "Regular VHF/UHF out to about 300 miles",
+     "title": "Tropospheric ducting",
+     "text": "Over-the-horizon VHF and UHF to about 300 miles on a regular basis. It's caused by temperature inversions in the atmosphere."
+    },
+    {
+     "label": "Raspy, distorted VHF signals",
+     "title": "Auroral backscatter",
+     "text": "VHF signals off the aurora are distorted, with a raspy sound."
+    },
+    {
+     "label": "Getting past a ridge between stations",
+     "title": "Knife-edge diffraction",
+     "text": "A sharp edge, like a ridge, can bend signals over the obstruction."
+    },
+    {
+     "label": "Short bursts off meteor trails",
+     "title": "Meteor scatter",
+     "text": "The band best suited for it is 6 meters."
+    },
+    {
+     "label": "Long distance through the F region",
+     "dims": [
+      {
+       "id": "band",
+       "label": "Band",
+       "options": [
+        "10 m",
+        "6 m",
+        "2 m",
+        "70 cm"
+       ]
+      },
+      {
+       "id": "sun",
+       "label": "Sunspots",
+       "options": [
+        "High (peak of the cycle)",
+        "Low"
+       ]
+      },
+      {
+       "id": "time",
+       "label": "Time of day",
+       "options": [
+        "Dawn to just after sunset",
+        "Night"
+       ]
+      }
+     ],
+     "title": "F region",
+     "rules": [
+      {
+       "when": {
+        "band": [
+         "10 m",
+         "6 m"
+        ],
+        "sun": [
+         "High (peak of the cycle)"
+        ],
+        "time": [
+         "Dawn to just after sunset"
+        ]
+       },
+       "title": "Open: long distance via the F region",
+       "text": "High sunspots and daytime: the best time for long-distance 10 meter contacts, and at the sunspot peak 6 meters can open too."
+      },
+      {
+       "when": {
+        "band": [
+         "10 m",
+         "6 m"
+        ],
+        "sun": [
+         "High (peak of the cycle)"
+        ],
+        "time": [
+         "Night"
+        ]
+       },
+       "title": "Less likely at night",
+       "text": "The best time for 10 meter F-region contacts is from dawn to shortly after sunset."
+      },
+      {
+       "when": {
+        "band": [
+         "10 m",
+         "6 m"
+        ],
+        "sun": [
+         "Low"
+        ]
+       },
+       "title": "Unlikely with low sunspots",
+       "text": "Long-distance F-region openings on these bands come with high sunspot activity."
+      },
+      {
+       "when": {
+        "band": [
+         "2 m",
+         "70 cm"
+        ]
+       },
+       "title": "Not via the F region",
+       "text": "At the peak of the sunspot cycle, the bands that open through the F region are 6 and 10 meters."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Sporadic E",
+   "how": "Occasional. Strong. 10, 6 and 2 m."
+  },
+  {
+   "term": "Tropospheric ducting",
+   "how": "Regular. About 300 miles. Temperature inversions."
+  },
+  {
+   "term": "Auroral backscatter",
+   "how": "Raspy, distorted sound."
+  },
+  {
+   "term": "F region",
+   "how": "10 and 6 m at the sunspot peak, in daytime."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T3C04",
+   "wrong": "Backscatter",
+   "why": "Occasional strong signals beyond the horizon on 10, 6 and 2 m is the signature of sporadic E."
+  },
+  {
+   "q": "T3C06",
+   "wrong": "F2 region refraction",
+   "why": "Regular VHF/UHF to about 300 miles is tropospheric ducting, down low in the atmosphere."
+  },
+  {
+   "q": "T3C08",
+   "wrong": "Sunspots and solar flares",
+   "why": "Sunspots drive the F region. Ducting comes from temperature inversions."
+  },
+  {
+   "q": "T3C07",
+   "wrong": "2 meters",
+   "why": "Meteor scatter works best on 6 meters."
+  },
+  {
+   "q": "T3C09",
+   "wrong": "From shortly after sunset to dawn during periods of high sunspot activity",
+   "why": "Right sunspots, wrong time. 10 m F-region contacts are best from dawn to just after sunset."
+  },
+  {
+   "q": "T3C03",
+   "wrong": "They are often received from 10,000 miles or more",
+   "why": "The giveaway for auroral signals is the sound: distorted and raspy."
+  }
+ ],
+ "questions": [
+  "T3C03",
+  "T3C04",
+  "T3C05",
+  "T3C06",
+  "T3C07",
+  "T3C08",
+  "T3C09",
+  "T3C10"
+ ]
+}
