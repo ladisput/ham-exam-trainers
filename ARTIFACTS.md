@@ -24,5 +24,7 @@ updates the site in about a minute; every other branch gets a preview link (show
 
 | Page | Link |
 |---|---|
-| Hub | (fill in once Cloudflare is connected, e.g. https://ham-exam-trainers.pages.dev/) |
-| Technician | hub link + `technician/` |
+| Hub | https://ham-trainers.pages.dev/ |
+| Technician | https://ham-trainers.pages.dev/technician/ |
+
+Cloudflare project name: `ham-trainers`. A branch's preview is at `https://<branch>.ham-trainers.pages.dev/`.
