@@ -127,7 +127,8 @@ async def main():
                         pairs = doc["widget"]["config"]["pairs"]
                         await pg.locator("#widget .l").first.click()
                         li = await pg.locator("#widget .l").first.get_attribute("data-i")
-                        await pg.locator(f'#widget .r:not([data-i="{li}"])').first.click(); assert await pg.locator("#widget .r.ok").count() == 0
+                        wrong = next(i for i, p in enumerate(pairs) if p[1] != pairs[int(li)][1])
+                        await pg.click(f'#widget .r[data-i="{wrong}"]'); assert await pg.locator("#widget .r.ok").count() == 0
                         for i in range(len(pairs)):
                             await pg.click(f'#widget .l[data-i="{i}"]'); await pg.click(f'#widget .r[data-i="{i}"]')
                         assert await pg.locator("#widget .r.ok").count() == len(pairs) and await pg.is_visible("#mtagain")

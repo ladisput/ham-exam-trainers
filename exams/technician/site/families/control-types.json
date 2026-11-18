@@ -1,0 +1,109 @@
+{
+ "id": "control-types",
+ "exam": "technician",
+ "title": "Local vs. remote vs. automatic control",
+ "idea": "Remote control is running your station from somewhere else, like over the internet. Automatic control is a repeater running on its own. Either way there's a control operator.",
+ "core": {
+  "type": "list",
+  "items": [
+   [
+    "Remote control",
+    "Operating the station over the internet. Any station may be remotely controlled"
+   ],
+   [
+    "Automatic control",
+    "Repeater operation"
+   ],
+   [
+    "Control point",
+    "Where the control operator function is performed"
+   ],
+   [
+    "Auxiliary station",
+    "The one-way link from a remote repeater receiver to the main repeater transmitter"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "scenario",
+  "config": {
+   "heading": "What kind of control is it?",
+   "lead": "Pick a setup to see what the rules call it.",
+   "situations": [
+    {
+     "label": "Running your station over the internet",
+     "title": "Remote control",
+     "text": "Operating the station over the internet is the example of remote control. Any station may be remotely controlled, and the control point is wherever you perform the control function."
+    },
+    {
+     "label": "A repeater running on its own",
+     "title": "Automatic control",
+     "text": "Repeater operation is the example of automatic control. It still has a control operator: no station ever transmits without one."
+    },
+    {
+     "label": "A computer sends your CW or your ID",
+     "title": "Not the automatic-control example",
+     "text": "The pool's example of automatic control is repeater operation, not a computer sending CW or identifying for you."
+    },
+    {
+     "label": "A one-way link from a remote repeater receiver to the main transmitter",
+     "title": "Auxiliary station",
+     "text": "One-way transmissions between a remote repeater receiver and the main repeater transmitter come from an auxiliary station."
+    },
+    {
+     "label": "Flying a model aircraft by radio",
+     "title": "Not remote control of a station",
+     "text": "Part 97's remote control example is operating your station over the internet. Controlling a model craft is something else."
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Remote",
+   "how": "You run the station from elsewhere. Example: over the internet."
+  },
+  {
+   "term": "Automatic",
+   "how": "The station runs itself. Example: a repeater."
+  },
+  {
+   "term": "Control point",
+   "how": "Where you are controlling it, not where the antenna or radio is."
+  }
+ ],
+ "traps": [
+  {
+   "q": "T1E05",
+   "wrong": "The location of the station’s transmitting antenna",
+   "why": "The control point is where the control operator function is performed, not where the antenna is."
+  },
+  {
+   "q": "T1E08",
+   "wrong": "Controlling a station over the internet",
+   "why": "That's remote control. The automatic-control example is repeater operation."
+  },
+  {
+   "q": "T1E09",
+   "wrong": "Only repeater stations",
+   "why": "Any station may be remotely controlled."
+  },
+  {
+   "q": "T1E10",
+   "wrong": "A software defined radio (SDR)",
+   "why": "An SDR is a kind of radio. Remote control means operating the station over the internet."
+  },
+  {
+   "q": "T1D07",
+   "wrong": "A backup radio for emergency use in case the main station radio fails",
+   "why": "An auxiliary station is the one-way link from a remote repeater receiver to the main transmitter."
+  }
+ ],
+ "questions": [
+  "T1E05",
+  "T1E08",
+  "T1E09",
+  "T1E10",
+  "T1D07"
+ ]
+}
