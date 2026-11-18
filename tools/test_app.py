@@ -91,10 +91,27 @@ async def main():
             for f in json.load(open(os.path.join(site, "families", "_index.json")))["families"]:
                 doc = json.load(open(os.path.join(site, "families", f["id"] + ".json")))
                 await pg.goto("about:blank"); await pg.goto(f"http://localhost:8790/index.html#family-{f['id']}"); await pg.wait_for_selector("#fdrill")
-                if doc["widget"]["type"] in ("formula-triangle", "ladder", "calculator"):
+                wt = doc["widget"]["type"]
+                if wt in ("formula-triangle", "ladder", "calculator", "circuit-toggle", "sort-bins", "match"):
                     assert await pg.locator("#widget").count() == 1, f"{f['id']}: widget card missing"
                     for i in range(await pg.locator("#widget .chip").count()):
                         await pg.locator("#widget .chip").nth(i).click(); assert await pg.is_visible("#widget .wres .eq"), f"{f['id']}: no result"
+                    if wt == "circuit-toggle":
+                        for m in ("parallel", "series"):
+                            await pg.click(f'#widget .seg [data-m="{m}"]'); assert await pg.locator("#widget .circ .mtr").count() == 1
+                    if wt == "sort-bins":  # sort every card into its right bin; expect a full score
+                        cards = {k["t"]: k["bin"] for k in doc["widget"]["config"]["cards"]}
+                        for _ in cards:
+                            await pg.click(f'#widget .bins button[data-b="{cards[(await pg.text_content("#widget .sbcard")).strip()]}"]'); await pg.click("#sbnext")
+                        assert (await pg.text_content("#widget .wres .eq")).startswith(f"{len(cards)} of {len(cards)}")
+                    if wt == "match":  # one wrong tap, then every right pair; expect all matched
+                        pairs = doc["widget"]["config"]["pairs"]
+                        await pg.locator("#widget .l").first.click()
+                        li = await pg.locator("#widget .l").first.get_attribute("data-i")
+                        await pg.locator(f'#widget .r:not([data-i="{li}"])').first.click(); assert await pg.locator("#widget .r.ok").count() == 0
+                        for i in range(len(pairs)):
+                            await pg.click(f'#widget .l[data-i="{i}"]'); await pg.click(f'#widget .r[data-i="{i}"]')
+                        assert await pg.locator("#widget .r.ok").count() == len(pairs) and await pg.is_visible("#mtagain")
                 assert await pg.locator(".fq").count() == len(f["questions"])
                 await pg.screenshot(path=f"{out}/{exam}-family-{f['id']}.png", full_page=True)
             print("page errors:", errs or "none"); await b.close()

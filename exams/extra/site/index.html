@@ -106,6 +106,24 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
 .rung.from{border-color:var(--blue);box-shadow:inset 4px 0 0 var(--blue)}.rung.to{border-color:var(--red);box-shadow:inset 4px 0 0 var(--red)}
 .gap{font:600 14px/1 "Barlow Condensed",sans-serif;color:var(--mute);padding:5px 0 5px 1.6em}
 .wave{display:block;width:100%;height:auto;margin-top:12px}
+.seg{display:flex;gap:6px;margin-top:4px}.seg button{flex:1}
+.circ{display:block;width:100%;height:auto;margin-top:12px;color:var(--ink)}
+.circ .w{fill:none;stroke:currentColor;stroke-width:3;stroke-linejoin:round;stroke-linecap:round}
+.circ .flow{fill:none;stroke:var(--blue);stroke-width:3;stroke-dasharray:3 11;stroke-linecap:round;animation:flow 1s linear infinite}
+.circ .mtr{fill:var(--card);stroke:var(--red);stroke-width:3}.circ text{font:700 20px "Barlow Condensed",sans-serif;fill:var(--red);text-anchor:middle}
+.circ .lbl{font:600 13px Barlow,sans-serif;fill:var(--mute)}
+@keyframes flow{to{stroke-dashoffset:-28}}@media(prefers-reduced-motion:reduce){.circ .flow{animation:none}}
+.sbcard{font:600 clamp(22px,6vw,28px)/1.2 "Barlow Condensed",sans-serif;text-align:center;padding:22px 12px;margin-top:10px;background:var(--face);border:1px solid var(--line);border-radius:10px}
+.bins{display:grid;grid-template-columns:repeat(auto-fit,minmax(90px,1fr));gap:8px;margin-top:10px}
+.bins button{font:600 18px/1.1 "Barlow Condensed",sans-serif;min-height:52px}
+.verdict{margin-top:10px;padding:10px 12px;border-radius:8px}.verdict.ok{background:var(--okbg);color:var(--ok)}.verdict.no{background:var(--badbg);color:var(--red)}
+.mt{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px;margin-top:10px}
+.mt div{display:flex;flex-direction:column;gap:8px}
+.mt button{text-align:left;line-height:1.25;padding:8px 10px;font-size:15px;min-height:48px}
+.mt .l{font:600 18px/1.15 "Barlow Condensed",sans-serif}
+.mt button.sel{border-color:var(--blue);box-shadow:inset 0 0 0 2px var(--blue)}
+.mt button.ok{background:var(--okbg);border-color:var(--ok);color:var(--ok)}
+.mt button.no{background:var(--badbg);border-color:var(--red);color:var(--red)}
 </style>
 </head>
 <body style="--call-size:22px;--call-w:9.5em">
@@ -417,6 +435,78 @@ const CALCS={
   }
 };
 WIDGETS.calculator=(el,c)=>{el.classList.add('wg');if(!CALCS[c.calc])throw 0;CALCS[c.calc](el,c)};
+
+/* circuit-toggle: a battery and two resistors, switched between series and parallel, with the meter each arrangement shows.
+   config {series:{title,lines}, parallel:{title,lines}, start}. Series shows an ammeter in the path; parallel a voltmeter across a part. */
+WIDGETS['circuit-toggle']=(el,c)=>{
+  let m=c.start||'series';
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Flip the circuit</h3><p class="small mute lead">Same battery, same two resistors. Switch how they are connected and watch where the current goes.</p>
+  <div class="seg" role="group" aria-label="Arrangement"><button data-m="series">Series</button><button data-m="parallel">Parallel</button></div>
+  <svg class="circ" viewBox="0 0 300 190" role="img"></svg><div class="wres"></div>`;
+  const svg=el.querySelector('svg'),res=el.querySelector('.wres');
+  const zh=(x,y)=>`M${x} ${y} l6 -9 l8 18 l8 -18 l8 18 l8 -18 l8 18 l4 -9`,zv=(x,y)=>`M${x} ${y} l-9 6 l18 8 l-18 8 l18 8 l-18 8 l18 8 l-9 4`;
+  const batt=`<line x1="20" y1="88" x2="60" y2="88" class="w"/><line x1="28" y1="100" x2="52" y2="100" class="w" style="stroke-width:5"/><text x="40" y="78" class="lbl" style="font-size:12px">+</text>`;
+  const D={
+    series:`${batt}<path class="w" d="M40 88 V30 H95 M145 30 H175 M225 30 H262 V72 M262 108 V160 H40 V100"/><path class="w" d="${zh(95,30)}"/><path class="w" d="${zh(175,30)}"/>
+      <path class="flow" d="M40 88 V30 H95 M145 30 H175 M225 30 H262 V72 M262 108 V160 H40 V100"/><circle class="mtr" cx="262" cy="90" r="18"/><text x="262" y="97">A</text>
+      <text class="lbl" x="150" y="182" style="text-anchor:middle">same current through each resistor</text>`,
+    parallel:`${batt}<path class="w" d="M40 88 V30 H275 M40 100 V160 H275 M150 30 V70 M150 120 V160 M220 30 V70 M220 120 V160 M275 30 V72 M275 108 V160"/><path class="w" d="${zv(150,70)}"/><path class="w" d="${zv(220,70)}"/>
+      <path class="flow" d="M40 88 V30 H150 V70 M150 120 V160 H40 V100"/><path class="flow" d="M150 30 H220 V70 M220 120 V160 H150"/><circle class="mtr" cx="275" cy="90" r="18"/><text x="275" y="97">V</text>
+      <text class="lbl" x="185" y="182" style="text-anchor:middle">same voltage across each resistor</text>`};
+  function draw(){
+    el.querySelectorAll('.seg button').forEach(b=>{const on=b.dataset.m===m;b.classList.toggle('pri',on);b.setAttribute('aria-pressed',on)});
+    svg.innerHTML=D[m];const t=c[m]||{};svg.setAttribute('aria-label',m==='series'?'Two resistors in series in one loop, with an ammeter in the loop':'Two resistors in parallel across the battery, with a voltmeter across them');
+    res.innerHTML=`<div class="eq" style="font-size:clamp(22px,6.5vw,30px)">${esc(t.title||'')}</div>${(t.lines||[]).map(l=>`<p>${esc(l)}</p>`).join('')}`;
+  }
+  el.querySelectorAll('.seg button').forEach(b=>b.onclick=()=>{m=b.dataset.m;draw()});
+  draw();
+};
+
+/* sort-bins: one card at a time; tap the bin it belongs in. config {bins:[...], cards:[{t, bin, why}]}. */
+WIDGETS['sort-bins']=(el,c)=>{
+  let deck,i,score,answered;
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Sort them</h3><p class="small mute lead">Tap where each one belongs: ${c.bins.map(esc).join(', ').replace(/, ([^,]*)$/,' or $1')}.</p><div class="sb"></div>`;
+  const box=el.querySelector('.sb');
+  function deal(){deck=shuffle(c.cards);i=0;score=0;show()}
+  function show(){
+    answered=false;
+    if(i>=deck.length){box.innerHTML=`<div class="wres"><div class="eq">${score} of ${deck.length} <em>${score===deck.length?'all sorted':'sorted'}</em></div><p>${score===deck.length?'Nice. You have the split.':'Go again until they all land on the first try.'}</p></div><button class="pri" id="sbagain" style="width:100%;margin-top:12px">Shuffle and sort again</button>`;box.querySelector('#sbagain').onclick=deal;return}
+    const k=deck[i];
+    box.innerHTML=`<p class="small mute" style="margin:0">${i+1} of ${deck.length}</p><div class="sbcard">${esc(k.t)}</div><div class="bins">${c.bins.map(b=>`<button data-b="${esc(b)}">${esc(b)}</button>`).join('')}</div><div class="vbox"></div>`;
+    box.querySelectorAll('.bins button').forEach(b=>b.onclick=()=>{
+      if(answered)return;answered=true;const ok=b.dataset.b===k.bin;if(ok)score++;
+      box.querySelectorAll('.bins button').forEach(x=>{x.disabled=true;if(x.dataset.b===k.bin)x.classList.add('pri')});
+      box.querySelector('.vbox').innerHTML=`<div class="verdict ${ok?'ok':'no'}">${ok?'Right.':'It goes in '+esc(k.bin)+'.'} ${esc(k.why||'')}</div><button class="pri" id="sbnext" style="width:100%;margin-top:10px">${i+1<deck.length?'Next':'See how you did'}</button>`;
+      const n=box.querySelector('#sbnext');n.onclick=()=>{i++;show()};n.focus({preventScroll:true});
+    });
+  }
+  deal();
+};
+
+/* match: tap a term on the left, then its partner on the right. config {left, right, pairs:[[term, partner]]}. */
+WIDGETS.match=(el,c)=>{
+  let sel=null,done=0;
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Match them up</h3><p class="small mute lead">Tap a ${esc((c.left||'term').toLowerCase())}, then the ${esc((c.right||'match').toLowerCase())} that goes with it.</p><div class="mbox"></div>`;
+  const box=el.querySelector('.mbox');
+  function deal(){
+    sel=null;done=0;const L=shuffle(c.pairs.map((p,i)=>[p[0],i])),R=shuffle(c.pairs.map((p,i)=>[p[1],i]));
+    box.innerHTML=`<div class="mt"><div><p class="small mute" style="margin:0">${esc(c.left||'')}</p>${L.map(([t,i])=>`<button class="l" data-i="${i}">${esc(t)}</button>`).join('')}</div>
+    <div><p class="small mute" style="margin:0">${esc(c.right||'')}</p>${R.map(([t,i])=>`<button class="r" data-i="${i}">${esc(t)}</button>`).join('')}</div></div><div class="mres"></div>`;
+    box.querySelectorAll('.l').forEach(b=>b.onclick=()=>{if(b.disabled)return;box.querySelectorAll('.l').forEach(x=>x.classList.toggle('sel',x===b));sel=b});
+    box.querySelectorAll('.r').forEach(b=>b.onclick=()=>{
+      if(b.disabled)return;
+      if(!sel){box.querySelector('.mres').innerHTML='<p class="small mute">Pick one on the left first.</p>';return}
+      if(sel.dataset.i===b.dataset.i){[sel,b].forEach(x=>{x.classList.remove('sel');x.classList.add('ok');x.disabled=true});sel=null;done++;
+        box.querySelector('.mres').innerHTML=done===c.pairs.length?`<div class="wres"><div class="eq">All ${done} <em>matched</em></div></div><button class="pri" id="mtagain" style="width:100%;margin-top:12px">Shuffle and match again</button>`:'';
+        const a=box.querySelector('#mtagain');if(a)a.onclick=deal}
+      else{b.classList.add('no');setTimeout(()=>b.classList.remove('no'),700);box.querySelector('.mres').innerHTML=`<p class="small" style="color:var(--red)">Not that one. Try again.</p>`}
+    });
+  }
+  deal();
+};
 function coreHtml(c){
   if(!c)return'';
   if(c.type==='rule-table'){const[h,...rows]=c.rows;return`<table><tr>${h.map(x=>`<th>${esc(x)}</th>`).join('')}</tr>${rows.map(r=>`<tr>${r.map(x=>`<td>${esc(x)}</td>`).join('')}</tr>`).join('')}</table>`}
