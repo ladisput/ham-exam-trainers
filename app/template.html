@@ -191,6 +191,18 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
 .bt .btcar{stroke:var(--ink);stroke-width:1.5;stroke-dasharray:3 3}
 .circ .plmtr{fill:var(--card);stroke:var(--ink);stroke-width:2.5}.circ .plmtr.hi{stroke:var(--red);stroke-width:4}
 .circ .skz{fill:var(--badbg)}.circ .sktk{stroke:var(--mute)}.circ .plbg{fill:var(--tint);stroke:var(--line)}.circ .plok{fill:var(--ok)}.circ .plover{fill:var(--red)}.circ .pllim{stroke:var(--red);stroke-width:2.5}
+.bnt button,.bnb button,.bno button,.rxp button{flex:1 1 auto}.bnb,.rxp,.msm{flex-wrap:wrap}
+.circ .bnrow{fill:var(--tint)}.circ .bnrow.on{fill:var(--card);stroke:var(--blue);stroke-width:2.5}.circ .bnf{font:700 15px "Barlow Condensed",sans-serif;fill:var(--ink)}.circ .bncall{font:700 17px "Barlow Condensed",sans-serif;fill:var(--red)}
+.bnrules{display:flex;flex-direction:column;gap:6px;margin-top:10px}.bnrules div{display:flex;gap:8px;align-items:flex-start}.bnrules i{font-style:normal;font-weight:700;width:1.2em;flex:none}.bnrules .ok i{color:var(--ok)}.bnrules .no i{color:var(--red)}
+.bwl{display:flex;flex-direction:column;gap:5px;margin-top:10px}.bwl button{display:grid;grid-template-columns:5.6em minmax(0,1fr) 4.4em;gap:8px;align-items:center;text-align:left;padding:6px 10px;min-height:44px}
+.bwl button i{display:block;height:10px;border-radius:5px;background:var(--blue)}.bwl button b{font:700 15px "Barlow Condensed",sans-serif;text-align:right}.bwl button.on{border-color:var(--ink);box-shadow:inset 0 0 0 2px var(--ink)}
+.circ .bwax{stroke:var(--mute);stroke-width:1.5}.circ .bws{fill:var(--blue)}.circ .bwn{fill:var(--mute);opacity:.7}.circ .bwn.bad{fill:var(--red)}.circ .bwspl{fill:var(--red);opacity:.35}
+.circ .bwflt{fill:none;stroke:var(--ink);stroke-width:1.5;stroke-dasharray:5 3}.circ .bwwf{fill:#0d1420}.circ .bwwfs{fill:#f2b33d}.circ .bwwfl{fill:#f2b33d;opacity:.8}
+.vsb{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:6px}.vsb span{font-size:13px;color:var(--mute)}.vsb .meterbar{margin-top:2px}
+.circ .vsfull{stroke:var(--red);stroke-width:1.5;stroke-dasharray:5 4}.circ .vsenv{fill:var(--blue);opacity:.75}.circ .vsclip{fill:var(--red)}.circ .vsmid{stroke:var(--line);stroke-width:1}
+.circ .msau{fill:none;stroke:var(--ink);stroke-width:2}.circ .msscr{fill:#0d1420}.circ .msrf{fill:none;stroke:#7be08f;stroke-width:1.6}.circ .msenv{fill:none;stroke:#f2b33d;stroke-width:2;stroke-dasharray:5 4}
+.rxc{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}.rxc .smb{flex:1 1 30%}
+.circ .rxflt{fill:var(--tint)}.circ .rxfloor{fill:none;stroke:var(--mute);stroke-width:1.5}.circ .rxsig{fill:var(--blue)}.circ .rxbad{fill:var(--red)}.circ .rxpop{fill:#c99a2e}.circ .rxnotch{fill:none;stroke:var(--ok);stroke-width:2;stroke-dasharray:4 3}
 </style>
 </head>
 <body style="--call-size:{{callSize}};--call-w:{{callWidth}}">
@@ -1381,23 +1393,49 @@ WIDGETS.ionosphere=(el,c)=>{
     if(p.snap==='muf')st.f=0.95*q.foF2*sec(st.el);if(p.snap==='fc'){st.el=90;st.f=q.foF2}if(p.snap==='ca')st.el=Math.asin(q.foF2/st.f)*180/Math.PI-0.5;draw()},svg);
   draw();
 };
-/* Morse "CQ" on a 650 Hz tone through Web Audio, for hearing propagation effects. o: {lvl 0-1, flut (flutter + several paths),
-   echo (seconds), noise 0-1}. Returns false when the browser has no audio. */
 let ACX=null;
+const MORSE={A:'.-',B:'-...',C:'-.-.',D:'-..',E:'.',F:'..-.',G:'--.',H:'....',I:'..',J:'.---',K:'-.-',L:'.-..',M:'--',N:'-.',O:'---',P:'.--.',Q:'--.-',R:'.-.',S:'...',T:'-',U:'..-',V:'...-',W:'.--',X:'-..-',Y:'-.--',Z:'--..',0:'-----',1:'.----',2:'..---',3:'...--',4:'....-',5:'.....',6:'-....',7:'--...',8:'---..',9:'----.'};
+function audioCtx(){const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return null;try{ACX=ACX||new AC();if(ACX.state==='suspended')ACX.resume();return ACX}catch(e){return null}}
+/* Key Morse text on gain node g from time t (dot length u seconds, key level lv). Returns the end time. */
+function keyMorse(g,t,text,u,lv=1){for(const w of text.split(' ')){for(const ch of w){const m=MORSE[ch];if(!m)continue;for(const s of m){const d=s==='-'?3*u:u;g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(lv,t+.006);g.gain.setValueAtTime(lv,t+d-.006);g.gain.linearRampToValueAtTime(0,t+d);t+=d+u}t+=2*u}t+=4*u}return t}
+/* Band-limited noise (or sparse clicks when clicks is set) from t0 to end into out. */
+function noiseTo(a,out,t0,end,gain,clicks){const n=a.createBufferSource(),b=a.createBuffer(1,Math.ceil(a.sampleRate*(end-t0+.1)),a.sampleRate),d=b.getChannelData(0);
+  if(clicks){const step=Math.round(a.sampleRate*.11);for(let i=0;i<d.length;i+=step+Math.round(Math.random()*step*.6))for(let j=0;j<a.sampleRate*.004&&i+j<d.length;j++)d[i+j]=(Math.random()*2-1)}
+  else for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
+  n.buffer=b;const f=a.createBiquadFilter();f.type='bandpass';f.frequency.value=800;f.Q.value=.7;const g=a.createGain();g.gain.value=gain;n.connect(f).connect(g).connect(out);n.start(t0);n.stop(end)}
+/* Morse on a 650 Hz tone through Web Audio, for hearing propagation. o: {text (default CQ), u, hz, lvl 0-1, flut (flutter + several paths),
+   echo (seconds), noise 0-1, tail: [levels] (one-second dashes after the text, as the NCDXF beacons send)}. Returns false with no audio. */
 function playCW(o){
-  const AC=window.AudioContext||window.webkitAudioContext;if(!AC)return false;
-  try{ACX=ACX||new AC();if(ACX.state==='suspended')ACX.resume()}catch(e){return false}
-  const a=ACX,t0=a.currentTime+.05,u=.07,out=a.createGain();out.gain.value=.3;out.connect(a.destination);
-  const key=a.createGain();key.gain.setValueAtTime(0,t0);let t=t0;
-  for(const ch of '-.-. --.-'){if(ch===' '){t+=2*u;continue}const d=ch==='-'?3*u:u;key.gain.setValueAtTime(0,t);key.gain.linearRampToValueAtTime(1,t+.006);key.gain.setValueAtTime(1,t+d-.006);key.gain.linearRampToValueAtTime(0,t+d);t+=d+u}
-  const end=t+.4+(o.echo||0),osc=a.createOscillator();osc.frequency.value=650;osc.connect(key);
+  const a=audioCtx();if(!a)return false;
+  const t0=a.currentTime+.05,out=a.createGain();out.gain.value=.3;out.connect(a.destination);
+  const key=a.createGain();key.gain.setValueAtTime(0,t0);let t=keyMorse(key,t0,o.text||'CQ',o.u||.07);
+  (o.tail||[]).forEach(L=>{key.gain.setValueAtTime(0,t);key.gain.linearRampToValueAtTime(L,t+.01);key.gain.setValueAtTime(L,t+.9);key.gain.linearRampToValueAtTime(0,t+.92);t+=1.05});
+  const end=t+.3+(o.echo||0),osc=a.createOscillator();osc.frequency.value=o.hz||650;osc.connect(key);
   const lv=a.createGain();lv.gain.value=o.lvl??1;lv.connect(out);
   const path=(delay,g,fl)=>{const dn=a.createDelay(1);dn.delayTime.value=delay;const gn=a.createGain();gn.gain.value=g;key.connect(dn).connect(gn).connect(lv);
     if(fl){[[fl,.45*g],[fl*1.6,.25*g]].forEach(([hz,amt])=>{const l=a.createOscillator(),lg=a.createGain();l.frequency.value=hz;lg.gain.value=amt;l.connect(lg).connect(gn.gain);l.start(t0);l.stop(end)})}};
   if(o.flut){path(0,.5,9);path(.004,.4,13);path(.009,.35,7)}else path(0,1,0);
   if(o.echo)path(o.echo,.55,0);
-  if(o.noise){const n=a.createBufferSource(),b=a.createBuffer(1,a.sampleRate*(end-t0+.1),a.sampleRate),d=b.getChannelData(0);for(let i=0;i<d.length;i++)d[i]=Math.random()*2-1;
-    n.buffer=b;const f=a.createBiquadFilter();f.type='bandpass';f.frequency.value=800;f.Q.value=.7;const ng=a.createGain();ng.gain.value=o.noise;n.connect(f).connect(ng).connect(out);n.start(t0);n.stop(end)}
+  if(o.noise)noiseTo(a,out,t0,end,o.noise);
+  osc.start(t0);osc.stop(end);return true;
+}
+/* A receiver with one problem on the band. p: whistle|pops|overload|hiss|qrm|split; fx: {notch, nb, nr 0-2, att, rev, split}. */
+function rxPlay(p,fx){
+  const a=audioCtx();if(!a)return false;
+  const t0=a.currentTime+.05,out=a.createGain();out.gain.value=.3;out.connect(a.destination);
+  const key=a.createGain();key.gain.setValueAtTime(0,t0);const end=keyMorse(key,t0,'CQ DX',.065)+.2;
+  const osc=a.createOscillator();osc.frequency.value=650;osc.connect(key);const sg=a.createGain();sg.gain.value=p==='hiss'?.5:1;
+  let s=key;
+  const shape=k=>{const w=a.createWaveShaper(),cv=new Float32Array(256);for(let i=0;i<256;i++)cv[i]=Math.tanh(k*(i/127.5-1));w.curve=cv;return w};
+  if(p==='overload'&&!fx.att){const w=shape(8),pre=a.createGain();pre.gain.value=3;s.connect(pre).connect(w);s=w;
+    [430,1110].forEach(hz=>{const o=a.createOscillator(),g=a.createGain();o.frequency.value=hz;g.gain.value=.15;o.connect(g).connect(out);o.start(t0);o.stop(end)})}
+  if(fx.nr===2){const w=shape(3),lp=a.createBiquadFilter();lp.type='lowpass';lp.frequency.value=700;s.connect(w).connect(lp);s=lp}
+  s.connect(sg).connect(out);
+  if(p==='whistle'&&!fx.notch){const o=a.createOscillator(),g=a.createGain();o.frequency.value=780;g.gain.value=.35;o.connect(g).connect(out);o.start(t0);o.stop(end)}
+  if(p==='pops'&&!fx.nb)noiseTo(a,out,t0,end,1.2,true);
+  noiseTo(a,out,t0,end,(p==='hiss'?.4:.04)*[1,.35,.15][fx.nr||0]);
+  if(p==='qrm'&&!fx.rev){const k2=a.createGain();k2.gain.setValueAtTime(0,t0);keyMorse(k2,t0+.15,'TEST TEST',.055,.8);const o=a.createOscillator();o.frequency.value=820;o.connect(k2).connect(out);o.start(t0);o.stop(end)}
+  if(p==='split'&&!fx.split)[600,700,760,560].forEach((hz,i)=>{const k=a.createGain();k.gain.setValueAtTime(0,t0);keyMorse(k,t0+i*.13,['K1AB','W9XY','N4QQ','AA7Z'][i],.06,.6);const o=a.createOscillator();o.frequency.value=hz;o.connect(k).connect(out);o.start(t0);o.stop(end)});
   osc.start(t0);osc.stop(end);return true;
 }
 
@@ -1642,6 +1680,263 @@ WIDGETS['power-limit']=(el,c)=>{
   el.querySelector('.pls').onclick=()=>{st.ss=!st.ss;unchip(el);draw()};
   sw.oninput=()=>{st.w=LOGS(1,3000,+sw.value);unchip(el);draw()};sg.oninput=()=>{st.g=+sg.value/2;unchip(el);draw()};
   chips(el,c.presets,p=>{st={b:p.b||'20',w:p.w??100,g:p.g||0,ss:!!p.ss,focus:p.focus||null};draw()},svg);
+  draw();
+};
+/* beacon: the NCDXF/IARU beacon network (18 beacons rotating over 14.100, 18.110, 21.150, 24.930 and 28.200 MHz, 10 s each), with a Listen
+   button (call sign, then dashes at 100, 10, 1 and 0.1 W), and a "set up your own beacon" rule check.
+   config {presets:[{q, tab 'net'|'own', t seconds, b band index, cond good|fair|poor, ob '20'|'15'|'10', f kHz, w watts, two, mode cw|wspr, focus 'avoid'|'purpose'}]}. */
+WIDGETS.beacon=(el,c)=>{
+  const NB=[['4U1UN','New York'],['VE8AT','Nunavut, Canada'],['W6WX','California'],['KH6RS','Hawaii'],['ZL6B','New Zealand'],['VK6RBP','Western Australia'],['JA2IGY','Japan'],['RR9O','Siberia'],['VR2B','Hong Kong'],['4S7B','Sri Lanka'],['ZS6DN','South Africa'],['5Z4B','Kenya'],['4X6TU','Israel'],['OH2B','Finland'],['CS3B','Madeira'],['LU4AA','Argentina'],['OA4B','Peru'],['YV5B','Venezuela']];
+  const FR=[14100,18110,21150,24930,28200],BN=['20 m','17 m','15 m','12 m','10 m'],OWN={'20':[14000,14350],'15':[21000,21450],'10':[28000,29700]};
+  const D=()=>({tab:'net',t:0,b:0,cond:'good',ob:'10',f:28250,w:50,two:false,mode:'cw',focus:null});let st=D();
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Listen for beacons</h3><p class="small mute lead">Beacons are stations that just send their call sign over and over, so anyone can tell where the band is open. Listen to the worldwide network, or try setting up your own.</p>
+  <div class="seg bnt" role="group" aria-label="View"><button data-t="net">The beacon network</button><button data-t="own">Your own beacon</button></div>
+  <div class="bnnet"><svg class="circ bn" viewBox="0 0 300 150" role="img"></svg>
+    <label for="bn-t" style="margin-top:8px">Time past the hour: <b class="bntv"></b></label><input id="bn-t" type="range" min="0" max="17">
+    <div class="seg bnb" role="group" aria-label="Listen on" style="margin-top:8px">${BN.map((n,i)=>`<button data-b="${i}">${n}</button>`).join('')}</div>
+    <div class="row" style="gap:8px;margin-top:8px;flex-wrap:wrap"><div class="seg bnc" role="group" aria-label="Band conditions"><button data-c="good">Band open</button><button data-c="fair">Fair</button><button data-c="poor">Poor</button></div><button class="smb lis">▶ Listen</button></div></div>
+  <div class="bnown" hidden><div class="seg bno" role="group" aria-label="Band" style="margin-top:10px">${Object.keys(OWN).map(k=>`<button data-o="${k}">${k} m</button>`).join('')}</div>
+    <label for="bn-f" style="margin-top:8px">Frequency: <b class="bnfv"></b></label><input id="bn-f" type="range" step="5">
+    <label for="bn-w" style="margin-top:8px">Power: <b class="bnwv"></b></label><input id="bn-w" type="range" min="1" max="200">
+    <div class="row" style="gap:8px;margin-top:8px;flex-wrap:wrap"><button class="smb bn2" aria-pressed="false">Second beacon here on this band</button><div class="seg bnm" role="group" aria-label="Mode"><button data-m="cw">CW</button><button data-m="wspr">WSPR</button></div></div></div>
+  <div class="wres"></div>`;
+  const svg=el.querySelector('svg'),stt=el.querySelector('#bn-t'),sf=el.querySelector('#bn-f'),sw=el.querySelector('#bn-w'),res=el.querySelector('.wres');
+  const on=(s,k)=>NB[((s-k)%18+18)%18];
+  function draw(){
+    segOn(el,'.bnt','t',st.tab);el.querySelector('.bnnet').hidden=st.tab!=='net';el.querySelector('.bnown').hidden=st.tab!=='own';
+    const F=k=>st.focus===k?' class="hl"':'';
+    if(st.tab==='net'){
+      segOn(el,'.bnb','b',st.b);segOn(el,'.bnc','c',st.cond);stt.value=st.t;el.querySelector('.bntv').textContent=`${Math.floor(st.t/6)}:${String(st.t%6*10).padStart(2,'0')} (then every 3 minutes)`;
+      let g=`<text class="lbl" x="8" y="12" style="text-anchor:start;font-size:11px">Frequency</text><text class="lbl" x="118" y="12" style="text-anchor:start;font-size:11px">On the air now</text><text class="lbl" x="292" y="12" style="text-anchor:end;font-size:11px">Next</text>`;
+      FR.forEach((f,k)=>{const y=20+k*26,b=on(st.t,k),n=on(st.t+1,k),sel=k===st.b;
+        g+=`<rect x="2" y="${y}" width="296" height="23" rx="5" class="bnrow${sel?' on':''}"/><text x="10" y="${y+16}" class="bnf" style="text-anchor:start">${(f/1000).toFixed(3)}</text><text class="lbl" x="70" y="${y+16}" style="text-anchor:start;font-size:11px">${BN[k]}</text>
+        <text x="118" y="${y+16}" class="bncall" style="text-anchor:start">${b[0]}</text><text class="lbl" x="292" y="${y+16}" style="text-anchor:end;font-size:11px">${n[0]}</text>`});
+      svg.innerHTML=g;const B=on(st.t,st.b);svg.setAttribute('aria-label',`At this moment ${B[0]} is on ${(FR[st.b]/1000).toFixed(3)} MHz`);
+      const heard={good:4,fair:3,poor:1}[st.cond];
+      res.innerHTML=`<div class="eq">${B[0]} · ${esc(B[1])}</div>
+      <p>On ${(FR[st.b]/1000).toFixed(3)} MHz now. Each beacon sends its call sign at 100 watts, then four one-second dashes at 100, 10, 1 and 0.1 watts. ${st.cond==='good'?'The band is wide open to '+esc(B[1])+': you hear all four dashes.':st.cond==='fair'?'You hear three dashes: a fair path.':'You barely hear the call sign: a poor path.'}</p>
+      <p${F('purpose')}>That's the point of a beacon: <b>observation of propagation and reception</b>. ${heard===4?'Four dashes heard':'Count the dashes'}, and you know how well the band reaches that part of the world.</p>
+      <p${F('avoid')}>The network sends on <b>14.100, 18.110, 21.150, 24.930 and 28.200 MHz</b>, so normally avoid transmitting on those frequencies.</p>`;
+    } else {
+      const R=OWN[st.ob];st.f=Math.max(R[0],Math.min(R[1],st.f));segOn(el,'.bno','o',st.ob);segOn(el,'.bnm','m',st.mode);
+      sf.min=R[0];sf.max=R[1];sf.value=st.f;sw.value=st.w;el.querySelector('.bnfv').textContent=(st.f/1000).toFixed(3)+' MHz';el.querySelector('.bnwv').textContent=st.w+' W PEP output';
+      const b2=el.querySelector('.bn2');b2.classList.toggle('pri',st.two);b2.setAttribute('aria-pressed',st.two);
+      const rules=[[st.f>=28200&&st.f<=28300,'Automatically controlled HF beacons only between <b>28.20 and 28.30 MHz</b>'],[st.w<=100,'No more than <b>100 watts PEP output</b>'],[!st.two,'<b>No more than one beacon</b> in the same band from the same station location']];
+      const ok=rules.every(r=>r[0]);
+      res.innerHTML=`<div class="verdict ${ok?'ok':'no'}">${ok?'Your beacon follows the rules':'Not allowed as set up'}</div>
+      <div class="bnrules">${rules.map(([g,t])=>`<div class="${g?'ok':'no'}"><i>${g?'✓':'✗'}</i><span>${t}</span></div>`).join('')}</div>
+      ${st.mode==='wspr'?`<p><b>WSPR</b> ("whisper") is the digital mode used as a <b>low-power beacon for assessing HF propagation</b>. A few watts or less, decoded far below the noise, with reports collected online.</p>`:''}`;
+    }
+  }
+  el.querySelectorAll('.bnt button').forEach(b=>b.onclick=()=>{st.tab=b.dataset.t;st.focus=null;unchip(el);draw()});
+  el.querySelectorAll('.bnb button').forEach(b=>b.onclick=()=>{st.b=+b.dataset.b;unchip(el);draw()});
+  el.querySelectorAll('.bnc button').forEach(b=>b.onclick=()=>{st.cond=b.dataset.c;unchip(el);draw()});
+  el.querySelectorAll('.bno button').forEach(b=>b.onclick=()=>{st.ob=b.dataset.o;st.f=OWN[st.ob][0]+(st.ob==='10'?250:85);unchip(el);draw()});
+  el.querySelectorAll('.bnm button').forEach(b=>b.onclick=()=>{st.mode=b.dataset.m;unchip(el);draw()});
+  stt.oninput=()=>{st.t=+stt.value;unchip(el);draw()};sf.oninput=()=>{st.f=+sf.value;unchip(el);draw()};sw.oninput=()=>{st.w=+sw.value;unchip(el);draw()};
+  el.querySelector('.bn2').onclick=()=>{st.two=!st.two;unchip(el);draw()};
+  el.querySelector('.lis').onclick=()=>{const L={good:[1,.35,.13,.05],fair:[.6,.2,.06,0],poor:[.18,.04,0,0]}[st.cond];playCW({text:on(st.t,st.b)[0],u:.06,lvl:L[0],tail:L.map(x=>x/L[0]),noise:{good:.02,fair:.05,poor:.08}[st.cond]})};
+  chips(el,c.presets,p=>{st=Object.assign(D(),p);delete st.q;draw()},el.querySelector('.bnt'));
+  draw();
+};
+
+/* bw-scope: signal widths side by side (tap a mode), a spectrum with your signal, a neighbour at a spacing you set, a receiver filter, an
+   overmodulation switch (splatter, and vertical lines on the waterfall) and, for data modes, a symbol-rate slider.
+   config {m, presets:[{q, m cw|ft8|rtty|ssb|am|fm, sp Hz, fw Hz, over, rate baud, focus '60'|'phone'|'filter'|'rate'|'wf'}]}. */
+WIDGETS['bw-scope']=(el,c)=>{
+  const M={cw:{n:'CW',w:150,span:3000},ft8:{n:'FT8',w:50,span:1500,rate:6.25},rtty:{n:'RTTY',w:250,span:3000,rate:45.45},ssb:{n:'SSB voice',w:2800,span:12000},am:{n:'AM voice',w:6000,span:24000},fm:{n:'FM voice',w:12000,span:48000}};
+  const D=m=>({m,sp:Math.round(M[m].w*1.6),fw:M[m].w,over:false,rate:M[m].rate||null,focus:null});let st=D(c.m||'ssb');
+  const LX=w=>Math.max(4,100*Math.log(w/20)/Math.log(20000/20));
+  el.classList.add('wg');
+  el.innerHTML=`<h3>How wide is it?</h3><p class="small mute lead">Every mode takes up a different width of spectrum. Tap one, then set the gap to the next station, your receiver's filter, and try overmodulating.</p>
+  <div class="bwl">${Object.entries(M).map(([k,v])=>`<button data-m="${k}"><span>${v.n}</span><i style="width:${LX(v.w)}%"></i><b>${v.w>=1000?fmt(v.w/1000)+' kHz':v.w+' Hz'}</b></button>`).join('')}</div>
+  <svg class="circ bw" viewBox="0 0 300 170" role="img"></svg>
+  <label for="bw-s" style="margin-top:8px">Gap to the next station: <b class="bwsv"></b></label><input id="bw-s" type="range" min="0" max="1000">
+  <label for="bw-f" style="margin-top:8px">Receiver filter: <b class="bwfv"></b></label><input id="bw-f" type="range" min="0" max="1000">
+  <div class="bwr"><label for="bw-r" style="margin-top:8px">Symbol rate: <b class="bwrv"></b></label><input id="bw-r" type="range" min="0" max="1000"></div>
+  <div class="row" style="gap:8px;margin-top:8px"><button class="smb bwo" aria-pressed="false">Overmodulate</button></div>
+  <div class="wres"></div>`;
+  const svg=el.querySelector('svg'),ss=el.querySelector('#bw-s'),sfw=el.querySelector('#bw-f'),sr=el.querySelector('#bw-r'),res=el.querySelector('.wres');
+  const Hz=v=>v>=1000?fmt(v/1000,3)+' kHz':fmt(Math.round(v))+' Hz';
+  function draw(){
+    const m=M[st.m],w=m.rate?m.w*st.rate/m.rate:m.w,span=m.span*(m.rate?Math.max(1,st.rate/m.rate*.8):1),x0=-.3*span,X=f=>8+284*(f-x0)/span;
+    el.querySelectorAll('.bwl button').forEach(b=>{const on=b.dataset.m===st.m;b.classList.toggle('on',on);b.setAttribute('aria-pressed',on)});
+    el.querySelector('.bwr').hidden=!m.rate;const ob=el.querySelector('.bwo');ob.classList.toggle('pri',st.over);ob.setAttribute('aria-pressed',st.over);
+    ss.value=Math.round(st.sp/(.65*span)*1000);sfw.value=LOGI(30,30000,st.fw);if(m.rate)sr.value=LOGI(m.rate/4,m.rate*8,st.rate);
+    el.querySelector('.bwsv').textContent=Hz(st.sp);el.querySelector('.bwfv').textContent=Hz(st.fw);if(m.rate)el.querySelector('.bwrv').textContent=fmt(st.rate,3)+' baud';
+    const lo=st.m==='ssb'?0:-w/2,hi=st.m==='ssb'?w:w/2,BY=82,H=56;
+    const sig=(a,b,cls,h=H)=>`<path d="M${X(a)} ${BY} L${X(a)+Math.min(6,(X(b)-X(a))/4)} ${BY-h} L${X(b)-Math.min(6,(X(b)-X(a))/4)} ${BY-h} L${X(b)} ${BY} Z" class="${cls}"/>`;
+    let g=`<line x1="8" y1="${BY}" x2="292" y2="${BY}" class="bwax"/>`;
+    for(let i=0;i<=5;i++){const f=x0+span*i/5;g+=`<text class="lbl" x="${X(f)}" y="${BY+13}" style="font-size:10px;text-anchor:${i?i<5?'middle':'end':'start'}">${f>=0?'+':'−'}${Hz(Math.abs(f))}</text>`}
+    const n0=lo+st.sp,n1=hi+st.sp,touch=st.sp<w,spl=st.over?w*1.6:0;
+    if(st.over)g+=sig(lo-spl,hi+spl,'bwspl',H*.28);
+    g+=sig(n0,n1,'bwn'+(touch?' bad':''),H*.8)+sig(lo,hi,'bws');
+    g+=`<rect x="${X(-st.fw/2+(st.m==='ssb'?w/2:0))}" y="${BY-H-12}" width="${Math.max(2,X(st.fw)-X(0))}" height="${H+12}" class="bwflt"/><text class="lbl" x="${X(st.m==='ssb'?w/2:0)}" y="${BY-H-16}" style="font-size:10px;fill:var(--ink)">your filter</text>`;
+    g+=`<text class="lbl" x="${X((lo+hi)/2)}" y="${BY-H/2+4}" style="fill:var(--card);font-weight:700;font-size:11px">you</text>`;
+    const WY=100;g+=`<rect x="8" y="${WY}" width="284" height="62" class="bwwf"/>`;
+    for(let r=0;r<10;r++){const y=WY+r*6.2,k=.55+.45*Math.abs(Math.sin(r*2.3+st.m.length));
+      g+=`<rect x="${X(lo)}" y="${y}" width="${X(hi)-X(lo)}" height="6.2" class="bwwfs" style="opacity:${k.toFixed(2)}"/><rect x="${X(n0)}" y="${y}" width="${X(n1)-X(n0)}" height="6.2" class="bwwfs" style="opacity:${(k*.7).toFixed(2)}"/>`;
+      if(st.over)[1.25,1.9].forEach(s=>{[(lo+hi)/2-s*w,(lo+hi)/2+s*w].forEach(f=>{if(f>x0&&f<x0+span)g+=`<rect x="${X(f)-1}" y="${y}" width="2.5" height="6.2" class="bwwfl"/>`})})}
+    g+=`<text class="lbl" x="12" y="${WY+60}" style="text-anchor:start;font-size:10px;fill:#cfd8e3">waterfall</text>`;
+    svg.innerHTML=g;svg.setAttribute('aria-label',`${m.n}, ${Hz(w)} wide, next station ${Hz(st.sp)} away, filter ${Hz(st.fw)}`);
+    const snr=st.fw<w?st.fw/w:w/st.fw,qrm=st.fw/2+w/2>st.sp&&st.m!=='ssb'||st.m==='ssb'&&st.fw>st.sp;
+    const F=k=>st.focus===k?' class="hl"':'';
+    const gap=st.m==='cw'?`For CW, leave <b>150 to 500 Hz</b> between you and the next station.`:st.m==='ssb'?`For SSB, leave <b>2 to 3 kHz</b> between you and the next station.`:`Leave at least the signal's width between stations.`;
+    res.innerHTML=`<div class="eq">${m.n}: ${Hz(w)} wide</div>
+    <div class="swr" style="margin-top:8px"><div><span>Next station</span><b style="color:${touch?'var(--red)':'inherit'}">${touch?'Overlapping':'Clear'}</b></div><div><span>Signal to noise</span><b>${Math.round(snr*100)}%</b></div><div><span>Splatter</span><b style="color:${st.over?'var(--red)':'inherit'}">${st.over?'Yes':'None'}</b></div></div>
+    <p>${gap} ${touch?'Right now the signals overlap.':''}</p>
+    <p${F('filter')}>${Math.abs(snr-1)<.12?'Filter matched to the signal: <b>the best signal-to-noise ratio</b>.':st.fw>w?'The filter is wider than the signal, so it lets in extra noise'+(qrm?' and the neighbour':'')+'.':'The filter is narrower than the signal and cuts part of it off.'} Match the receiver's bandwidth to the mode for the best signal-to-noise ratio.</p>
+    ${st.over?`<p${F('wf')}><b>Overmodulation</b>: excessive bandwidth. Splatter spreads out either side${m.rate?', and on a waterfall it shows as <b>vertical lines on either side</b> of the data signal':''}.</p>`:''}
+    ${m.rate?`<p${F('rate')}><b>Higher symbol rates need wider bandwidth.</b> Slide the symbol rate and watch the signal grow.</p>`:''}
+    ${st.m==='ssb'?`<p${F('60')}>On 60 meters USB, the maximum bandwidth permitted is <b>2.8 kHz</b>: just what a voice SSB signal takes.</p><p${F('phone')}>Of the phone emissions, <b>single sideband is the narrowest</b>: narrower than AM, vestigial sideband, FM or PM.</p>`:''}`;
+  }
+  el.querySelectorAll('.bwl button').forEach(b=>b.onclick=()=>{st=D(b.dataset.m);unchip(el);draw()});
+  ss.oninput=()=>{const m=M[st.m];st.sp=+ss.value/1000*.65*m.span*(m.rate?Math.max(1,st.rate/m.rate*.8):1);unchip(el);draw()};
+  sfw.oninput=()=>{st.fw=LOGS(30,30000,+sfw.value);unchip(el);draw()};
+  sr.oninput=()=>{const m=M[st.m],r=LOGS(m.rate/4,m.rate*8,+sr.value)/st.rate;st.rate*=r;st.sp*=r;st.fw*=r;unchip(el);draw()};
+  el.querySelector('.bwo').onclick=()=>{st.over=!st.over;unchip(el);draw()};
+  chips(el,c.presets,p=>{st=D(p.m||'ssb');if(p.rate){const r=p.rate/st.rate;st.sp*=r;st.fw*=r}['sp','fw','over','rate','focus'].forEach(k=>{if(p[k]!=null)st[k]=p[k]});draw()},svg);
+  draw();
+};
+
+/* voice-scope: an SSB voice envelope on a scope. Mic gain drives it, the ALC holds peaks at full PEP over a 6 dB range, past that it
+   flat-tops; the speech processor raises the average; a data (AFSK) mode is a steady envelope that ALC should not touch.
+   config {presets:[{q, mic 0-100, proc 0-10 dB, mode voice|data, focus 'alc'|'drive'|'loud'|'avg'|'flat'}]}. */
+WIDGETS['voice-scope']=(el,c)=>{
+  const BU=[[.08,.9],[.19,.5],[.29,.75],[.41,.35],[.54,1],[.65,.55],[.77,.42],[.89,.8]],N=150;
+  const D=()=>({mic:40,proc:0,mode:'voice',focus:null});let st=D();
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Talk into the mic</h3><p class="small mute lead">This is your SSB signal on a scope as you say a few words. Turn up the mic gain and the speech processor, and watch the ALC and the peaks.</p>
+  <div class="seg vsm" role="group" aria-label="Mode"><button data-m="voice">Voice</button><button data-m="data">Data (AFSK)</button></div>
+  <svg class="circ vs" viewBox="0 0 300 150" role="img"></svg>
+  <div class="vsb"><div><span>Average power</span><div class="meterbar"><i class="vsa"></i></div></div><div><span>ALC</span><div class="meterbar"><i class="vsl"></i></div></div></div>
+  <label for="vs-m" style="margin-top:8px">Mic gain (transmit audio): <b class="vsmv"></b></label><input id="vs-m" type="range" min="0" max="100">
+  <div class="vsp"><label for="vs-p" style="margin-top:8px">Speech processor: <b class="vspv"></b></label><input id="vs-p" type="range" min="0" max="10"></div>
+  <div class="wres"></div>`;
+  const svg=el.querySelector('svg'),sm=el.querySelector('#vs-m'),sp=el.querySelector('#vs-p'),res=el.querySelector('.wres');
+  function draw(){
+    segOn(el,'.vsm','m',st.mode);sm.value=st.mic;sp.value=st.proc;el.querySelector('.vsmv').textContent=st.mic+'%';el.querySelector('.vspv').textContent=st.proc?st.proc+' dB':'off';
+    const data=st.mode==='data';el.querySelector('.vsp').hidden=data;
+    const k=data?0:st.proc/15,g=.4*10**(st.mic/100),e=[];
+    for(let i=0;i<N;i++){const x=i/(N-1);let v=data?(x>.05&&x<.95?.85:0):.04+Math.max(...BU.map(([c,h])=>h*Math.exp(-(((x-c)/.035)**2))));e.push(Math.pow(Math.min(1,v),1-k))}
+    const Dp=g*Math.max(...e),A=Math.min(2,Math.max(1,Dp)),pre=e.map(v=>g*v/A),out=pre.map(v=>Math.min(1,v)),flat=pre.some(v=>v>1.001);
+    const avg=out.reduce((s,v)=>s+v*v,0)/N,alc=(A-1),CY=72,AMP=52,X=i=>10+280*i/(N-1),noise=data?0:.04*(1+st.proc/3);
+    let g2=`<line x1="10" y1="${CY-AMP}" x2="290" y2="${CY-AMP}" class="vsfull"/><line x1="10" y1="${CY+AMP}" x2="290" y2="${CY+AMP}" class="vsfull"/><text class="lbl" x="290" y="${CY-AMP-4}" style="text-anchor:end;font-size:10px">full PEP</text>`;
+    const top=out.map((v,i)=>`${X(i).toFixed(1)} ${(CY-AMP*Math.max(v,noise)).toFixed(1)}`),bot=out.map((v,i)=>`${X(i).toFixed(1)} ${(CY+AMP*Math.max(v,noise)).toFixed(1)}`).reverse();
+    g2+=`<path d="M${top.join(' L')} L${bot.join(' L')} Z" class="vsenv"/>`;
+    pre.forEach((v,i)=>{if(v>1.001)g2+=`<rect x="${X(i)-1}" y="${CY-AMP-2}" width="2.2" height="5" class="vsclip"/><rect x="${X(i)-1}" y="${CY+AMP-3}" width="2.2" height="5" class="vsclip"/>`});
+    g2+=`<line x1="10" y1="${CY}" x2="290" y2="${CY}" class="vsmid"/><text class="lbl" x="10" y="${CY+AMP+20}" style="text-anchor:start;font-size:10px">time →</text>`;
+    svg.innerHTML=g2;svg.setAttribute('aria-label',`Envelope: average power ${Math.round(avg*100)} percent of PEP, ALC ${Math.round(alc*100)} percent${flat?', flat-topping':''}`);
+    el.querySelector('.vsa').style.width=Math.round(avg*100)+'%';const l=el.querySelector('.vsl');l.style.width=Math.round(alc*100)+'%';l.style.background=alc>.6||data&&alc>.02?'var(--red)':'var(--ok)';
+    const F=x=>st.focus===x?' class="hl"':'';let tag,say;
+    if(flat){tag='Flat-topping';say=`<span${F('flat')}>The peaks are squashed flat at full power: <b>flat-topping</b>, signal distortion caused by <b>excessive drive or speech levels</b>. The ALC has run out of range. It splatters onto nearby frequencies. Turn the mic gain down.</span>`}
+    else if(data&&alc>.02){tag='ALC acting on data';say=`The ALC is squeezing a data signal. <b>ALC action distorts the signal</b>, so for AFSK data turn the transmit audio down until the ALC is inactive.`}
+    else if(data){tag='Clean data';say=`A steady AFSK envelope with <b>no ALC action</b>: just right for data. ALC action would distort it.`}
+    else if(alc>.6){tag='Heavy ALC';say=`<span${F('drive')}>The ALC is working hard, pulling back the gain so the peaks don't overdrive the amplifier. That's its job: <b>ALC prevents excessive drive</b>. A little ALC is fine; this much means turn the mic gain down.</span>`}
+    else if(alc>0){tag='ALC just acting';say=`<span${F('alc')}>Just right: the ALC moves a little on voice peaks. You set this with the <b>transmit audio or microphone gain</b>.</span>`}
+    else{tag='Under-driven';say=`No ALC action and low average power. The voice peaks don't reach full PEP. Turn the <b>mic gain</b> up until the ALC just moves.`}
+    if(!data&&st.proc>0)say+=st.proc>=8?` <span${F('proc')}>The processor is set too hard: <b>distorted speech, extra intermodulation products and excessive background noise</b> (see the noise filling the gaps between words).</span>`
+      :` <span${F('loud')}>The speech processor lifts the quiet parts of your voice, so it sounds <b>louder</b> at the far end.</span> <span${F('avg')}>The peaks stay the same, but it <b>increases average power</b>.</span>`;
+    res.innerHTML=`<div class="eq">${tag}</div><p>${say}</p><p class="small mute">Average power ${Math.round(avg*100)}% of PEP · ALC ${Math.round(alc*100)}%</p>`;
+  }
+  el.querySelectorAll('.vsm button').forEach(b=>b.onclick=()=>{st.mode=b.dataset.m;unchip(el);draw()});
+  sm.oninput=()=>{st.mic=+sm.value;unchip(el);draw()};sp.oninput=()=>{st.proc=+sp.value;unchip(el);draw()};
+  chips(el,c.presets,p=>{st=Object.assign(D(),p);delete st.q;draw()},svg);
+  draw();
+};
+
+/* mod-scope: audio (or data) in, RF out on a scope, for AM, FM, PM and FSK. config {m, presets:[{q, m am|fm|pm|fsk, lvl 0-100, focus 'scope'|'env'|'react'}]}. */
+WIDGETS['mod-scope']=(el,c)=>{
+  const MN={am:'AM',fm:'FM',pm:'PM',fsk:'FSK'},BITS=[1,0,1,1,0,1,0,0];
+  const D=()=>({m:'am',lvl:60,focus:null});let st=D();if(c.m)st.m=c.m;
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Watch the RF change</h3><p class="small mute lead">The top trace is what goes in. The bottom is the RF that comes out, on a scope. Pick a modulation and turn up the audio.</p>
+  <div class="seg msm" role="group" aria-label="Modulation">${Object.entries(MN).map(([k,v])=>`<button data-m="${k}">${v}</button>`).join('')}</div>
+  <svg class="circ ms" viewBox="0 0 300 220" role="img"></svg>
+  <label for="ms-l" style="margin-top:8px"><span class="mslab">Audio level</span>: <b class="mslv"></b></label><input id="ms-l" type="range" min="0" max="100">
+  <div class="wres"></div>`;
+  const svg=el.querySelector('svg'),sl=el.querySelector('#ms-l'),res=el.querySelector('.wres');
+  function draw(){
+    segOn(el,'.msm','m',st.m);sl.value=st.lvl;el.querySelector('.mslv').textContent=st.lvl+'%';el.querySelector('.mslab').textContent=st.m==='fsk'?'Frequency shift':'Audio level';
+    const L=st.lvl/100,N=700,CYC=20,X=i=>10+280*i/(N-1),au=t=>st.m==='fsk'?(BITS[Math.min(7,Math.floor(t*8))]?1:-1):Math.sin(2*Math.PI*1.5*t);
+    let ph=0,top=[],rf=[],env=[];const AY=36,AH=20,RY=130,RH=56;
+    for(let i=0;i<N;i++){const t=i/(N-1),a=au(t);let y,amp=1;
+      if(st.m==='am'){amp=Math.max(0,1+1.2*L*a)/2.2;ph=2*Math.PI*CYC*t}
+      else if(st.m==='fm'){ph+=2*Math.PI*(CYC+CYC*.55*L*a)/(N-1)}
+      else if(st.m==='fsk'){ph+=2*Math.PI*(CYC+CYC*.45*L*a)/(N-1)}
+      else ph=2*Math.PI*CYC*t+2.6*L*a;
+      y=(st.m==='am'?amp:.95)*Math.sin(ph);top.push(`${X(i).toFixed(1)} ${(AY-AH*a*(st.m==='fsk'?.8:Math.max(.15,L))).toFixed(1)}`);rf.push(`${X(i).toFixed(1)} ${(RY-RH*y).toFixed(1)}`);env.push(amp)}
+    let g=`<text class="lbl" x="10" y="10" style="text-anchor:start;font-size:11px">${st.m==='fsk'?'Data in (digital control signal)':'Audio in'}</text><line x1="10" y1="${AY}" x2="290" y2="${AY}" class="vsmid"/><path d="M${top.join(' L')}" class="msau"/>`;
+    g+=`<rect x="6" y="${RY-RH-14}" width="288" height="${2*RH+22}" rx="8" class="msscr"/><path d="M${rf.join(' L')}" class="msrf"/>`;
+    if(st.m==='am'){const e1=env.map((v,i)=>`${X(i).toFixed(1)} ${(RY-RH*v).toFixed(1)}`),e2=env.map((v,i)=>`${X(i).toFixed(1)} ${(RY+RH*v).toFixed(1)}`);g+=`<path d="M${e1.join(' L')}" class="msenv"/><path d="M${e2.join(' L')}" class="msenv"/>`}
+    g+=`<text class="lbl" x="150" y="${RY+RH+24}" style="font-size:11px${st.focus==='scope'?';fill:var(--red);font-weight:700':''}">Scope vertical input: the attenuated RF output</text>`;
+    svg.innerHTML=g;svg.setAttribute('aria-label',`${MN[st.m]} at ${st.lvl} percent`);
+    const F=k=>st.focus===k?' class="hl"':'';const over=st.m==='am'&&1.2*L>1;
+    const say={am:`<b>Amplitude modulation</b>: the audio varies the <b>instantaneous power level</b> of the RF. <span${F('env')}>The dashed line joining the peaks is the <b>modulation envelope</b>: the waveform created by connecting the peak values of the modulated signal. It's a copy of the audio.</span>${over?' Past 100%, the envelope pinches off to nothing: overmodulation, which splatters.':''}`,
+      fm:`<b>Frequency modulation</b>: the audio changes the <b>instantaneous frequency</b> of the RF. Watch the cycles bunch up and spread out while the height stays the same.`,
+      pm:`<b>Phase modulation</b>: the audio shifts the <b>phase angle</b> of the RF. It looks a lot like FM; the difference is that in PM the shift follows how fast the audio changes. <span${F('react')}>A <b>reactance modulator</b> on a transmitter's RF amplifier stage produces phase modulation.</span>`,
+      fsk:`<b>Direct binary FSK</b>: the oscillator's frequency is changed directly by a digital control signal, switching between two frequencies for 1s and 0s.`}[st.m];
+    res.innerHTML=`<div class="eq">${({am:'Amplitude changes',fm:'Frequency changes',pm:'Phase changes',fsk:'Two frequencies'})[st.m]}</div><p>${say}</p><p${F('scope')}>To check the RF envelope, the scope's <b>vertical input</b> gets the <b>attenuated RF output of the transmitter</b>.</p>`;
+  }
+  el.querySelectorAll('.msm button').forEach(b=>b.onclick=()=>{st.m=b.dataset.m;st.focus=null;unchip(el);draw()});
+  sl.oninput=()=>{st.lvl=+sl.value;unchip(el);draw()};
+  chips(el,c.presets,p=>{st=Object.assign(D(),p);delete st.q;draw()},svg);
+  draw();
+};
+
+/* rx-panel: a receiver with a problem on the band and front-panel controls; the right one clears it, Listen plays it.
+   config {presets:[{q, p whistle|pops|overload|hiss|qrm|split, on:[notch|nb|att|rev|split], nr 0-2}]}. */
+WIDGETS['rx-panel']=(el,c)=>{
+  const P={whistle:['A whistle','A steady carrier sits in your passband, whistling over the CW.','notch'],pops:['Ignition pops','A car or power line sends sharp pulses of noise.','nb'],
+    overload:['A blasting signal','A very strong station nearby overloads the receiver: everything is garbled.','att'],hiss:['Hiss','A weak signal under steady background hiss.','nr'],
+    qrm:['A neighbour','Another CW station right next to the one you want.','rev'],split:['A pileup','A rare DX station says "listening up 5". Everyone calling on its frequency covers it up.','split']};
+  const CT=[['notch','Notch'],['nb','Blanker'],['nr','NR'],['att','Attenuator'],['rev','Reverse sideband'],['split','Dual VFO (split)']];
+  const D=()=>({p:'whistle',notch:false,nb:false,nr:0,att:false,rev:false,split:false});let st=D();
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Fix the receiver</h3><p class="small mute lead">Pick a problem on the band, press Listen, then try the front-panel controls until it clears.</p>
+  <div class="seg rxp" role="group" aria-label="Problem">${Object.entries(P).map(([k,v])=>`<button data-p="${k}">${v[0]}</button>`).join('')}</div>
+  <svg class="circ rx" viewBox="0 0 300 130" role="img"></svg>
+  <div class="rxc">${CT.map(([k,n])=>`<button class="smb" data-c="${k}">${n}</button>`).join('')}</div>
+  <div class="row" style="gap:8px;margin-top:8px"><button class="smb lis">▶ Listen</button></div>
+  <div class="wres"></div>`;
+  const svg=el.querySelector('svg'),res=el.querySelector('.wres');
+  const fixed=()=>{const k=P[st.p][2];return k==='nr'?st.nr>0:!!st[k]};
+  function draw(){
+    segOn(el,'.rxp','p',st.p);
+    el.querySelectorAll('.rxc button').forEach(b=>{const k=b.dataset.c,on=k==='nr'?st.nr>0:st[k];b.classList.toggle('on',!!on);b.setAttribute('aria-pressed',!!on);if(k==='nr')b.textContent='NR'+(st.nr===1?': low':st.nr===2?': high':'')});
+    const X=f=>12+276*f/2400,BY=100,fx=fixed(),p=st.p;
+    let g=`<rect x="${X(400)}" y="14" width="${X(900)-X(400)}" height="${BY-14}" class="rxflt"/><text class="lbl" x="${X(650)}" y="11" style="font-size:10px">receiver filter</text><line x1="12" y1="${BY}" x2="288" y2="${BY}" class="bwax"/>`;
+    [0,600,1200,1800,2400].forEach(f=>{g+=`<text class="lbl" x="${X(f)}" y="${BY+14}" style="font-size:10px;text-anchor:${f?f<2400?'middle':'end':'start'}">${f} Hz</text>`});
+    const att=st.att?.5:1,floor=BY-(p==='hiss'?30*[1,.45,.2][st.nr]:p==='overload'&&!st.att?34:6)*1;
+    let fl='';for(let f=0;f<=2400;f+=40)fl+=`${f?' L':'M'}${X(f).toFixed(1)} ${(floor-2*Math.sin(f*.9)-2*Math.sin(f*.37)).toFixed(1)}`;g+=`<path d="${fl}" class="rxfloor"/>`;
+    const spike=(f,h,cls,w=3)=>`<rect x="${X(f)-w/2}" y="${BY-h}" width="${w}" height="${h}" class="${cls}"/>`;
+    g+=spike(650,(p==='overload'&&!st.att?80:p==='hiss'?36:70)*(st.att&&p!=='overload'?.6:1),'rxsig',st.nr===2?9:4);
+    if(p==='whistle')g+=st.notch?`<path d="M${X(700)} 14 L${X(780)} ${BY} L${X(860)} 14" class="rxnotch"/>`+spike(780,8,'rxbad'):spike(780,62,'rxbad');
+    if(p==='pops'&&!st.nb)for(let f=100;f<2400;f+=180)g+=spike(f+((f*7)%60),70+((f*13)%20),'rxpop',2);
+    if(p==='overload'&&!st.att)[300,480,860,1100,1500,1900].forEach(f=>{g+=spike(f,40+((f*3)%25),'rxbad')});
+    if(p==='qrm')g+=spike(st.rev?1350:820,56,'rxbad');
+    if(p==='split'){g=`<line x1="12" y1="70" x2="288" y2="70" class="bwax"/><text class="lbl" x="${X(500)}" y="88" style="font-size:11px">DX frequency</text><text class="lbl" x="${X(1900)}" y="88" style="font-size:11px">up 5 kHz</text>
+      <rect x="${X(500)-2}" y="24" width="4" height="46" class="rxsig"/>
+      ${[1700,1820,1900,2010,2100].map(f=>`<rect x="${X(f)-1.5}" y="40" width="3" height="30" class="rxbad"/>`).join('')}
+      ${st.split?'':[440,520,560].map(f=>`<rect x="${X(f)-1.5}" y="36" width="3" height="34" class="rxbad"/>`).join('')}
+      <text class="lbl" x="${X(500)}" y="108" style="fill:var(--blue);font-weight:700">VFO A: listen</text><text class="lbl" x="${X(st.split?1900:500)}" y="${st.split?108:122}" style="fill:var(--red);font-weight:700">VFO B: transmit</text>`}
+    svg.innerHTML=g;svg.setAttribute('aria-label',`${P[p][0]}: ${fx?'cleared':'still there'}`);
+    const side=[];
+    if(st.nr===2)side.push('NR on high: <b>received signals may become distorted</b>, watery and smeared.');
+    if(st.att&&p!=='overload')side.push('The attenuator also weakens the signal you want; save it for overload.');
+    if(st.notch&&p!=='whistle')side.push('The notch only removes a steady carrier.');
+    if(st.nb&&p!=='pops')side.push('The noise blanker only helps with sharp pulses.');
+    const fix={notch:'The <b>notch filter</b> reduces interference from <b>carriers in the receiver passband</b>.',nb:'The <b>noise blanker</b> works by <b>reducing receiver gain during each noise pulse</b>.',
+      att:'The <b>receive attenuator</b> prevents <b>receiver overload from strong incoming signals</b>.',nr:'<b>Noise reduction</b> pulls down the hiss. Turn it up too far and received signals may become distorted.',
+      rev:'Switching to the <b>opposite (reverse) sideband</b> for CW moves the interfering station to the other side, where the filter can reject it: it may reduce or eliminate interference.',
+      split:'<b>Dual VFOs</b>: <b>transmit on one frequency and listen on another</b>. You hear the DX on A while calling up 5 on B.'}[P[p][2]];
+    res.innerHTML=`<div class="eq">${fx?'Cleared':esc(P[p][0])}</div><div class="verdict ${fx?'ok':'no'}">${fx?'Fixed':'Still a problem: try another control'}</div><p>${esc(P[p][1])}</p>${fx?`<p>${fix}</p>`:''}${side.map(s=>`<p class="small">${s}</p>`).join('')}`;
+  }
+  el.querySelectorAll('.rxp button').forEach(b=>b.onclick=()=>{st=D();st.p=b.dataset.p;unchip(el);draw()});
+  el.querySelectorAll('.rxc button').forEach(b=>b.onclick=()=>{const k=b.dataset.c;if(k==='nr')st.nr=(st.nr+1)%3;else st[k]=!st[k];unchip(el);draw()});
+  el.querySelector('.lis').onclick=()=>rxPlay(st.p,st);
+  chips(el,c.presets,p=>{st=D();st.p=p.p;(p.on||[]).forEach(k=>st[k]=true);if(p.nr)st.nr=p.nr;draw()},el.querySelector('.rxp'));
   draw();
 };
 function coreHtml(c){

@@ -1,0 +1,134 @@
+{
+ "id": "speech-alc",
+ "exam": "general",
+ "title": "Mic gain, ALC and the speech processor",
+ "idea": "Mic gain sets how hard your voice drives the transmitter. ALC holds back peaks so the amplifier isn't overdriven; too much drive and the peaks flat-top. A speech processor raises average power so you sound louder.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Control or effect",
+    "What to know"
+   ],
+   [
+    "ALC set with",
+    "Transmit audio or mic gain"
+   ],
+   [
+    "ALC's job",
+    "Prevent excessive drive"
+   ],
+   [
+    "AFSK data",
+    "ALC inactive: ALC action distorts"
+   ],
+   [
+    "Speech processor",
+    "Louder: increases average power"
+   ],
+   [
+    "Processor set wrong",
+    "Distortion, intermod and background noise"
+   ],
+   [
+    "Flat-topping",
+    "Distortion from excessive drive or speech levels"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "voice-scope",
+  "config": {
+   "presets": [
+    {
+     "q": "G2A12",
+     "mic": 55,
+     "focus": "alc"
+    },
+    {
+     "q": "G4A05",
+     "mic": 66,
+     "focus": "drive"
+    },
+    {
+     "q": "G4A11",
+     "mode": "data",
+     "mic": 70
+    },
+    {
+     "q": "G4D01",
+     "mic": 45,
+     "proc": 6,
+     "focus": "loud"
+    },
+    {
+     "q": "G4D02",
+     "mic": 45,
+     "proc": 6,
+     "focus": "avg"
+    },
+    {
+     "q": "G4D03",
+     "mic": 50,
+     "proc": 10,
+     "focus": "proc"
+    },
+    {
+     "q": "G8A10",
+     "mic": 100,
+     "focus": "flat"
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Mic gain",
+   "how": "How hard your voice drives the transmitter. Sets the ALC."
+  },
+  {
+   "term": "ALC",
+   "how": "Holds peaks back to prevent excessive drive."
+  },
+  {
+   "term": "Processor",
+   "how": "Raises average power, not peak power."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G2A12",
+   "wrong": "RF clipping level",
+   "why": "ALC is set with the transmit audio or microphone gain."
+  },
+  {
+   "q": "G4D02",
+   "wrong": "It increases peak power",
+   "why": "Peaks stay the same; average power goes up."
+  },
+  {
+   "q": "G4D01",
+   "wrong": "Prevent distortion of voice signals",
+   "why": "It makes you sound louder; overdone, it adds distortion."
+  },
+  {
+   "q": "G8A10",
+   "wrong": "The transmitter’s automatic level control (ALC) is properly adjusted",
+   "why": "Flat-topping is distortion from too much drive or speech level."
+  },
+  {
+   "q": "G4A11",
+   "wrong": "When using digital modes, too much ALC activity can cause the transmitter to overheat",
+   "why": "The reason is that ALC action distorts the data signal."
+  }
+ ],
+ "questions": [
+  "G2A12",
+  "G4A05",
+  "G4A11",
+  "G4D01",
+  "G4D02",
+  "G4D03",
+  "G8A10"
+ ]
+}

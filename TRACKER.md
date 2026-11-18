@@ -90,11 +90,11 @@ plain scenario only where nothing can be varied, and the reason is recorded (CW 
 | 18 | Which sideband, and where it sits (`sidebands`) | Operating | 13 | Band-edge tuner | done |
 | 19 | General privileges map (`privileges-map`) | Rules | 12 | Band chart (built for Technician) | done |
 | 20 | Power limits and 60 meters (`power-limits`) | Rules | 8 | Band chart of the HF bands with each band's power limit, the 30-meter 200 W exception and the 60-meter channel rules | done |
-| 21 | Beacons (`beacons`) | Rules | 6 | Band chart with the beacon frequencies and the 28.2 to 28.3 MHz automatic beacon window marked | todo |
-| 22 | How wide is each signal (`signal-width`) | Operating | 8 | Spectrum view | todo |
-| 23 | Mic gain, ALC and the speech processor (`speech-alc`) | Operating | 7 | Voice envelope on a scope | todo |
-| 24 | AM, FM and PM: what changes (`modulation`) | Circuits | 7 | Modulation scope | todo |
-| 25 | Receiver tools: notch, blanker, NR, attenuator (`receiver-tools`) | Operating | 6 | Receiver panel with a problem on the band (whistle, ignition pops, a blasting signal); switch on the right control and it clears | todo |
+| 21 | Beacons (`beacons`) | Rules | 6 | Band chart with the beacon frequencies and the 28.2 to 28.3 MHz automatic beacon window marked | done |
+| 22 | How wide is each signal (`signal-width`) | Operating | 8 | Spectrum view | done |
+| 23 | Mic gain, ALC and the speech processor (`speech-alc`) | Operating | 7 | Voice envelope on a scope | done |
+| 24 | AM, FM and PM: what changes (`modulation`) | Circuits | 7 | Modulation scope | done |
+| 25 | Receiver tools: notch, blanker, NR, attenuator (`receiver-tools`) | Operating | 6 | Receiver panel with a problem on the band (whistle, ignition pops, a blasting signal); switch on the right control and it clears | done |
 | 26 | The waterfall and FT8 (`waterfall-ft8`) | Digital modes | 8 | Live waterfall | todo |
 | 27 | RTTY and FSK (`rtty-fsk`) | Digital modes | 6 | Two-tone FSK display | todo |
 | 28 | PSK31, QPSK and Varicode (`psk`) | Digital modes | 4 | Phase wheel | todo |
@@ -133,6 +133,7 @@ plain scenario only where nothing can be varied, and the reason is recorded (CW 
 
 ## Log
 
+- 2026-11-18 (General batch 5, PR general-batch5): Beacons, signal width, mic gain/ALC/processor, AM/FM/PM, receiver tools. New widgets: `beacon` (NCDXF network schedule and Listen; your-own-beacon rule check), `bw-scope` (widths side by side, neighbour gap, filter, overmodulation with waterfall lines, symbol rate), `voice-scope` (SSB envelope with mic gain, processor, ALC, flat-topping; AFSK data mode), `mod-scope` (AM/FM/PM/FSK on a scope), `rx-panel` (receiver problems and the control that clears each, with sound). Audio helpers generalised (`playCW` text and beacon tail, `rxPlay`). After PR #14 merged: General v4, Technician v13, Extra v8 republished from main. Next batch: families 26-30.
 - 2026-11-18 (General batch 4, PR general-batch4): Skip zone and scatter, short vs. long path, sidebands, General privileges, power limits. New widgets: `skip-zone` (ground wave, skip zone, sky wave; scatter toggle with a fluttering meter and a Listen button), `great-circle` (azimuthal map centred on Kansas with six cities; beam heading, short/long path, echo delay when both are open; Listen plays the echo), `band-tuner` (US band plan for General/Extra; dial, sideband by mode and band, 16 kHz close-up of the edges, privilege check; used by both sidebands and privileges-map), `power-limit` (PEP output meter against each band's limit; 60 m ERP with antenna gain; spread spectrum 10 W). Shared `playCW` Web Audio helper. After PR #13 merged: General v3, Technician v12, Extra v7 republished from main. Next batch: families 21-25.
 - 2026-11-18 (General batch 3, PR general-batch3): Intermodulation and the two-tone test, Sun to Earth, sunspots/flux/K/A, MUF/LUF, D/E/F regions. New widgets: `two-tone` (two audio tones into SSB with a drive slider; odd-order products grow beside them), `sun-timeline` (flare, CME, coronal hole or rotation on a log time slider, with band-condition tiles at Earth), `sun-indices` (sunspot slider sets solar flux and opens/closes bands 160-10 m; tappable 3-hour K bars give the A index), `ionosphere` (cross-section with frequency, takeoff angle and day/night/flare; simplified model: foF2 8 MHz day / 4 night, foE 3.5, secant law capped at 3.5, D absorption by day, hop distances from spherical geometry; used by both muf-luf and ionosphere-regions). After PR #12 merged: General v2, Technician v11, Extra v6 republished from main. Next batch: families 16-20 (scatter, long path, sidebands, privileges map, power limits).
 - 2026-11-18 (PR #11 merged): General Class Trainer published from main as a new artifact (https://claude.ai/artifact/6ybQ4odexMzPKbgtAhoHux, v1, batch 1 families, `db` + `user`). Technician and Extra are republished once #12 merges (the template changes in #11 and #12 add only General widgets).

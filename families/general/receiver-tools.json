@@ -1,0 +1,130 @@
+{
+ "id": "receiver-tools",
+ "exam": "general",
+ "title": "Receiver tools: notch, blanker, NR, attenuator",
+ "idea": "Each receiver control fixes one kind of trouble. Notch for a carrier, blanker for pulses, noise reduction for hiss, attenuator for overload, reverse sideband for a CW neighbour, and dual VFOs for split operation.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Problem",
+    "Control"
+   ],
+   [
+    "A carrier (whistle) in the passband",
+    "Notch filter"
+   ],
+   [
+    "Ignition or power-line pulses",
+    "Noise blanker: cuts gain during each pulse"
+   ],
+   [
+    "Steady hiss",
+    "Noise reduction (too much distorts)"
+   ],
+   [
+    "Strong signal overload",
+    "Receive attenuator"
+   ],
+   [
+    "A CW station next door",
+    "Reverse sideband"
+   ],
+   [
+    "Working split",
+    "Dual VFO: transmit on one, listen on the other"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "rx-panel",
+  "config": {
+   "presets": [
+    {
+     "q": "G4A01",
+     "p": "whistle",
+     "on": [
+      "notch"
+     ]
+    },
+    {
+     "q": "G4A03",
+     "p": "pops",
+     "on": [
+      "nb"
+     ]
+    },
+    {
+     "q": "G4A07",
+     "p": "hiss",
+     "nr": 2
+    },
+    {
+     "q": "G4A13",
+     "p": "overload",
+     "on": [
+      "att"
+     ]
+    },
+    {
+     "q": "G4A02",
+     "p": "qrm",
+     "on": [
+      "rev"
+     ]
+    },
+    {
+     "q": "G4A12",
+     "p": "split",
+     "on": [
+      "split"
+     ]
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Notch",
+   "how": "Removes a carrier in the passband."
+  },
+  {
+   "term": "Noise blanker",
+   "how": "Drops gain during each noise pulse."
+  },
+  {
+   "term": "Attenuator",
+   "how": "Prevents overload from strong signals."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G4A01",
+   "wrong": "To eliminate receiver interference from impulse noise sources",
+   "why": "Impulse noise is the noise blanker's job. The notch removes carriers."
+  },
+  {
+   "q": "G4A03",
+   "wrong": "By clipping noise peaks",
+   "why": "It reduces receiver gain during each pulse."
+  },
+  {
+   "q": "G4A13",
+   "wrong": "To reduce excessive audio level on strong signals",
+   "why": "It protects the receiver from overload, not your ears."
+  },
+  {
+   "q": "G4A12",
+   "wrong": "To permit full duplex operation -- that is, transmitting and receiving at the same time",
+   "why": "Dual VFO is for split: transmit on one frequency and listen on another, not at the same time."
+  }
+ ],
+ "questions": [
+  "G4A01",
+  "G4A02",
+  "G4A03",
+  "G4A07",
+  "G4A12",
+  "G4A13"
+ ]
+}

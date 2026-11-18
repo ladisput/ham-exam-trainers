@@ -13,6 +13,18 @@
    ]
   },
   {
+   "id": "beacons",
+   "title": "Beacons",
+   "questions": [
+    "G1B02",
+    "G1B03",
+    "G1B09",
+    "G1B10",
+    "G1E10",
+    "G8C02"
+   ]
+  },
+  {
    "id": "combining-parts",
    "title": "Resistors, capacitors and inductors in series and parallel",
    "questions": [
@@ -106,6 +118,19 @@
    ]
   },
   {
+   "id": "modulation",
+   "title": "AM, FM and PM: what changes",
+   "questions": [
+    "G4B04",
+    "G8A01",
+    "G8A02",
+    "G8A03",
+    "G8A04",
+    "G8A05",
+    "G8A11"
+   ]
+  },
+  {
    "id": "muf-luf",
    "title": "MUF, LUF and the usable window",
    "questions": [
@@ -182,6 +207,18 @@
    ]
   },
   {
+   "id": "receiver-tools",
+   "title": "Receiver tools: notch, blanker, NR, attenuator",
+   "questions": [
+    "G4A01",
+    "G4A02",
+    "G4A03",
+    "G4A07",
+    "G4A12",
+    "G4A13"
+   ]
+  },
+  {
    "id": "rms-peak-pep",
    "title": "RMS, peak, peak-to-peak and PEP",
    "questions": [
@@ -226,6 +263,20 @@
    ]
   },
   {
+   "id": "signal-width",
+   "title": "How wide is each signal",
+   "questions": [
+    "G1C03",
+    "G2B04",
+    "G2B05",
+    "G8A07",
+    "G8A08",
+    "G8B09",
+    "G8B10",
+    "G8C13"
+   ]
+  },
+  {
    "id": "solar-indices",
    "title": "Sunspots, solar flux, K and A",
    "questions": [
@@ -249,6 +300,19 @@
     "G3A10",
     "G3A11",
     "G3A14"
+   ]
+  },
+  {
+   "id": "speech-alc",
+   "title": "Mic gain, ALC and the speech processor",
+   "questions": [
+    "G2A12",
+    "G4A05",
+    "G4A11",
+    "G4D01",
+    "G4D02",
+    "G4D03",
+    "G8A10"
    ]
   },
   {
