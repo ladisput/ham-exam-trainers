@@ -152,6 +152,18 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
 .smf .chips{margin-top:0}.smb{min-width:48px;min-height:44px;padding:0 10px;font:600 16px/1 "Barlow Condensed",sans-serif}.smb.on{background:var(--ink);border-color:var(--ink);color:var(--card)}
 .cbrow{display:grid;grid-template-columns:4.2em minmax(0,1fr) 5.2em auto;gap:8px;align-items:center;margin-top:8px}.cbrow label{margin:0}.cbrow button{min-width:44px;padding:0}
 .wg input[type=range]{min-height:36px;border:0;background:none}
+.gg{stroke:var(--line);stroke-width:1}.gl{fill:none;stroke-width:3;stroke-linejoin:round}.gl.xl{stroke:var(--blue)}.gl.xc{stroke:var(--red)}.gl.z{stroke:var(--ink);stroke-width:2;stroke-dasharray:5 4}
+.gcur{stroke:var(--ink);stroke-width:1.5}.gdot{fill:var(--card);stroke:var(--ink);stroke-width:3}
+.lgd{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:13px;color:var(--mute);margin-top:6px}.lgd i{display:inline-block;width:18px;height:0;border-top:3px solid;vertical-align:middle;margin-right:5px}.lgd .xl{border-color:var(--blue)}.lgd .xc{border-color:var(--red)}.lgd .z{border-top:2px dashed var(--ink)}
+.sx{stroke:var(--mute);stroke-width:1.5}.sl{stroke:var(--ink);stroke-width:3;stroke-linecap:round}.sl.rf{stroke:var(--blue)}.sl.out{stroke:var(--red)}.sl.img{stroke:var(--mute);stroke-dasharray:4 3}.sl.dash{stroke:var(--mute);stroke-dasharray:3 4;stroke-width:2}
+.circ .sll{fill:var(--ink)}.circ .sll.rf{fill:var(--blue)}.circ .sll.out{fill:var(--red)}
+.sbx{fill:var(--tint);stroke:var(--line)}.sbx.ok{fill:var(--okbg);stroke:var(--ok)}.sbx.bad{fill:var(--badbg);stroke:var(--red)}
+.gnd{stroke:var(--mute);stroke-width:2}.ins{fill:var(--card);stroke:var(--ink);stroke-width:2}.coax{fill:none;stroke:var(--mute);stroke-width:3}.dim{fill:none;stroke:var(--mute);stroke-width:1.5}
+.per{fill:none;stroke:var(--red);stroke-width:2;stroke-linecap:round}.bm{fill:none;stroke:var(--red);stroke-width:2}
+.arb{display:flex;flex-wrap:nowrap;gap:6px;margin-top:10px}.arb .smb{flex:1;min-width:0;padding:0 2px}
+.chain{display:flex;align-items:center;gap:4px}.chain div{flex:1;min-width:0;background:var(--tint);border-radius:8px;padding:8px 6px;text-align:center}.chain i{font-style:normal;color:var(--mute)}
+.chain span{display:block;font-size:12px;color:var(--mute)}.chain b{display:block;font:700 19px/1.1 "Barlow Condensed",sans-serif}.chain small{display:block;font-size:13px;color:var(--red)}.chain.hi .mul{box-shadow:inset 0 0 0 2px var(--blue)}
+.sens{stroke:var(--red);stroke-width:2;stroke-dasharray:6 4}.mgok{fill:var(--okbg);stroke:var(--ok)}.mgbad{fill:var(--badbg);stroke:var(--red)}
 </style>
 </head>
 <body style="--call-size:20px;--call-w:8.2em">
@@ -901,6 +913,276 @@ WIDGETS.transformer=(el,c)=>{
   el.querySelector('.tfflip').onclick=()=>{st.flip=!st.flip;unchip(el);draw()};
   chips(el,c.presets,p=>{st={np:p.np,ns:p.ns,vp:String(p.vp??120),flip:!!p.flip,match:p.zp?[p.zp,p.zs]:null};draw()});
   draw();
+};
+/* ---- General batch 2 widgets ---- */
+const LOGS=(a,b,s)=>a*Math.pow(b/a,s/1000),LOGI=(a,b,v)=>Math.max(0,Math.min(1000,Math.round(1000*Math.log(v/a)/Math.log(b/a))));
+function segOn(el,sel,attr,v){el.querySelectorAll(sel+' button').forEach(b=>{const on=b.dataset[attr]===String(v);b.classList.toggle('pri',on);b.setAttribute('aria-pressed',on)})}
+/* spectrum(svg,{x0,x1,ticks,tl,lines:[{f,h 0..1,cls,lab,anc}],boxes:[{a,b,cls,lab}],H}): a frequency axis with signal lines */
+function spectrum(svg,o){
+  const H=o.H||160,L=14,R=286,base=H-30,top=34,X=f=>L+(f-o.x0)/(o.x1-o.x0)*(R-L);
+  let g=`<line x1="${L}" y1="${base}" x2="${R}" y2="${base}" class="sx"/>`;
+  (o.boxes||[]).forEach(b=>{const a=X(Math.max(o.x0,b.a)),z=X(Math.min(o.x1,b.b));g+=`<rect x="${a}" y="${top-8}" width="${Math.max(3,z-a)}" height="${base-top+8}" class="sbx ${b.cls||''}"/>${b.lab?`<text class="lbl" x="${Math.max(40,Math.min(260,(a+z)/2))}" y="${top-13}" style="text-anchor:middle">${b.lab}</text>`:''}`});
+  (o.ticks||[]).forEach(t=>{g+=`<line x1="${X(t)}" y1="${base}" x2="${X(t)}" y2="${base+5}" class="sx"/><text class="lbl" x="${X(t)}" y="${base+19}" style="text-anchor:middle">${o.tl(t)}</text>`});
+  (o.lines||[]).forEach(l=>{if(l.f<o.x0||l.f>o.x1)return;const x=X(l.f),y=base-(base-top)*l.h;g+=`<line x1="${x}" y1="${base}" x2="${x}" y2="${y}" class="sl ${l.cls||''}"/>${l.lab?`<text class="lbl sll ${l.cls||''}" x="${x+(l.anc==='start'?-2:l.anc==='end'?2:0)}" y="${y-6}" style="text-anchor:${l.anc||'middle'}">${l.lab}</text>`:''}`});
+  svg.setAttribute('viewBox',`0 0 300 ${H}`);svg.innerHTML=g;
+}
+
+/* reactance-graph: config {L µH, C pF, f MHz, mode series|parallel, presets:[{q, L, C, f or at:true (snap to resonance), mode, srf, show:'L'|'C'}]} */
+WIDGETS['reactance-graph']=(el,c)=>{
+  const FA=0.1,FB=100,LA=0.1,LB=100,CA=10,CB=2000,CP=3,ZA=1,ZB=1e5,XA=40,XB=290,YT=26,YB=176;
+  let st={L:c.L??10,C:c.C??100,f:c.f??2,mode:c.mode||'series',srf:false,show:''};
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Slide the frequency</h3><p class="small mute lead">A coil's reactance climbs as the frequency goes up. A capacitor's falls. Where the two lines cross they are equal and cancel: that's resonance.</p>
+  <div class="seg rgm" role="group" aria-label="Circuit"><button data-m="series">Series LC</button><button data-m="parallel">Parallel LC (tank)</button></div>
+  <svg class="circ rg" viewBox="0 0 300 200" role="img"></svg>
+  <div class="lgd"><span><i class="xl"></i>Coil X<sub>L</sub></span><span><i class="xc"></i>Capacitor X<sub>C</sub></span><span><i class="z"></i>Whole circuit</span></div>
+  <label for="rg-f" style="margin-top:10px">Frequency: <b class="rgfv"></b></label><input id="rg-f" type="range" min="0" max="1000">
+  <label for="rg-l" style="margin-top:8px">Coil, L: <b class="rglv"></b></label><input id="rg-l" type="range" min="0" max="1000">
+  <label for="rg-c" style="margin-top:8px">Capacitor, C: <b class="rgcv"></b></label><input id="rg-c" type="range" min="0" max="1000">
+  <button class="rgs" style="width:100%;margin-top:10px"></button><div class="wres"></div>`;
+  const svg=el.querySelector('svg'),sf=el.querySelector('#rg-f'),sl=el.querySelector('#rg-l'),sc=el.querySelector('#rg-c'),res=el.querySelector('.wres'),bs=el.querySelector('.rgs');
+  const X=f=>XA+(XB-XA)*Math.log(f/FA)/Math.log(FB/FA),Y=z=>YB-(YB-YT)*Math.log(Math.max(z,1e-6)/ZA)/Math.log(ZB/ZA);
+  const xl=f=>2*Math.PI*f*st.L,xc=f=>1e6/(2*Math.PI*f*st.C),f0=()=>1e3/(2*Math.PI*Math.sqrt(st.L*st.C)),fsr=()=>1e3/(2*Math.PI*Math.sqrt(st.L*CP));
+  const xr=f=>xl(f)/(1-(f/fsr())**2);/* coil with its own turn-to-turn capacitance: + inductive, - capacitive */
+  const zn=f=>{const R=2,a=xl(f),b=xc(f);return st.mode==='series'?Math.hypot(R,a-b):Math.hypot(R,a)*b/Math.hypot(R,a-b)};
+  const path=(fn,a=FA,b=FB)=>{let d='';for(let i=0;i<=180;i++){const f=a*Math.pow(b/a,i/180);d+=(i?'L':'M')+X(f).toFixed(1)+' '+Y(Math.abs(fn(f))).toFixed(1)}return d};
+  const hz=f=>fmtSI(f*1e6,'Hz',3);
+  function draw(){
+    segOn(el,'.rgm','m',st.mode);
+    sf.value=LOGI(FA,FB,st.f);sl.value=LOGI(LA,LB,st.L);sc.value=LOGI(CA,CB,st.C);
+    el.querySelector('.rgfv').textContent=hz(st.f);el.querySelector('.rglv').textContent=fmtSI(st.L*1e-6,'H',3);el.querySelector('.rgcv').textContent=fmtSI(st.C*1e-12,'F',3);
+    bs.textContent=st.srf?'Back to the ideal coil':'Real coil: show its self-resonance';
+    const F0=f0(),SR=fsr(),near=Math.abs(Math.log(st.f/F0))<0.02,dimL=st.show==='C',dimC=st.show==='L'||st.srf;
+    let g=`<defs><clipPath id="rgclip"><rect x="${XA}" y="${YT}" width="${XB-XA}" height="${YB-YT}"/></clipPath></defs>`;
+    [0.1,1,10,100].forEach((f,i)=>{g+=`<line x1="${X(f)}" y1="${YT}" x2="${X(f)}" y2="${YB}" class="gg"/><text class="lbl" x="${X(f)}" y="${YB+16}" style="text-anchor:${i===0?'start':i===3?'end':'middle'}">${['100 kHz','1 MHz','10 MHz','100 MHz'][i]}</text>`});
+    [1,10,100,1e3,1e4,1e5].forEach((z,i)=>{g+=`<line x1="${XA}" y1="${Y(z)}" x2="${XB}" y2="${Y(z)}" class="gg"/><text class="lbl" x="${XA-4}" y="${Y(z)+4}" style="text-anchor:end">${['1','10','100','1k','10k','100k'][i]}</text>`});
+    g+=`<text class="lbl" x="${XA-4}" y="${YT-12}" style="text-anchor:end">ohms</text><g clip-path="url(#rgclip)">`;
+    g+=`<path d="${path(zn)}" class="gl z" style="opacity:${st.srf?0:.75}"/>`;
+    g+=`<path d="${path(xc)}" class="gl xc" style="opacity:${dimC?.2:1}"/>`;
+    if(st.srf){g+=`<path d="${path(xl)}" class="gl xl" style="opacity:.25"/><path d="${path(xr,FA,SR*0.999)}" class="gl xl"/><path d="${path(xr,SR*1.001,FB)}" class="gl xc" style="stroke-dasharray:7 4"/>`;
+      if(SR<FB)g+=`<line x1="${X(SR)}" y1="${YT}" x2="${X(SR)}" y2="${YB}" class="gg" style="stroke-dasharray:3 3;stroke:var(--red)"/>`}
+    else g+=`<path d="${path(xl)}" class="gl xl" style="opacity:${dimL?.2:1}"/>`;
+    if(!st.srf&&F0>FA&&F0<FB)g+=`<circle cx="${X(F0)}" cy="${Y(xl(F0))}" r="6" class="gdot"/>`;
+    g+=`</g><line x1="${X(st.f)}" y1="${YT}" x2="${X(st.f)}" y2="${YB}" class="gcur"/>`;
+    if(!st.srf&&F0>FA&&F0<FB){const x=X(F0);g+=`<text class="lbl" x="${Math.max(XA+4,Math.min(XB-4,x))}" y="${YT+12}" style="text-anchor:${x<XA+60?'start':x>XB-60?'end':'middle'};fill:var(--ink)">resonance</text>`}
+    if(st.srf&&SR<FB){const x=X(SR);g+=`<text class="lbl" x="${Math.min(x+4,XB-90)}" y="${YT+12}" style="fill:var(--red);text-anchor:start">self-resonance</text>`}
+    svg.innerHTML=g;svg.setAttribute('aria-label',`Reactance graph at ${hz(st.f)}, resonance ${hz(F0)}`);
+    const a=xl(st.f),b=xc(st.f),z=zn(st.f),lo=st.f<F0,Lw=lo?'capacitor':'coil';
+    let say;
+    if(st.srf)say=st.f>SR?`Above its self-resonant frequency (${hz(SR)}) the capacitance between the coil's own turns takes over. This "inductor" now <b>acts like a capacitor</b>: its reactance falls as the frequency rises.`
+      :`Every real coil has a little capacitance between its turns (here about ${CP} pF), so it resonates on its own at ${hz(SR)}. Below that it behaves as an inductor. Slide the frequency past the red line to see it flip.`;
+    else if(near)say=st.mode==='series'?`At resonance X<sub>L</sub> and X<sub>C</sub> are equal and <b>cancel</b>. Only the wire's small resistance is left, so a series LC has <b>very low impedance</b> and the current peaks.`
+      :`At resonance X<sub>L</sub> and X<sub>C</sub> are equal and <b>cancel</b>. Energy swings back and forth between the coil and the capacitor, so a parallel tank has <b>very high impedance</b>. An LC oscillator runs at this frequency, set only by L and C.`;
+    else say=st.mode==='series'?`${lo?'Below':'Above'} resonance the ${Lw}'s reactance is bigger, so the series circuit acts like a ${lo?'capacitor':'coil'}.`
+      :`${lo?'Below':'Above'} resonance the ${lo?'coil':'capacitor'} has the smaller reactance and carries more of the current, so the tank acts like ${lo?'a coil':'a capacitor'}.`;
+    if(!st.srf&&st.show==='L')say+=' Watch the blue line: raise the frequency and the coil\'s reactance goes <b>up</b>.';
+    if(!st.srf&&st.show==='C')say+=' Watch the red line: raise the frequency and the capacitor\'s reactance goes <b>down</b>.';
+    res.innerHTML=`<div class="swr"><div><span>Coil X<sub>L</sub></span><b>${fmtSI(st.srf?Math.abs(xr(st.f)):a,'Ω',3)}</b></div><div><span>Capacitor X<sub>C</sub></span><b>${fmtSI(b,'Ω',3)}</b></div><div><span>${st.srf?'Coil acts as':'Whole circuit'}</span><b>${st.srf?(st.f>SR?'capacitor':'inductor'):fmtSI(z,'Ω',3)}</b></div></div>
+    <p class="small mute">X<sub>L</sub> = 2π f L. X<sub>C</sub> = 1 / (2π f C). Both are measured in ohms and written X. Resonance: f = 1 / (2π √(L C)) = <b>${hz(F0)}</b></p><p>${say}</p>`;
+  }
+  el.querySelectorAll('.rgm button').forEach(b=>b.onclick=()=>{st.mode=b.dataset.m;unchip(el);draw()});
+  sf.oninput=()=>{st.f=LOGS(FA,FB,+sf.value);unchip(el);draw()};
+  sl.oninput=()=>{st.L=LOGS(LA,LB,+sl.value);unchip(el);draw()};
+  sc.oninput=()=>{st.C=LOGS(CA,CB,+sc.value);unchip(el);draw()};
+  bs.onclick=()=>{st.srf=!st.srf;if(st.srf&&st.f<fsr())st.f=Math.min(FB,fsr()*0.6);unchip(el);draw()};
+  chips(el,c.presets,p=>{st={L:p.L??10,C:p.C??100,f:p.f??2,mode:p.mode||'series',srf:!!p.srf,show:p.show||''};if(p.at)st.f=f0();draw()});
+  draw();
+};
+
+/* antenna-ruler: config {f MHz, kind dipole|quarter|yagi, presets:[{q,f,kind}]} */
+WIDGETS['antenna-ruler']=(el,c)=>{
+  const FA=1.8,FB=60,BANDS=[[3.55,'80 m'],[7.15,'40 m'],[14.25,'20 m'],[21.2,'15 m'],[28.5,'10 m'],[50.1,'6 m']];
+  const K={dipole:'Dipole',quarter:'Vertical',yagi:'Yagi'},KN={dipole:'Half-wave dipole',quarter:'Quarter-wave vertical',yagi:'3-element Yagi'};
+  let st={f:c.f??14.25,kind:c.kind||'dipole',fs:String(c.f??14.25)};
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Cut the antenna</h3><p class="small mute lead">Lower frequency, longer antenna. Pick a band or slide the frequency and watch the wire grow. The person is drawn to the same scale.</p>
+  <div class="seg ark" role="group" aria-label="Antenna" style="flex-wrap:wrap">${Object.entries(K).map(([k,v])=>`<button data-k="${k}">${v}</button>`).join('')}</div>
+  <svg class="circ ar" viewBox="0 0 300 180" role="img"></svg>
+  <div class="chips arb">${BANDS.map(([f,l])=>`<button class="smb" data-f="${f}">${l}</button>`).join('')}</div>
+  <div class="fields" style="grid-template-columns:minmax(0,2fr) minmax(0,1fr);align-items:end"><div><label for="ar-s">Frequency</label><input id="ar-s" type="range" min="0" max="1000"></div><div><label for="ar-f">MHz</label><input id="ar-f" type="text" inputmode="decimal"></div></div>
+  <div class="wres"></div>`;
+  const svg=el.querySelector('svg'),sl=el.querySelector('#ar-s'),$f=el.querySelector('#ar-f'),res=el.querySelector('.wres');
+  const ft=x=>fmt(x,x<10?2:3)+' ft';
+  const nice=s=>{const want=60/s,p=Math.pow(10,Math.floor(Math.log10(want)));for(const m of[1,2,5,10])if(m*p>=want*.7)return m*p;return 10*p};
+  function person(x,g,s){const h=6*s,r=Math.max(1,.55*s);return`<g class="per"><circle cx="${x}" cy="${g-h+r}" r="${r}"/><path d="M${x} ${g-h+2*r} V${g-h*.45} M${x} ${g-h*.45} L${x-h*.13} ${g} M${x} ${g-h*.45} L${x+h*.13} ${g} M${x-h*.17} ${g-h*.68} H${x+h*.17}"/></g>`}
+  function dim(x1,x2,y,t){return`<path class="dim" d="M${x1} ${y-5} V${y+5} M${x2} ${y-5} V${y+5} M${x1} ${y} H${x2}"/><text class="lbl" x="${(x1+x2)/2}" y="${y-6}" style="text-anchor:middle;fill:var(--ink)">${t}</text>`}
+  function draw(){
+    segOn(el,'.ark','k',st.kind);sl.value=LOGI(FA,FB,st.f);$f.value=st.fs;
+    el.querySelectorAll('.arb .smb').forEach(b=>b.classList.toggle('on',Math.abs(+b.dataset.f-st.f)<1e-9));
+    const f=st.f;if(!(f>0)){res.innerHTML='<p class="small mute" style="margin:0">Type a frequency in MHz.</p>';return}
+    const half=468/f,qtr=234/f,G=160;let g=`<line x1="6" y1="${G}" x2="294" y2="${G}" class="gnd"/>`,s,out;
+    if(st.kind==='dipole'){s=Math.min(240/half,95/6);const x0=150-half*s/2,x1=150+half*s/2,y=62;
+      g+=`<path class="w" d="M${x0} ${y} H${148} M${152} ${y} H${x1}"/><rect x="146" y="${y-4}" width="8" height="8" rx="2" class="ins"/><path class="coax" d="M150 ${y+4} V${G}"/>`+dim(x0,x1,y-18,ft(half))+`<text class="lbl" x="${(x0+150)/2}" y="${y+16}" style="text-anchor:middle">${ft(half/2)}</text><text class="lbl" x="${(150+x1)/2}" y="${y+16}" style="text-anchor:middle">${ft(half/2)}</text>`+person(Math.max(18,x0-14),G,s);
+      out=`<div class="eq">468 / ${fmt(f,5)} = <em>${ft(half)}</em></div><p class="small mute">Half wave in feet = 468 / MHz. The coax feeds the middle, so each side is half of that: ${ft(half/2)}.</p>`}
+    else if(st.kind==='quarter'){s=Math.min(120/qtr,95/6);const x=170,top=G-qtr*s;
+      g+=`<path class="w" d="M${x} ${G} V${top}"/><path class="w" style="stroke-width:2" d="M${x} ${G} l-46 14 M${x} ${G} l46 14 M${x} ${G} l-20 18 M${x} ${G} l20 18"/>`
+        +`<path class="dim" d="M${x+20} ${top} H${x+30} M${x+20} ${G} H${x+30} M${x+25} ${top} V${G}"/><text class="lbl" x="${x+34}" y="${(top+G)/2+4}" style="fill:var(--ink);text-anchor:start">${ft(qtr)}</text>`+person(70,G,s);
+      out=`<div class="eq">234 / ${fmt(f,5)} = <em>${ft(qtr)}</em></div><p class="small mute">Quarter wave in feet = 234 / MHz. A quarter is half of a half wave, so 234 is half of 468. The radials (or the ground) make the other half.</p>`}
+    else{const D=half,Rf=D*1.05,Dr=D*0.95;s=124/Rf;const y=92,el3=[[60,Rf,'Reflector'],[150,D,'Driven'],[240,Dr,'Director']];
+      g='';g+=`<path class="w" d="M40 ${y} H260" style="stroke:var(--mute)"/><text class="lbl" x="150" y="${y+12}" style="text-anchor:middle">boom</text>`;
+      el3.forEach(([x,L,n],i)=>{g+=`<path class="w" d="M${x} ${y-L*s/2} V${y+L*s/2}" style="${i===1?'stroke:var(--red)':''}"/><text class="lbl" x="${x}" y="${y-L*s/2-8}" style="text-anchor:middle;fill:var(--ink)">${n}</text><text class="lbl" x="${x}" y="${y+L*s/2+16}" style="text-anchor:middle">${ft(L)}</text>`});
+      g+=`<path class="bm" d="M262 ${y} h22 m-8 -6 l8 6 l-8 6"/><text class="lbl" x="292" y="${y-10}" style="text-anchor:end">beam</text>`;
+      out=`<div class="eq">Driven ≈ <em>${ft(D)}</em></div><p class="small mute">The driven element is about a half wave, like a dipole: 468 / ${fmt(f,5)} = ${ft(D)}. The reflector behind it is a little <b>longer</b> (about ${ft(Rf)}). The director in front is a little <b>shorter</b> (about ${ft(Dr)}). The beam goes toward the director.</p>`}
+    const bar=nice(s),bw=bar*s;g+=st.kind==='quarter'?`<path class="dim" d="M10 14 h${bw} M10 10 v8 M${10+bw} 10 v8"/><text class="lbl" x="${14+bw}" y="18" style="text-anchor:start">${fmt(bar)} ft</text>`:`<path class="dim" d="M${290-bw} 172 h${bw} M${290-bw} 168 v8 M290 168 v8"/><text class="lbl" x="${286-bw}" y="176" style="text-anchor:end">${fmt(bar)} ft</text>`;
+    svg.innerHTML=g;svg.setAttribute('aria-label',`${KN[st.kind]} for ${fmt(f,5)} MHz`);
+    res.innerHTML=out+`<p class="small">A full wave is 300 / ${fmt(f,4)} = ${fmt(300/f,3)} meters. Bands are named by about that number: 80, 40, 20, 15, 10 meters.</p>
+    <div class="note"><b>Why 468 and not 492?</b>A half wave in free space is 492 / MHz feet. A real wire acts a bit longer than it is, so you cut it about 5% short: 468.</div>`;
+  }
+  el.querySelectorAll('.ark button').forEach(b=>b.onclick=()=>{st.kind=b.dataset.k;unchip(el);draw()});
+  el.querySelectorAll('.arb .smb').forEach(b=>b.onclick=()=>{st.f=+b.dataset.f;st.fs=b.dataset.f;unchip(el);draw()});
+  sl.oninput=()=>{const f=LOGS(FA,FB,+sl.value);st.f=+f.toFixed(f<10?2:1);st.fs=String(st.f);unchip(el);draw()};
+  $f.oninput=()=>{st.fs=$f.value;st.f=num($f.value);unchip(el);draw()};
+  chips(el,c.presets,p=>{st={f:p.f,kind:p.kind||'dipole',fs:String(p.f)};draw()});
+  draw();
+};
+
+/* Bessel J_0..J_n(x) by backward recurrence (Miller), for FM sidebands */
+function besselJ(n,x){
+  if(x===0)return Array.from({length:n+1},(_,i)=>i?0:1);
+  const M=2*Math.ceil((Math.max(n,x)+20+Math.sqrt(40*Math.max(n,x)))/2);let j=new Array(M+2).fill(0);j[M]=1e-30;
+  for(let k=M;k>0;k--){j[k-1]=2*k/x*j[k]-j[k+1];if(Math.abs(j[k-1])>1e200)for(let i=k-1;i<=M;i++)j[i]*=1e-200}
+  let s=j[0];for(let k=2;k<=M;k+=2)s+=2*j[k];return j.slice(0,n+1).map(v=>v/s);
+}
+/* fm-spectrum: config {dev kHz, af kHz, osc MHz, out MHz, presets:[{q,dev,af,osc,out}]} */
+WIDGETS['fm-spectrum']=(el,c)=>{
+  let st={dev:c.dev??5,af:c.af??3,osc:String(c.osc??12.21),out:String(c.out??146.52),hi:''};
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Spread an FM signal</h3><p class="small mute lead">Deviation is how far the carrier swings. The audio tone sets how fast it swings, and puts sidebands that far apart. Carson's rule: bandwidth = 2 x (deviation + audio).</p>
+  <svg class="circ fs" viewBox="0 0 300 160" role="img"></svg>
+  <label for="fm-d" style="margin-top:10px">Deviation: <b class="fmdv"></b></label><input id="fm-d" type="range" min="5" max="100">
+  <label for="fm-a" style="margin-top:8px">Audio tone: <b class="fmav"></b></label><input id="fm-a" type="range" min="3" max="50">
+  <div class="wres fmr"></div>
+  <h3 style="margin-top:18px">Multiply up to VHF</h3><p class="small mute lead">Many VHF FM rigs modulate a low oscillator, then a multiplier stage makes a harmonic of it to reach the operating frequency. The deviation gets multiplied too.</p>
+  <div class="fields"><div><label for="fm-o">Oscillator MHz</label><input id="fm-o" type="text" inputmode="decimal"></div><div><label for="fm-t">Transmitter MHz</label><input id="fm-t" type="text" inputmode="decimal"></div></div>
+  <div class="wres fmc"></div>`;
+  const svg=el.querySelector('svg'),sd=el.querySelector('#fm-d'),sa=el.querySelector('#fm-a'),$o=el.querySelector('#fm-o'),$t=el.querySelector('#fm-t'),r1=el.querySelector('.fmr'),r2=el.querySelector('.fmc');
+  function draw(){
+    sd.value=Math.round(st.dev*10);sa.value=Math.round(st.af*10);$o.value=st.osc;$t.value=st.out;
+    el.querySelector('.fmdv').textContent=fmt(st.dev,3)+' kHz';el.querySelector('.fmav').textContent=fmt(st.af,3)+' kHz';
+    const beta=st.dev/st.af,N=Math.floor(20/st.af),J=besselJ(N,beta),bw=2*(st.dev+st.af),lines=[];
+    for(let n=-N;n<=N;n++){const h=Math.abs(J[Math.abs(n)]);if(h<0.01)continue;lines.push({f:n*st.af,h:Math.min(1,h)*.92,cls:n?'':'rf'})}
+    spectrum(svg,{x0:-20,x1:20,ticks:[-20,-10,0,10,20],tl:t=>t?(t>0?'+':'−')+Math.abs(t):'carrier',H:160,lines,boxes:[{a:-(st.dev+st.af),b:st.dev+st.af,cls:'ok',lab:fmt(bw,3)+' kHz wide (Carson)'}]});
+    svg.setAttribute('aria-label',`FM spectrum, ${fmt(bw,3)} kilohertz wide`);
+    r1.innerHTML=`<div class="eq">2 x (${fmt(st.dev,3)} + ${fmt(st.af,3)}) = <em>${fmt(bw,3)} kHz</em></div>
+    <p class="small mute">Sidebands sit every ${fmt(st.af,3)} kHz (the audio tone). Their size comes from deviation / audio = ${fmt(beta,3)}. Almost all the power lands inside Carson's bandwidth. Scale: kHz from the carrier.</p>
+    ${Math.abs(J[0])<0.06?'<p class="small">At this setting the carrier itself almost vanishes: the power has moved into the sidebands.</p>':''}`;
+    const o=num(st.osc),t=num(st.out);
+    if(!(o>0&&t>0)){r2.innerHTML='<p class="small mute" style="margin:0">Type both frequencies.</p>';return}
+    const m=t/o,whole=Math.abs(m-Math.round(m))<0.01,dOsc=st.dev*1000/m;
+    r2.innerHTML=`<div class="chain${st.hi?' hi':''}"><div><span>Oscillator</span><b>${fmt(o,5)} MHz</b><small>± ${fmtSI(dOsc,'Hz',4)}</small></div><i>→</i><div class="mul"><span>Multiplier</span><b>x ${fmt(m,4)}</b></div><i>→</i><div><span>Transmitter</span><b>${fmt(t,5)} MHz</b><small>± ${fmt(st.dev,3)} kHz</small></div></div>
+    <p class="small mute">Multiplier = ${fmt(t,5)} / ${fmt(o,5)} = ${fmt(m,4)}.${whole?'':' (Real multipliers are whole numbers, such as 2, 3 or 12.)'}</p>
+    <p>For ${fmt(st.dev,3)} kHz at the antenna, the oscillator only needs ${fmt(st.dev,3)} kHz / ${fmt(m,4)} = <b>${fmtSI(dOsc,'Hz',4)}</b> of deviation.</p>`;
+  }
+  sd.oninput=()=>{st.dev=+sd.value/10;unchip(el);draw()};sa.oninput=()=>{st.af=+sa.value/10;unchip(el);draw()};
+  $o.oninput=()=>{st.osc=$o.value;unchip(el);draw()};$t.oninput=()=>{st.out=$t.value;unchip(el);draw()};
+  chips(el,c.presets,p=>{st={dev:p.dev??5,af:p.af??3,osc:String(p.osc??st.osc),out:String(p.out??st.out),hi:p.hi||''};draw();if(p.hi)el.querySelector('.fmc').scrollIntoView({block:'nearest',behavior:'smooth'})},el.querySelector('svg'));
+  draw();
+};
+
+/* link-budget: config {w watts, tl, ta, path, ra, rl (dB), bw Hz, nf dB, g dB, presets:[{q, ...same keys, focus:'rx'}]} */
+WIDGETS['link-budget']=(el,c)=>{
+  const D={w:100,tl:1.5,ta:6,path:160,ra:2.15,rl:1.5,bw:2400,nf:3,g:20};
+  const F=[['w','Transmitter watts'],['tl','Feed line loss, dB'],['ta','Transmit antenna gain, dBi'],['path','Path loss, dB'],['ra','Receive antenna gain, dBi'],['rl','Feed line loss, dB']];
+  let st={...D,...c,focus:''};F.forEach(([k])=>st[k]=String(st[k]));
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Follow the signal in dB</h3><p class="small mute lead">Start with the transmitter's power, add the antenna gains, take away every loss. What's left arrives at the receiver. Then compare it with the weakest signal the receiver can copy.</p>
+  <svg class="circ lb" viewBox="0 0 300 210" role="img"></svg>
+  <div class="fields lbf">${F.map(([k,l])=>`<div><label for="lb-${k}">${l}</label><input id="lb-${k}" data-k="${k}" type="text" inputmode="decimal"></div>`).join('')}</div>
+  <div class="wres lbr"></div>
+  <h3 style="margin-top:18px">What makes a receiver sensitive</h3><p class="small mute lead">Sensitivity is the weakest signal it can copy. Lower (more negative) is better.</p>
+  <label for="lb-g">Front-end (input amplifier) gain: <b class="lbgv"></b></label><input id="lb-g" type="range" min="0" max="30">
+  <label for="lb-n" style="margin-top:8px">Front-end noise figure: <b class="lbnv"></b></label><input id="lb-n" type="range" min="1" max="20">
+  <label for="lb-b" style="margin-top:8px">Demodulator bandwidth: <b class="lbbv"></b></label><input id="lb-b" type="range" min="0" max="1000">
+  <div class="wres lbs"></div>`;
+  const svg=el.querySelector('svg'),r1=el.querySelector('.lbr'),r2=el.querySelector('.lbs'),sg=el.querySelector('#lb-g'),sn=el.querySelector('#lb-n'),sb=el.querySelector('#lb-b');
+  const BA=100,BB=16000,NF2=20,SNR=10,db=x=>(x>0?'+':x<0?'−':'')+fmt(Math.abs(x),3);
+  function sens(){const F1=10**(st.nf/10),F2=10**(NF2/10),G=10**(st.g/10),nfs=10*Math.log10(F1+(F2-1)/G);return{nfs,mds:-174+10*Math.log10(st.bw)+nfs,s:-174+10*Math.log10(st.bw)+nfs+SNR}}
+  function draw(){
+    F.forEach(([k])=>{const i=el.querySelector('#lb-'+k);if(document.activeElement!==i)i.value=st[k]});
+    sg.value=st.g;sn.value=st.nf;sb.value=LOGI(BA,BB,st.bw);
+    el.querySelector('.lbgv').textContent=st.g+' dB';el.querySelector('.lbnv').textContent=st.nf+' dB';el.querySelector('.lbbv').textContent=fmtSI(st.bw,'Hz',3);
+    const v=Object.fromEntries(F.map(([k])=>[k,num(st[k])])),S=sens();
+    if(!F.every(([k])=>isFinite(v[k]))||!(v.w>0)){r1.innerHTML='<p class="small mute" style="margin:0">Fill in every box.</p>';svg.innerHTML='';return}
+    const p0=10*Math.log10(v.w*1000),steps=[['Transmitter',p0],['Feed line',-v.tl],['Antenna',v.ta],['Path',-v.path],['Antenna',v.ra],['Feed line',-v.rl]];
+    let lv=[],acc=0;steps.forEach(([n,d],i)=>{acc=i?acc+d:d;lv.push(acc)});const rx=acc,mg=rx-S.s;
+    const lo=Math.min(-150,S.s-10,rx-10),hi=Math.max(70,p0+10),XA=44,XB=292,YT=12,YB=184,Y=d=>YT+(hi-d)/(hi-lo)*(YB-YT),w=(XB-XA)/7;
+    let g='';for(let d=Math.ceil(hi/50)*50;d>=lo;d-=50){g+=`<line x1="${XA}" y1="${Y(d)}" x2="${XB}" y2="${Y(d)}" class="gg"/><text class="lbl" x="${XA-4}" y="${Y(d)+4}" style="text-anchor:end">${d}</text>`}
+    g+=`<text class="lbl" x="${XA-4}" y="${YT-2}" style="text-anchor:end">dBm</text>`;
+    g+=`<rect x="${XA+6*w}" y="${Math.min(Y(rx),Y(S.s))}" width="${w}" height="${Math.abs(Y(rx)-Y(S.s))}" class="${mg>=0?'mgok':'mgbad'}"/><line x1="${XA}" y1="${Y(S.s)}" x2="${XB}" y2="${Y(S.s)}" class="sens"/><text class="lbl" x="${XA+4}" y="${Y(S.s)+15}" style="fill:var(--red);text-anchor:start">receiver needs ${fmt(S.s,4)} dBm</text>`;
+    let d='';lv.forEach((L,i)=>{const x=XA+i*w;d+=(i?`V${Y(L)}`:`M${x} ${Y(L)}`)+`H${x+w}`});d+=`H${XB}`;g+=`<path d="${d}" class="gl xl"/>`;
+    steps.forEach(([n,dd],i)=>{const x=XA+i*w+w/2,up=i===0||dd>=0;g+=`<text class="lbl" x="${x}" y="${Y(lv[i])+(up?-7:15)}" style="text-anchor:middle;fill:var(--ink)">${i?db(dd):fmt(p0,3)}</text>`});
+    g+=`<text class="lbl" x="${XA+6.5*w}" y="${Y(rx)-7}" style="text-anchor:middle;fill:var(--blue)">${fmt(rx,4)}</text>`;
+    svg.innerHTML=g;svg.setAttribute('aria-label',`Link budget: ${fmt(rx,4)} dBm arrives, margin ${fmt(mg,3)} dB`);
+    r1.innerHTML=`<div class="eq">Arrives: <em>${fmt(rx,4)} dBm</em></div>
+    <p class="small mute">Link budget = transmit power + antenna gains − all the losses, as seen at the receiver: ${fmt(p0,3)} dBm (${fmt(v.w)} W) − ${fmt(v.tl)} + ${fmt(v.ta)} − ${fmt(v.path)} + ${fmt(v.ra)} − ${fmt(v.rl)} = ${fmt(rx,4)} dBm.</p>
+    <p><b>Link margin</b> = what arrives − the minimum the receiver needs = ${fmt(rx,4)} − (${fmt(S.s,4)}) = <b>${db(mg)} dB</b>. ${mg>=0?`That's how much fading the link can take before it drops out.`:`The signal is below what the receiver needs: no copy. Add power or gain, or cut losses.`}</p>`;
+    r2.innerHTML=`<div class="eq">Sensitivity <em>${fmt(S.s,4)} dBm</em></div>
+    <p class="small mute">Noise in the bandwidth (−174 + 10 log ${fmtSI(st.bw,'Hz',3)}) + system noise figure ${fmt(S.nfs,3)} dB + ${SNR} dB the mode needs.</p>
+    <p>${st.focus==='rx'?'All three knobs matter: ':''}Narrow the bandwidth and less noise gets in. Lower the noise figure and the front end adds less noise. More front-end gain hides the noisier stages after it (they're set at ${NF2} dB here), until the front end's own noise figure is all that's left.</p>`;
+  }
+  el.querySelectorAll('.lbf input').forEach(i=>i.oninput=()=>{st[i.dataset.k]=i.value;unchip(el);draw()});
+  sg.oninput=()=>{st.g=+sg.value;unchip(el);draw()};sn.oninput=()=>{st.nf=+sn.value;unchip(el);draw()};sb.oninput=()=>{st.bw=Math.round(LOGS(BA,BB,+sb.value)/10)*10;unchip(el);draw()};
+  chips(el,c.presets,p=>{st={...D,...p,focus:p.focus||''};delete st.q;F.forEach(([k])=>st[k]=String(st[k]));draw();if(p.focus==='rx')el.querySelector('.lbs').scrollIntoView({block:'nearest',behavior:'smooth'})},el.querySelector('svg'));
+  draw();
+};
+
+/* mixer: config {mode rx|mod|det, rf, lo MHz, af, bfo kHz, presets:[{q,mode,rf,lo,img,af,filt none|usb|lsb,bfo}]} */
+WIDGETS.mixer=(el,c)=>{
+  const IF=9,M={rx:'Receiver mixer',mod:'Balanced modulator',det:'Product detector'};
+  let st={mode:c.mode||'rx',rf:c.rf??14.2,lo:c.lo??20,img:false,af:c.af??1,filt:'none',bfo:0};
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Mix two frequencies</h3><p class="small mute lead">A mixer takes two signals in and puts out their sum and their difference. That one trick tunes a receiver, makes single sideband, and turns it back into audio.</p>
+  <div class="seg mxm" role="group" aria-label="Circuit" style="flex-wrap:wrap">${Object.entries(M).map(([k,v])=>`<button data-m="${k}">${v}</button>`).join('')}</div>
+  <svg class="circ mx" viewBox="0 0 300 170" role="img"></svg><div class="mxc"></div><div class="wres"></div>`;
+  const svg=el.querySelector('svg'),ctl=el.querySelector('.mxc'),res=el.querySelector('.wres');
+  const sld=(id,lab,min,max,step,v)=>`<label for="${id}" style="margin-top:10px">${lab}: <b class="${id}v"></b></label><input id="${id}" type="range" min="${min}" max="${max}" step="${step}" value="${v}">`;
+  function controls(){
+    if(st.mode==='rx')ctl.innerHTML=sld('mx-r','Signal you want (RF)',1,30,0.05,st.rf)+sld('mx-l','Local oscillator (LO)',10,40,0.05,st.lo)+`<div class="seg" style="margin-top:10px"><button class="mxt">Tune the LO onto it</button><button class="mxi"></button></div>`;
+    else if(st.mode==='mod')ctl.innerHTML=sld('mx-a','Audio tone',0.3,3,0.1,st.af)+`<p class="small mute" style="margin:10px 0 4px">Sideband filter</p><div class="seg mxf"><button data-f="none">None</button><button data-f="usb">Keep upper</button><button data-f="lsb">Keep lower</button></div>`;
+    else ctl.innerHTML=sld('mx-a','Voice tone in the signal',0.3,3,0.1,st.af)+sld('mx-b','BFO tuning error',-1,1,0.05,st.bfo);
+    ctl.querySelectorAll('input').forEach(i=>i.oninput=()=>{const k={'mx-r':'rf','mx-l':'lo','mx-a':'af','mx-b':'bfo'}[i.id];st[k]=+i.value;unchip(el);draw()});
+    const t=ctl.querySelector('.mxt');if(t)t.onclick=()=>{st.lo=+(st.rf+IF).toFixed(2);controls();unchip(el);draw()};
+    const im=ctl.querySelector('.mxi');if(im)im.onclick=()=>{st.img=!st.img;unchip(el);draw()};
+    ctl.querySelectorAll('.mxf button').forEach(b=>b.onclick=()=>{st.filt=b.dataset.f;unchip(el);draw()});
+  }
+  function draw(){
+    segOn(el,'.mxm','m',st.mode);
+    const sv=(id,t)=>{const b=ctl.querySelector('.'+id+'v');if(b)b.textContent=t};
+    if(st.mode==='rx'){
+      sv('mx-r',fmt(st.rf,4)+' MHz');sv('mx-l',fmt(st.lo,4)+' MHz');
+      const im=ctl.querySelector('.mxi');if(im){im.textContent=st.img?'Remove the image signal':'Add a signal at the image';im.classList.toggle('pri',st.img)}
+      const dif=Math.abs(st.lo-st.rf),sum=st.lo+st.rf,img=st.lo+IF,hit=Math.abs(dif-IF)<0.15,imd=Math.abs(img-st.lo);
+      const lines=[{f:st.rf,h:.55,cls:'rf',lab:'RF'},{f:st.lo,h:.85,lab:'LO'},{f:dif,h:.3,cls:'out',lab:'diff'},{f:sum,h:.3,cls:'out',lab:'sum'}];
+      if(st.img)lines.push({f:img,h:.55,cls:'img',lab:'image'});
+      spectrum(svg,{x0:0,x1:72,ticks:[0,9,20,40,60],tl:t=>t===9?'IF 9':String(t),H:170,lines,boxes:[{a:IF-0.6,b:IF+0.6,cls:st.img&&Math.abs(imd-IF)<0.15?'bad':hit?'ok':''}]});
+      svg.setAttribute('aria-label',`Mixer: RF ${st.rf} MHz, LO ${st.lo} MHz`);
+      res.innerHTML=`<div class="eq">${fmt(st.lo,4)} − ${fmt(st.rf,4)} = <em>${fmt(dif,4)} MHz</em></div>
+      <p class="small mute">Out of the mixer: the difference (${fmt(dif,4)} MHz) and the sum (${fmt(sum,4)} MHz). Mixing two RF signals like this is called <b>heterodyning</b>. The receiver's IF filter only passes 9 MHz. Scale: MHz.</p>
+      <p>${hit?`Tuned in: the difference lands right in the 9 MHz IF filter. To listen to another station you <b>tune the local oscillator</b>, so every station mixes down to the same IF.`:`The difference isn't at 9 MHz, so nothing gets through the IF filter. Slide the <b>local oscillator</b> (or tap "Tune the LO onto it") until LO − RF = 9.`}</p>
+      ${st.img?`<div class="note"><b>Image response</b>A station at ${fmt(img,4)} MHz is ${fmt(img-st.lo,4)} MHz above the LO, so it mixes to ${fmt(imd,4)} MHz too${Math.abs(imd-IF)<0.15?' and comes straight through the IF':''}. It sits <b>twice the IF</b> (${fmt(img-st.rf,4)} MHz) away from the signal you want. Only a filter before the mixer can keep it out.</div>`:''}`;
+    }else if(st.mode==='mod'){
+      sv('mx-a',fmt(st.af,3)+' kHz');ctl.querySelectorAll('.mxf button').forEach(b=>{const on=b.dataset.f===st.filt;b.classList.toggle('pri',on);b.setAttribute('aria-pressed',on)});
+      const keep=s=>st.filt==='none'||st.filt===s,lines=[{f:0,h:.85,cls:'dash',lab:'carrier (cancelled)'}];
+      if(keep('lsb'))lines.push({f:-st.af,h:.55,cls:'out',lab:'lower',anc:'end'});if(keep('usb'))lines.push({f:st.af,h:.55,cls:'out',lab:'upper',anc:'start'});
+      const boxes=st.filt==='none'?[]:[{a:st.filt==='usb'?0.2:-3.4,b:st.filt==='usb'?3.4:-0.2,cls:'ok',lab:'filter'}];
+      spectrum(svg,{x0:-4,x1:4,ticks:[-3,0,3],tl:t=>t?(t>0?'+':'−')+Math.abs(t)+' kHz':'9 MHz',H:170,lines,boxes});
+      svg.setAttribute('aria-label','Balanced modulator output');
+      res.innerHTML=`<div class="eq">${st.filt==='none'?'Out: <em>double sideband</em>':'Out: <em>single sideband</em>'}</div>
+      <p class="small mute">The balanced modulator mixes the ${fmt(st.af,3)} kHz audio with a 9 MHz carrier oscillator. It puts out the sum (9 MHz + ${fmt(st.af,3)} kHz) and the difference (9 MHz − ${fmt(st.af,3)} kHz), and the "balanced" part cancels the carrier itself.</p>
+      <p>${st.filt==='none'?'Both sidebands and no carrier: <b>double-sideband</b> suppressed-carrier RF. To make SSB, a <b>filter</b> keeps one sideband. Try one of the filter buttons.':`The <b>filter</b> keeps only the ${st.filt==='usb'?'upper':'lower'} sideband: that's ${st.filt.toUpperCase()}, single sideband.`}</p>`;
+    }else{
+      sv('mx-a',fmt(st.af,3)+' kHz');sv('mx-b',(st.bfo>0?'+':st.bfo<0?'−':'')+fmt(Math.abs(st.bfo),2)+' kHz');
+      const out=st.af-st.bfo;
+      spectrum(svg,{x0:-4,x1:4,ticks:[-3,0,3],tl:t=>t?(t>0?'+':'−')+Math.abs(t)+' kHz':'9 MHz',H:170,lines:[{f:st.af,h:.55,cls:'rf',lab:'USB signal',anc:'start'},{f:st.bfo,h:.85,lab:'BFO',anc:st.bfo>0.4?'start':'end'}]});
+      svg.setAttribute('aria-label','Product detector inputs');
+      res.innerHTML=`<div class="eq">Audio out: <em>${fmt(Math.abs(out),3)} kHz</em></div>
+      <p class="small mute">The product detector mixes the incoming single sideband signal with a beat frequency oscillator (BFO) sitting where the missing carrier was. The difference is the audio. The sum (about 18 MHz) is filtered off.</p>
+      <p>${Math.abs(st.bfo)<0.03?`BFO on frequency: the voice comes out at its real pitch (${fmt(st.af,3)} kHz in, ${fmt(st.af,3)} kHz out). This is how an SSB receiver <b>recovers the audio</b>.`:`BFO off by ${fmt(Math.abs(st.bfo),2)} kHz: every tone shifts by that much, so the voice sounds ${out>st.af?'high and squeaky':'low and growly'}. That's what you fix with the receiver's tuning knob.`}</p>`;
+    }
+  }
+  el.querySelectorAll('.mxm button').forEach(b=>b.onclick=()=>{st.mode=b.dataset.m;controls();unchip(el);draw()});
+  chips(el,c.presets,p=>{st={mode:p.mode||'rx',rf:p.rf??14.2,lo:p.lo??20,img:!!p.img,af:p.af??1,filt:p.filt||'none',bfo:p.bfo??0};controls();draw()},svg);
+  controls();draw();
 };
 function coreHtml(c){
   if(!c)return'';

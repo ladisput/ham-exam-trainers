@@ -1,13 +1,13 @@
 # Published artifacts
 
-Publish with `publish_files` in `patch` mode, passing the slug and the current version
-(get it with `get_artifact` first). Both artifacts declare `db` + `user` (see SPEC.md).
+Publish with the Artifact tool (`url` + `file_path` + a `files` map; read a file first if the tool says it changed).
+All three real artifacts declare `db` (root read/write `owner`; `data/users/{self}` read/write `interact`) + `user` (see SPEC.md).
 
 | Exam | Title | Slug | Link |
 |---|---|---|---|
 | Technician | Technician Class Trainer | d00c70f5-a606-48a8-ac64-5b1842328783 | https://claude.ai/artifact/Sh4cJiGP3fLhWjVSZnyxTL |
 | Extra | Extra Class Trainer | 2b21fb82-f2d4-46b4-be2b-52f6ea2966bc | https://claude.ai/artifact/6KvPV3j5FiNQxkDvHqce91 |
-| General | (not built yet) | | |
+| General | General Class Trainer | | https://claude.ai/artifact/6ybQ4odexMzPKbgtAhoHux |
 | Preview (test copy) | General Trainer Preview (shows whichever exam's batch is being tested) | | https://claude.ai/artifact/JVa74CyW5j9ktfCoZp2u1o |
 
 Files published per artifact: `index.html`, `pool.json`, `hooks.json`, `fig/*.png`, `families/*.json` (from `exams/<exam>/site/`, after `tools/site.py build <exam>`).

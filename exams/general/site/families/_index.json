@@ -2,6 +2,17 @@
  "exam": "general",
  "families": [
   {
+   "id": "antenna-length",
+   "title": "Antenna length (468 / f)",
+   "questions": [
+    "G9B10",
+    "G9B11",
+    "G9B12",
+    "G9C02",
+    "G9C03"
+   ]
+  },
+  {
    "id": "combining-parts",
    "title": "Resistors, capacitors and inductors in series and parallel",
    "questions": [
@@ -30,6 +41,37 @@
    ]
   },
   {
+   "id": "fm-deviation",
+   "title": "FM deviation and bandwidth",
+   "questions": [
+    "G8B04",
+    "G8B06",
+    "G8B07"
+   ]
+  },
+  {
+   "id": "link-budget",
+   "title": "Link budget and link margin",
+   "questions": [
+    "G8A13",
+    "G8A14",
+    "G7C08"
+   ]
+  },
+  {
+   "id": "mixers-images",
+   "title": "Mixers, IF and image response",
+   "questions": [
+    "G8B01",
+    "G8B02",
+    "G8B03",
+    "G8B11",
+    "G7C01",
+    "G7C02",
+    "G7C04"
+   ]
+  },
+  {
    "id": "power-formulas",
    "title": "Power from any two values (P, E, I, R)",
    "questions": [
@@ -37,6 +79,25 @@
     "G5B04",
     "G5B05",
     "G5B12"
+   ]
+  },
+  {
+   "id": "reactance-resonance",
+   "title": "Reactance, impedance and resonance",
+   "questions": [
+    "G5A01",
+    "G5A02",
+    "G5A03",
+    "G5A04",
+    "G5A05",
+    "G5A06",
+    "G5A07",
+    "G5A08",
+    "G5A09",
+    "G5A11",
+    "G5A12",
+    "G6A11",
+    "G7B09"
    ]
   },
   {
