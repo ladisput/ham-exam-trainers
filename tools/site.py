@@ -125,6 +125,16 @@ def check(exam):
                 bad.append(f"{fid}: preset {pr.get('q')}: m must be am, fm, pm or fsk")
             if t == "rx-panel" and pr.get("p") not in ("whistle", "pops", "overload", "hiss", "qrm", "split"):
                 bad.append(f"{fid}: preset {pr.get('q')}: p must be a known problem")
+            if t == "waterfall" and not (-1 <= pr.get("sel", -1) < 6 and pr.get("tx", "off") in ("off", "even", "odd") and 0 <= pr.get("clock", 0) <= 3):
+                bad.append(f"{fid}: preset {pr.get('q')}: needs sel -1 to 5, tx off/even/odd and clock 0-3 s")
+            if t == "rtty" and not (pr.get("sb", "lsb") in ("lsb", "usb") and pr.get("shift", 170) in (85, 170, 425, 850) and pr.get("baud", 45.45) in (45.45, 50, 75) and pr.get("gen", "afsk") in ("afsk", "fsk")):
+                bad.append(f"{fid}: preset {pr.get('q')}: needs sb lsb/usb, shift 85/170/425/850, baud 45.45/50/75, gen afsk/fsk")
+            if t == "psk" and pr.get("m", "qpsk") not in ("bpsk", "qpsk"):
+                bad.append(f"{fid}: preset {pr.get('q')}: m must be bpsk or qpsk")
+            if t == "arq" and not (pr.get("mode") in ("arq", "fec") and 0 <= pr.get("noise", 30) <= 100 and pr.get("part", "hdr") in ("hdr", "data", "crc")):
+                bad.append(f"{fid}: preset {pr.get('q')}: needs mode arq/fec, noise 0-100, part hdr/data/crc")
+            if t == "net-map" and not (pr.get("tab") in ("winlink", "mesh", "modes") and pr.get("proto", "packet") in ("packet", "pactor", "vara") and set(pr.get("down", [])) <= set("ABCEF") and pr.get("grp", "dv") in ("dv", "ft", "ws", "wl")):
+                bad.append(f"{fid}: preset {pr.get('q')}: needs tab winlink/mesh/modes, proto, relay nodes A-F in down, grp dv/ft/ws/wl")
             if w.get("type") == "band-chart":
                 B = c["bands"][pr.get("b", 0)] if pr.get("b", 0) < len(c["bands"]) else None
                 if B is None or ("i" in pr and not 0 <= pr["i"] < len(B.get("segs", [])) + len(B.get("marks", []))):

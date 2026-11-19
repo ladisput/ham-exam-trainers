@@ -1,0 +1,155 @@
+{
+ "id": "waterfall-ft8",
+ "exam": "general",
+ "title": "The waterfall and FT8",
+ "idea": "A waterfall shows frequency across, time running down and strength as brightness. FT8 is 8-tone FSK in 15-second slots: keep your clock right and answer in the other slot.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "FT8 fact",
+    "Answer"
+   ],
+   [
+    "Modulation",
+    "8-tone frequency shift keying"
+   ],
+   [
+    "Where on 20 m",
+    "About 14.074 to 14.077 MHz"
+   ],
+   [
+    "Clock",
+    "Accurate to within about 1 second"
+   ],
+   [
+    "Answering a CQ",
+    "Clear frequency, alternate time slot"
+   ],
+   [
+    "Signal report +3",
+    "SNR of +3 dB in a 2.5 kHz bandwidth"
+   ],
+   [
+    "Strength",
+    "Decodes at very low signal-to-noise ratios"
+   ],
+   [
+    "Waterfall axes",
+    "Frequency across, time down, strength = intensity"
+   ],
+   [
+    "Vertical lines beside a signal",
+    "Overmodulation"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "waterfall",
+  "config": {
+   "presets": [
+    {
+     "q": "G8C14",
+     "focus": "axes"
+    },
+    {
+     "q": "G2E15",
+     "sel": 0,
+     "focus": "where"
+    },
+    {
+     "q": "G2E04",
+     "sel": 2,
+     "tx": "odd",
+     "txf": 2650,
+     "focus": "slot"
+    },
+    {
+     "q": "G2E07",
+     "sel": 0,
+     "clock": 2.4,
+     "focus": "clock"
+    },
+    {
+     "q": "G8A09",
+     "sel": 1,
+     "focus": "tones"
+    },
+    {
+     "q": "G8C07",
+     "sel": 4,
+     "snr": -20,
+     "focus": "snr"
+    },
+    {
+     "q": "G8C15",
+     "sel": 2,
+     "snr": 3,
+     "focus": "report"
+    },
+    {
+     "q": "G8C13",
+     "sel": 0,
+     "over": true,
+     "focus": "over"
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Same slot",
+   "how": "You both transmit at once; neither hears the other."
+  },
+  {
+   "term": "Alternate slot",
+   "how": "You send while they listen. Pick a clear frequency."
+  },
+  {
+   "term": "FT8 report",
+   "how": "Signal-to-noise in 2.5 kHz, not an S-meter reading."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G2E04",
+   "wrong": "Find a clear frequency during the same time slot as the calling station",
+   "why": "In the same slot they're transmitting too, so they can't hear you."
+  },
+  {
+   "q": "G2E04",
+   "wrong": "Always call on the station’s frequency",
+   "why": "Calling on their own frequency piles everyone on one spot; find a clear one."
+  },
+  {
+   "q": "G2E07",
+   "wrong": "A special hardware modem",
+   "why": "A sound card interface is enough; the must-have is a clock right to about 1 second."
+  },
+  {
+   "q": "G8C15",
+   "wrong": "The signal is 3 dB over S9",
+   "why": "FT8 reports are signal-to-noise in 2.5 kHz, not S units."
+  },
+  {
+   "q": "G8C14",
+   "wrong": "Frequency is horizontal, signal strength is vertical, time is intensity",
+   "why": "That's a spectrum display. On a waterfall time runs down and strength is the brightness."
+  },
+  {
+   "q": "G8C13",
+   "wrong": "Insufficient modulation",
+   "why": "Too much modulation, not too little, splatters lines either side."
+  }
+ ],
+ "questions": [
+  "G2E04",
+  "G2E07",
+  "G2E15",
+  "G8A09",
+  "G8C07",
+  "G8C13",
+  "G8C14",
+  "G8C15"
+ ]
+}
