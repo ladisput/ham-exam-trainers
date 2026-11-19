@@ -13,6 +13,18 @@
    ]
   },
   {
+   "id": "arq-fec",
+   "title": "ARQ, NAK and error correction",
+   "questions": [
+    "G2E03",
+    "G2E09",
+    "G8C03",
+    "G8C05",
+    "G8C06",
+    "G8C10"
+   ]
+  },
+  {
    "id": "beacons",
    "title": "Beacons",
    "questions": [
@@ -188,6 +200,16 @@
    ]
   },
   {
+   "id": "psk",
+   "title": "PSK31, QPSK and Varicode",
+   "questions": [
+    "G8A06",
+    "G8A12",
+    "G8C08",
+    "G8C12"
+   ]
+  },
+  {
    "id": "reactance-resonance",
    "title": "Reactance, impedance and resonance",
    "questions": [
@@ -231,6 +253,18 @@
     "G5B13",
     "G5B14",
     "G1C11"
+   ]
+  },
+  {
+   "id": "rtty-fsk",
+   "title": "RTTY and FSK",
+   "questions": [
+    "G2E01",
+    "G2E06",
+    "G2E14",
+    "G8A01",
+    "G8C04",
+    "G8C11"
    ]
   },
   {
@@ -326,6 +360,33 @@
     "G5C07",
     "G5A10",
     "G7C03"
+   ]
+  },
+  {
+   "id": "waterfall-ft8",
+   "title": "The waterfall and FT8",
+   "questions": [
+    "G2E04",
+    "G2E07",
+    "G2E15",
+    "G8A09",
+    "G8C07",
+    "G8C13",
+    "G8C14",
+    "G8C15"
+   ]
+  },
+  {
+   "id": "winlink-mesh",
+   "title": "Winlink, gateways and mesh networks",
+   "questions": [
+    "G2E02",
+    "G2E10",
+    "G2E11",
+    "G2E12",
+    "G2E13",
+    "G8C09",
+    "G8C16"
    ]
   }
  ]

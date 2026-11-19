@@ -1,0 +1,141 @@
+{
+ "id": "arq-fec",
+ "exam": "general",
+ "title": "ARQ, NAK and error correction",
+ "idea": "ARQ answers every packet: ACK if it arrived clean, NAK to ask for it again, and too many failed tries drops the link. FEC sends redundant data so the receiver repairs errors itself.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Term",
+    "Meaning"
+   ],
+   [
+    "ACK",
+    "Received without error"
+   ],
+   [
+    "NAK",
+    "Request retransmission of the packet"
+   ],
+   [
+    "Too many tries (ARQ)",
+    "The connection is dropped"
+   ],
+   [
+    "FEC",
+    "Redundant information sent with the data"
+   ],
+   [
+    "Header",
+    "Routing and handling information"
+   ],
+   [
+    "Interference to PACTOR or VARA",
+    "Retries, timeouts, long pauses, failed connections: all of these"
+   ],
+   [
+    "Joining a PACTOR contact",
+    "Not possible: two stations only"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "arq",
+  "config": {
+   "presets": [
+    {
+     "q": "G8C03",
+     "mode": "arq",
+     "noise": 10,
+     "part": "hdr",
+     "focus": "frame"
+    },
+    {
+     "q": "G8C05",
+     "mode": "arq",
+     "noise": 45,
+     "seed": 2,
+     "focus": "nak"
+    },
+    {
+     "q": "G8C06",
+     "mode": "arq",
+     "noise": 88,
+     "seed": 1,
+     "focus": "drop"
+    },
+    {
+     "q": "G2E03",
+     "mode": "arq",
+     "noise": 70,
+     "seed": 3,
+     "focus": "sym"
+    },
+    {
+     "q": "G2E09",
+     "mode": "arq",
+     "noise": 10,
+     "join": true,
+     "focus": "join"
+    },
+    {
+     "q": "G8C10",
+     "mode": "fec",
+     "noise": 45,
+     "seed": 2,
+     "focus": "fec"
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "ARQ",
+   "how": "Receiver replies ACK or NAK; bad packets are sent again."
+  },
+  {
+   "term": "FEC",
+   "how": "No replies; extra redundant data lets the receiver fix errors."
+  },
+  {
+   "term": "Parity bit",
+   "how": "Only detects an error in one character; it can't fix it."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G8C05",
+   "wrong": "Packet was received without error",
+   "why": "That's ACK. NAK means send it again."
+  },
+  {
+   "q": "G8C06",
+   "wrong": "The checksum overflows",
+   "why": "Nothing overflows: after too many tries, ARQ simply drops the connection."
+  },
+  {
+   "q": "G8C10",
+   "wrong": "By using a parity bit with each character",
+   "why": "A parity bit can only flag an error. FEC sends redundant data to fix it."
+  },
+  {
+   "q": "G8C03",
+   "wrong": "Trailer",
+   "why": "Routing goes up front, in the header."
+  },
+  {
+   "q": "G2E09",
+   "wrong": "Send a NAK code",
+   "why": "A NAK asks for a resend; nothing lets a third station into a PACTOR link."
+  }
+ ],
+ "questions": [
+  "G2E03",
+  "G2E09",
+  "G8C03",
+  "G8C05",
+  "G8C06",
+  "G8C10"
+ ]
+}

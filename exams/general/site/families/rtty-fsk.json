@@ -1,0 +1,124 @@
+{
+ "id": "rtty-fsk",
+ "exam": "general",
+ "title": "RTTY and FSK",
+ "idea": "RTTY shifts between two frequencies, mark and space, 170 Hz apart, sending 5-bit Baudot. Sent as audio tones on LSB, or by shifting the oscillator directly. Wrong sideband, swapped mark and space, or wrong baud and it won't decode.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "RTTY fact",
+    "Answer"
+   ],
+   [
+    "The two frequencies",
+    "Mark and space"
+   ],
+   [
+    "Usual HF shift",
+    "170 Hz"
+   ],
+   [
+    "AFSK with an SSB rig",
+    "LSB"
+   ],
+   [
+    "Direct FSK",
+    "Data changes the oscillator's frequency directly"
+   ],
+   [
+    "Baudot",
+    "5-bit code plus start and stop bits"
+   ],
+   [
+    "Tuned in but won't decode",
+    "Reversed mark/space, wrong baud or wrong sideband: all of these"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "rtty",
+  "config": {
+   "presets": [
+    {
+     "q": "G8C11",
+     "focus": "ms"
+    },
+    {
+     "q": "G2E06",
+     "shift": 170,
+     "focus": "shift"
+    },
+    {
+     "q": "G2E01",
+     "gen": "afsk",
+     "focus": "lsb"
+    },
+    {
+     "q": "G8A01",
+     "gen": "fsk",
+     "focus": "gen"
+    },
+    {
+     "q": "G8C04",
+     "ch": "K",
+     "focus": "baudot"
+    },
+    {
+     "q": "G2E14",
+     "sb": "usb",
+     "focus": "why"
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "AFSK",
+   "how": "Two audio tones into an SSB transmitter on LSB."
+  },
+  {
+   "term": "Direct FSK",
+   "how": "The data line shifts the oscillator's frequency itself."
+  },
+  {
+   "term": "Baudot (RTTY)",
+   "how": "5 bits plus start and stop; not 7-bit ASCII with parity."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G2E01",
+   "wrong": "USB",
+   "why": "USB is the FT8 and data convention; RTTY via AFSK is LSB."
+  },
+  {
+   "q": "G2E06",
+   "wrong": "850 Hz",
+   "why": "850 Hz is an old wide shift; amateur HF RTTY uses 170 Hz."
+  },
+  {
+   "q": "G8C04",
+   "wrong": "A 7-bit code with start, stop, and parity bits",
+   "why": "That's ASCII-style framing. Baudot is 5 bits plus start and stop."
+  },
+  {
+   "q": "G8C11",
+   "wrong": "Dot and dash",
+   "why": "Dot and dash is Morse. FSK's two frequencies are mark and space."
+  },
+  {
+   "q": "G8A01",
+   "wrong": "By keying an FM transmitter with a sub-audible tone",
+   "why": "Direct FSK changes the oscillator with the digital signal itself."
+  }
+ ],
+ "questions": [
+  "G2E01",
+  "G2E06",
+  "G2E14",
+  "G8A01",
+  "G8C04",
+  "G8C11"
+ ]
+}
