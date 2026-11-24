@@ -151,7 +151,7 @@ like a family page (hash route `#ref-<id>`, back returns). Technician has one so
   copies them to `exams/<exam>/site/references/` and writes its `_index.json`; `check` validates them.
 - Each kind is a renderer in the `REFS` registry in `app/template.html` (`REFS[kind](doc)` returns the page's cards),
   listed in `REF_KINDS` in `tools/site.py`. Add a new kind in both places.
-- `glossary`: `groups` of `{title, items}`, each item `[term, meaning]` or `[term, meaning, note]` (shown as
+- `glossary`: each group card shows band buttons (top right, most questions first): how many questions in that band use any of the group's terms, counted in the page from the pool; tapping one opens the band. `groups` of `{title, items}`, each item `[term, meaning]` or `[term, meaning, note]` (shown as
   "HF = High Frequency"). Groups follow related ideas (RACES beside ARES), not the alphabet. A term may list variants
   as "a.m., p.m.". `skip` maps pool tokens that look like abbreviations but aren't listed (call signs, figure labels,
   misspellings in wrong answers) to the reason. `check` fails if a term isn't in the exam's pool (scope rule) or if

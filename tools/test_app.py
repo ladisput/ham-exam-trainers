@@ -100,6 +100,28 @@ async def main():
                     n = sum(len(g["items"]) for g in doc["groups"])
                     assert await pg.locator("#fam .gl").count() == n, "the glossary should show every entry"
                     assert await pg.locator("#fam .fambtn, #fam #fdrill").count() == 0, "a reference page has no question links"
+                    # band buttons on each group: counts recomputed here the way site.py's check reads the pool, most first
+                    import re
+                    def words(q):
+                        w = set()
+                        for t in re.findall(r"[A-Za-z0-9][A-Za-z0-9.\-/]*", " ".join([q["q"]] + q["a"])):
+                            t = re.sub(r"^[\d.]+(?=[A-Za-z])", "", t.rstrip(".,")); w.add(t); w |= {x for x in re.split(r"[-/]", t) if x}
+                        return w
+                    W = {qi: words(q) for qi, q in BY.items()}
+                    for gi, g in enumerate(doc["groups"]):
+                        terms = [v.rstrip(".") for it in g["items"] for v in it[0].split(", ")]
+                        n = {}
+                        for qi in BY:
+                            if any(t in W[qi] for t in terms): n[qi[:2]] = n.get(qi[:2], 0) + 1
+                        got = await pg.locator("#fam .card").nth(gi + 1).locator("[data-gb]").all_text_contents()
+                        got = [x.replace(" ", "") for x in got]; cnt = [int(x[2:]) for x in got]
+                        assert sorted(got) == sorted(f"{b_}{c}" for b_, c in n.items()) and cnt == sorted(cnt, reverse=True), (g["title"], got, n)
+                    # tapping a band button opens that band
+                    first = pg.locator("#fam [data-gb]").first; fb = await first.get_attribute("data-gb")
+                    await first.click(); await pg.wait_for_selector("#back")
+                    assert "#band-" + fb in pg.url and await pg.is_hidden("#fam")
+                    await pg.goto("about:blank"); await pg.goto("http://localhost:8790/index.html"); await pg.wait_for_selector(".band")
+                    await pg.locator('#app button[data-ref]').nth(i).click(); await pg.wait_for_selector("#fback2")
                 await pg.screenshot(path=f"{out}/{exam}-ref-{r['id']}.png", full_page=True)
                 await pg.click("#fback2"); await pg.wait_for_selector("#app .band")
                 assert await pg.is_hidden("#fam") and "#ref-" not in pg.url

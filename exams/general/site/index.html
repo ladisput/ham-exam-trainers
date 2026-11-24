@@ -81,6 +81,10 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
 .gl{display:grid;grid-template-columns:minmax(4.2em,max-content) 1em minmax(0,1fr);gap:0 6px;align-items:baseline;padding:9px 0;border-top:1px solid var(--line)}
 .gl:first-of-type{border-top:0}.gl b{font:700 20px/1.15 "Barlow Condensed",sans-serif;overflow-wrap:anywhere}.gl i{font-style:normal;color:var(--mute);text-align:center}
 .gl .gn{grid-column:3;font-size:14px;color:var(--mute);margin-top:2px}
+.glh{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.glb{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:6px;margin-left:auto}
+.glb button{min-height:44px;min-width:44px;padding:4px 10px;border-radius:99px;border-color:var(--blue);color:var(--blue);font:600 16px/1 "Barlow Condensed",sans-serif;white-space:nowrap}
+.glb button span{color:var(--mute);font-weight:500;margin-left:4px}
 .trap s{color:var(--red)}.trap .tq{font:600 14px/1 "Barlow Condensed",sans-serif;color:var(--mute);margin-right:6px}
 .fq{border-top:1px solid var(--line)}.fq:first-of-type{border-top:0}
 .fq summary{gap:10px;padding:8px 0;line-height:1.4;align-items:flex-start}
@@ -1982,7 +1986,23 @@ async function showFam(id){
    Look-up pages that are not tied to any question (no "Still confused?" button, no drill). references/_index.json lists them;
    each page is references/<id>.json with a `kind`; REFS[kind](doc) returns its cards. Shown in #fam like a family page. */
 const REFS={};
-REFS.glossary=f=>(f.groups||[]).map(g=>`<div class="sp"></div><div class="card"><h3 style="margin-bottom:4px">${esc(g.title)}</h3>
+/* Words in a question and its answers, as the glossary check in tools/site.py sees them: whole tokens and their
+   -/ parts, leading digits and trailing periods dropped (120V -> V, U.S. -> U.S). */
+let QWORDS=null;
+function qWords(){
+  if(QWORDS)return QWORDS;QWORDS={};
+  POOL.qs.forEach(q=>{const w=new Set();[q.q,...q.a].join(' ').match(/[A-Za-z0-9][A-Za-z0-9.\-\/]*/g)?.forEach(t=>{
+    t=t.replace(/[.,]+$/,'').replace(/^[\d.]+(?=[A-Za-z])/,'');w.add(t);t.split(/[-\/]/).forEach(x=>x&&w.add(x))});QWORDS[q.id]=w});
+  return QWORDS;
+}
+/* Per band: how many questions use at least one of the group's terms. Most first. */
+function glBands(g){
+  const W=qWords(),terms=g.items.flatMap(it=>it[0].split(', ').map(v=>v.replace(/\.$/,''))),n={};
+  POOL.qs.forEach(q=>{if(terms.some(t=>W[q.id].has(t))){const b=q.id.slice(0,2);n[b]=(n[b]||0)+1}});
+  return Object.entries(n).sort((a,b)=>b[1]-a[1]||BANDS.indexOf(a[0])-BANDS.indexOf(b[0]));
+}
+REFS.glossary=f=>(f.groups||[]).map(g=>`<div class="sp"></div><div class="card"><div class="glh"><h3>${esc(g.title)}</h3>
+  <div class="glb">${glBands(g).map(([b,n])=>`<button data-gb="${b}" aria-label="${n} question${n>1?'s':''} in band ${b}: ${esc(POOL.subs[b])}">${b}<span>${n}</span></button>`).join('')}</div></div>
   ${g.items.map(([t,m,n])=>`<div class="gl"><b>${esc(t)}</b><i>=</i><span>${esc(m)}</span>${n?`<span class="gn">${esc(n)}</span>`:''}</div>`).join('')}</div>`).join('');
 function openRef(id){if(!REF[id])return;famScroll=scrollY;famPrev=location.hash;famPushed=true;location.hash='ref-'+id}
 function refHash(){const m=location.hash.match(/^#ref-([a-z0-9-]+)$/);return m&&REF[m[1]]?m[1]:null}
@@ -1997,6 +2017,8 @@ async function showRef(id){
   <div class="card"><p class="cond mute" style="font-size:18px;margin:0 0 4px">Reference</p><h2>${esc(f.title)}</h2>${f.idea?`<p class="idea">${esc(f.idea)}</p>`:''}</div>
   ${REFS[f.kind](f)}<div class="sp"></div><button id="fback2" style="width:100%">← Back</button>`;
   $('#fback').onclick=famBack;$('#fback2').onclick=famBack;
+  box.querySelectorAll('[data-gb]').forEach(el=>el.onclick=()=>{history.replaceState(null,'',location.pathname+location.search+(famPushed?famPrev:''));
+    box.hidden=true;box.innerHTML='';app.hidden=false;famOpen=null;location.hash='band-'+el.dataset.gb;scrollTo(0,0)});
   scrollTo(0,0);
 }
 function startFam(id){R={mode:'run',band:null,fam:id,kind:'Drill: '+FAM[id].title,hooks:true,qs:shuffle(famQs(id)),i:0,res:[]};view='run';ask()}
