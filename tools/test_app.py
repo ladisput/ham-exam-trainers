@@ -87,6 +87,25 @@ async def main():
                 assert await pg.locator('#app button[data-fam]').count() == len(fams), "home should list every family page"
                 await pg.locator('#app button[data-fam]').first.click(); await pg.wait_for_selector("#fdrill")
                 await pg.click("#fback"); await pg.wait_for_selector("#app .band")
+            # reference pages: listed on the home screen, each opens with every entry, back returns home, deep link works
+            rp = os.path.join(site, "references", "_index.json")
+            refs = json.load(open(rp))["references"] if os.path.exists(rp) else []
+            await pg.goto("about:blank"); await pg.goto("http://localhost:8790/index.html"); await pg.wait_for_selector(".band")
+            assert await pg.locator('#app button[data-ref]').count() == len(refs), "home should list every reference page"
+            for i, r in enumerate(refs):
+                doc = json.load(open(os.path.join(site, "references", r["id"] + ".json")))
+                await pg.locator('#app button[data-ref]').nth(i).click(); await pg.wait_for_selector("#fback2")
+                assert "#ref-" + r["id"] in pg.url and await pg.is_hidden("#app")
+                if doc["kind"] == "glossary":
+                    n = sum(len(g["items"]) for g in doc["groups"])
+                    assert await pg.locator("#fam .gl").count() == n, "the glossary should show every entry"
+                    assert await pg.locator("#fam .fambtn, #fam #fdrill").count() == 0, "a reference page has no question links"
+                await pg.screenshot(path=f"{out}/{exam}-ref-{r['id']}.png", full_page=True)
+                await pg.click("#fback2"); await pg.wait_for_selector("#app .band")
+                assert await pg.is_hidden("#fam") and "#ref-" not in pg.url
+                await pg.goto("about:blank"); await pg.goto(f"http://localhost:8790/index.html#ref-{r['id']}"); await pg.wait_for_selector("#fam .gl, #fback2")
+                await pg.click("#fback"); await pg.wait_for_selector("#app .band")
+                await pg.goto("about:blank"); await pg.goto("http://localhost:8790/index.html"); await pg.wait_for_selector(".band")
             # every real family page: loads, its widget card renders (not dropped by an error), every preset chip works
             for f in json.load(open(os.path.join(site, "families", "_index.json")))["families"]:
                 doc = json.load(open(os.path.join(site, "families", f["id"] + ".json")))

@@ -77,6 +77,10 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
 .core td:first-child,.core th:first-child{color:var(--mute);font-size:16px}
 .cmp{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-top:8px}
 .cmp div{background:var(--tint);border-radius:10px;padding:10px 12px}.cmp b{display:block;font:600 20px/1.15 "Barlow Condensed",sans-serif;margin-bottom:2px}
+/* Reference pages (look-up pages not tied to questions): glossary */
+.gl{display:grid;grid-template-columns:minmax(4.2em,max-content) 1em minmax(0,1fr);gap:0 6px;align-items:baseline;padding:9px 0;border-top:1px solid var(--line)}
+.gl:first-of-type{border-top:0}.gl b{font:700 20px/1.15 "Barlow Condensed",sans-serif;overflow-wrap:anywhere}.gl i{font-style:normal;color:var(--mute);text-align:center}
+.gl .gn{grid-column:3;font-size:14px;color:var(--mute);margin-top:2px}
 .trap s{color:var(--red)}.trap .tq{font:600 14px/1 "Barlow Condensed",sans-serif;color:var(--mute);margin-right:6px}
 .fq{border-top:1px solid var(--line)}.fq:first-of-type{border-top:0}
 .fq summary{gap:10px;padding:8px 0;line-height:1.4;align-items:flex-start}
@@ -217,6 +221,7 @@ let POOL,HOOKS={},BY={},GROUPS={},BANDS=[];
 let P={v:1,call:'',h:{},runs:{},exams:[],ts:0};
 let R=null,view='home';
 let FAM={},FAMDOC={},QFAM={},famOpen=null,famPushed=false,famPrev='',famScroll=0;
+let REF={},REFDOC={};
 /* Exam settings: filled in from exams/<exam>/exam.json by tools/site.py build. */
 const CFG={"title": "Technician Class Trainer", "heading": "Technician class trainer", "element": "Element 2 · 2026–2030 pool", "source": "NCVEC 2026–2030 Element 2 pool, public domain, Feb 19, 2026 revision (in effect July 1, 2026 through June 30, 2030).", "letter": "T", "ex": 35, "pass": 26, "ls": "tech-trainer-v1", "callSize": "20px", "short": "Tech Trainer", "callWidth": "8.2em"};
 const LS=CFG.ls,EX=CFG.ex,PASS=CFG.pass;
@@ -292,6 +297,8 @@ function home(){
    <span><span class="small mute">${n} on the exam · ${ids.length} in pool · ${pct(r)} ready</span><span class="bar ${r>=.8?'done':''}"><i style="width:${r*100}%"></i><s></s></span></span></button>`}).join('')}</div>
   ${Object.keys(FAM).length?`<div class="sp"></div><div class="card"><div class="row" style="justify-content:space-between;margin-bottom:4px"><h3>Still confused? pages</h3><span class="small mute">one idea, every angle</span></div>
   ${Object.values(FAM).map(f=>{const r=rd(famQs(f.id));return`<button class="band" data-fam="${esc(f.id)}" style="grid-template-columns:minmax(0,1fr)"><span style="font-weight:500">${esc(f.title)}</span><span><span class="small mute">${famQs(f.id).length} questions · ${pct(r)} ready</span><span class="bar ${r>=.8?'done':''}"><i style="width:${r*100}%"></i><s></s></span></span></button>`}).join('')}</div>`:''}
+  ${Object.keys(REF).length?`<div class="sp"></div><div class="card"><div class="row" style="justify-content:space-between;margin-bottom:4px"><h3>Reference</h3><span class="small mute">look things up</span></div>
+  ${Object.values(REF).map(f=>`<button class="band" data-ref="${esc(f.id)}" style="grid-template-columns:minmax(0,1fr)"><span style="font-weight:500">${esc(f.title)}</span>${f.idea?`<span class="small mute">${esc(f.idea)}</span>`:''}</button>`).join('')}</div>`:''}
   <div class="sp"></div>
   <details class="card"><summary class="cond" style="font-size:20px">Backup and notes</summary>
   <p class="small mute">${syncNote||'Progress is saved on this device.'} To move it or keep a spare, copy the backup code and paste it back here later.</p>
@@ -398,7 +405,7 @@ function debrief(d){
    The page is shown over the current view (#fam), so closing it returns to the exact run or debrief state. */
 const famQs=id=>(FAM[id]?FAM[id].questions:[]).filter(q=>BY[q]);
 function famBtns(id,skip){return(QFAM[id]||[]).filter(f=>f!==skip).map(f=>`<button class="fambtn" data-fam="${f}"><span>Still confused?</span><b>${esc(FAM[f].title)}</b></button>`).join('')}
-document.addEventListener('click',e=>{const el=e.target.closest('[data-fam]');if(el&&!el.closest('#fam'))openFam(el.dataset.fam)});
+document.addEventListener('click',e=>{const el=e.target.closest('[data-fam]');if(el&&!el.closest('#fam'))openFam(el.dataset.fam);const rf=e.target.closest('[data-ref]');if(rf&&!rf.closest('#fam'))openRef(rf.dataset.ref)});
 function openFam(id){if(!FAM[id])return;famScroll=scrollY;famPrev=location.hash;famPushed=true;location.hash='family-'+id}
 function closeFam(){const box=$('#fam');box.hidden=true;box.innerHTML='';app.hidden=false;famOpen=null;if(view==='home')home();scrollTo(0,famScroll)}
 function famBack(){if(famPushed)history.back();else{history.replaceState(null,'',location.pathname+location.search);closeFam()}}
@@ -1971,18 +1978,41 @@ async function showFam(id){
   if($('#widget'))try{WIDGETS[f.widget.type]($('#widget'),f.widget.config||{},f)}catch(e){$('#widget').remove()}
   scrollTo(0,0);
 }
+/* ---- Reference pages ----
+   Look-up pages that are not tied to any question (no "Still confused?" button, no drill). references/_index.json lists them;
+   each page is references/<id>.json with a `kind`; REFS[kind](doc) returns its cards. Shown in #fam like a family page. */
+const REFS={};
+REFS.glossary=f=>(f.groups||[]).map(g=>`<div class="sp"></div><div class="card"><h3 style="margin-bottom:4px">${esc(g.title)}</h3>
+  ${g.items.map(([t,m,n])=>`<div class="gl"><b>${esc(t)}</b><i>=</i><span>${esc(m)}</span>${n?`<span class="gn">${esc(n)}</span>`:''}</div>`).join('')}</div>`).join('');
+function openRef(id){if(!REF[id])return;famScroll=scrollY;famPrev=location.hash;famPushed=true;location.hash='ref-'+id}
+function refHash(){const m=location.hash.match(/^#ref-([a-z0-9-]+)$/);return m&&REF[m[1]]?m[1]:null}
+async function showRef(id){
+  const box=$('#fam');famOpen='ref-'+id;app.hidden=true;box.hidden=false;
+  box.innerHTML='<p class="mute">Loading…</p>';
+  let f=REFDOC[id];
+  if(!f){try{f=REFDOC[id]=await fetch('references/'+id+'.json').then(r=>{if(!r.ok)throw 0;return r.json()})}catch(e){f=null}}
+  if(famOpen!=='ref-'+id)return;
+  if(!f||!REFS[f.kind]){REFDOC[id]=undefined;box.innerHTML=`<button id="fback">← Back</button><div class="sp"></div><div class="card"><p>This page didn't load. Check your connection and try again.</p></div>`;$('#fback').onclick=famBack;return}
+  box.innerHTML=`<button id="fback">← Back</button><div class="sp"></div>
+  <div class="card"><p class="cond mute" style="font-size:18px;margin:0 0 4px">Reference</p><h2>${esc(f.title)}</h2>${f.idea?`<p class="idea">${esc(f.idea)}</p>`:''}</div>
+  ${REFS[f.kind](f)}<div class="sp"></div><button id="fback2" style="width:100%">← Back</button>`;
+  $('#fback').onclick=famBack;$('#fback2').onclick=famBack;
+  scrollTo(0,0);
+}
 function startFam(id){R={mode:'run',band:null,fam:id,kind:'Drill: '+FAM[id].title,hooks:true,qs:shuffle(famQs(id)),i:0,res:[]};view='run';ask()}
 function famHash(){const m=location.hash.match(/^#family-([a-z0-9-]+)$/);return m&&FAM[m[1]]?m[1]:null}
 
 function route(){const fh=famHash();if(fh){const h=location.hash;home();history.replaceState(null,'',h);famPushed=false;showFam(fh);return}
+  const rh=refHash();if(rh){const h=location.hash;home();history.replaceState(null,'',h);famPushed=false;showRef(rh);return}
   const m=location.hash.match(new RegExp('^#band-('+CFG.letter+'\\d)$'));if(m&&BANDS.includes(m[1]))band(m[1]);else home()}
 addEventListener('bip',()=>{if(POOL&&view==='home'&&!famOpen)home()});
-addEventListener('hashchange',()=>{const fh=famHash();if(fh){showFam(fh);return}if(famOpen){closeFam();return}if(view==='run'&&R&&R.res.length)return;route()});
+addEventListener('hashchange',()=>{const fh=famHash();if(fh){showFam(fh);return}const rh=refHash();if(rh){showRef(rh);return}if(famOpen){closeFam();return}if(view==='run'&&R&&R.res.length)return;route()});
 
-Promise.all([fetch('pool.json').then(r=>r.json()),fetch('hooks.json').then(r=>r.ok?r.json():{}).catch(()=>({})),fetch('families/_index.json').then(r=>r.ok?r.json():{families:[]}).catch(()=>({families:[]}))]).then(([p,h,fi])=>{
+Promise.all([fetch('pool.json').then(r=>r.json()),fetch('hooks.json').then(r=>r.ok?r.json():{}).catch(()=>({})),fetch('families/_index.json').then(r=>r.ok?r.json():{families:[]}).catch(()=>({families:[]})),fetch('references/_index.json').then(r=>r.ok?r.json():{references:[]}).catch(()=>({references:[]}))]).then(([p,h,fi,ri])=>{
   POOL=p;HOOKS=h;POOL.qs.forEach(q=>{BY[q.id]=q;(GROUPS[q.id.slice(0,3)]=GROUPS[q.id.slice(0,3)]||[]).push(q.id)});
   BANDS=Object.keys(POOL.subs).sort();
   (fi.families||[]).forEach(f=>{FAM[f.id]=f;f.questions.forEach(q=>(QFAM[q]=QFAM[q]||[]).push(f.id))});
+  (ri.references||[]).forEach(f=>{REF[f.id]=f});
   route();
 }).catch(()=>{app.innerHTML='<p>The question pool failed to load. Reload the page to try again.</p>'});
 

@@ -1,0 +1,11 @@
+{
+ "exam": "technician",
+ "references": [
+  {
+   "id": "abbreviations",
+   "title": "Abbreviations",
+   "kind": "glossary",
+   "idea": "Every abbreviation in the Technician pool, grouped with the ones it gets mixed up with."
+  }
+ ]
+}
