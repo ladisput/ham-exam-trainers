@@ -141,6 +141,22 @@ actually works it; `tools/site.py check` checks that every preset is a family qu
 Each widget is a function in the `WIDGETS` registry in `app/template.html`: `WIDGETS[type](el, config, family)` fills
 the card `el`. A page whose widget type isn't built yet shows no widget card.
 
+## Reference pages
+
+Look-up pages that are not part of the family system: no question links to them, no "Still confused?" button, no drill,
+no readiness. The home screen lists them under "Reference" (below the family pages); they open over the current view
+like a family page (hash route `#ref-<id>`, back returns). Technician has one so far: `abbreviations`.
+
+- Files: `references/<exam>/<id>.json` with `id`, `exam`, `title`, optional `idea`, and `kind`. `tools/site.py build`
+  copies them to `exams/<exam>/site/references/` and writes its `_index.json`; `check` validates them.
+- Each kind is a renderer in the `REFS` registry in `app/template.html` (`REFS[kind](doc)` returns the page's cards),
+  listed in `REF_KINDS` in `tools/site.py`. Add a new kind in both places.
+- `glossary`: each group card shows band buttons (top right, most questions first): how many questions in that band use any of the group's terms, counted in the page from the pool; tapping one opens the band. `groups` of `{title, items}`, each item `[term, meaning]` or `[term, meaning, note]` (shown as
+  "HF = High Frequency"). Groups follow related ideas (RACES beside ARES), not the alphabet. A term may list variants
+  as "a.m., p.m.". `skip` maps pool tokens that look like abbreviations but aren't listed (call signs, figure labels,
+  misspellings in wrong answers) to the reason. `check` fails if a term isn't in the exam's pool (scope rule) or if
+  an abbreviation in the pool is neither listed nor skipped (completeness).
+
 ## Look and feel
 
 Radio front panel and logbook. Keep it consistent with the live pages (copy their CSS variables):

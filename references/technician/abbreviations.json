@@ -1,0 +1,161 @@
+{
+ "id": "abbreviations",
+ "exam": "technician",
+ "kind": "glossary",
+ "title": "Abbreviations",
+ "idea": "Every abbreviation in the Technician pool, grouped with the ones it gets mixed up with.",
+ "groups": [
+  {"title": "Frequency and bands", "items": [
+   ["RF", "Radio Frequency"],
+   ["HF", "High Frequency"],
+   ["VHF", "Very High Frequency"],
+   ["UHF", "Ultra High Frequency"],
+   ["Hz", "Hertz (cycles per second)"],
+   ["kHz", "Kilohertz", "Small k, capital H."],
+   ["MHz", "Megahertz", "Capital M, capital H. A small m means milli."],
+   ["GHz", "Gigahertz"]
+  ]},
+  {"title": "Electricity and formulas", "items": [
+   ["AC", "Alternating Current"],
+   ["DC", "Direct Current", "Also written dc."],
+   ["V", "Volts"],
+   ["E", "Voltage (in formulas)"],
+   ["I", "Current (in formulas)"],
+   ["R", "Resistance (in formulas)"],
+   ["P", "Power (in formulas)"],
+   ["I2, E2", "I squared, E squared (I x I, E x E)"],
+   ["dB", "Decibel"]
+  ]},
+  {"title": "Voice and Morse modes", "items": [
+   ["CW", "Continuous Wave (Morse code)"],
+   ["AM", "Amplitude Modulation"],
+   ["SSB", "Single Sideband (a form of AM)"],
+   ["FM", "Frequency Modulation"],
+   ["PM", "Phase Modulation"],
+   ["PEP", "Peak Envelope Power"]
+  ]},
+  {"title": "Digital modes", "items": [
+   ["PSK", "Phase-Shift Keying"],
+   ["PSK31", "Phase-Shift Keying at 31 baud"],
+   ["AFSK", "Audio Frequency-Shift Keying"],
+   ["RTTY", "Radioteletype"],
+   ["AMTOR", "Amateur Teleprinting Over Radio"],
+   ["PACTOR", "Packet + AMTOR, combined"],
+   ["ARQ", "Automatic Repeat reQuest (asks for a resend when it finds an error)"],
+   ["FT8", "Franke-Taylor 8-tone mode (named for its designers)"],
+   ["WSJT-X", "Weak Signal software by Joe Taylor (K1JT)"],
+   ["DRM", "Digital Radio Mondiale"]
+  ]},
+  {"title": "Location, pictures and networks", "items": [
+   ["APRS", "Automatic Packet Reporting System"],
+   ["GPS", "Global Positioning System"],
+   ["NMEA", "National Marine Electronics Association (its format carries GPS data)"],
+   ["TV", "Television"],
+   ["NTSC", "National Television System Committee (analog fast-scan color TV)"],
+   ["IEEE", "Institute of Electrical and Electronics Engineers (802.11 is its Wi-Fi standard)"]
+  ]},
+  {"title": "Repeaters and digital voice", "items": [
+   ["CTCSS", "Continuous Tone-Coded Squelch System"],
+   ["DCS", "Digital Coded Squelch"],
+   ["DTMF", "Dual-Tone Multi-Frequency (touch-tone keypad)"],
+   ["DMR", "Digital Mobile Radio"],
+   ["CODEC", "Coder-Decoder"],
+   ["D-STAR", "Digital Smart Technologies for Amateur Radio"],
+   ["GMRS", "General Mobile Radio Service (not amateur radio)"],
+   ["IRLP", "Internet Radio Linking Project"],
+   ["VoIP", "Voice over Internet Protocol"]
+  ]},
+  {"title": "Satellites and space", "items": [
+   ["ISS", "International Space Station"],
+   ["NASA", "National Aeronautics and Space Administration"],
+   ["AMSAT", "Radio Amateur Satellite Corporation"],
+   ["LEO", "Low Earth Orbit"],
+   ["U/V", "Uplink on UHF (70 cm), downlink on VHF (2 m)"],
+   ["EME", "Earth-Moon-Earth (moonbounce)"]
+  ]},
+  {"title": "On-air shorthand and Q signals", "items": [
+   ["CQ", "Calling any station"],
+   ["DX", "Distance (a far-away station)"],
+   ["QSO", "A contact (a conversation)"],
+   ["QSL", "I acknowledge receipt"],
+   ["QSY", "Changing frequency"],
+   ["QRM", "Interference from other stations"],
+   ["QRN", "Natural noise (static)"],
+   ["QSB", "Fading signal"],
+   ["QTH", "Location"],
+   ["QRZ", "Who is calling me?"],
+   ["QRU", "I have nothing for you"],
+   ["QTC", "I have messages for you"],
+   ["QSR", "Repeat your call on the calling frequency", "Not a way to have words repeated back."]
+  ]},
+  {"title": "Radio controls", "items": [
+   ["VFO", "Variable Frequency Oscillator (sets the frequency)"],
+   ["RIT", "Receiver Incremental Tuning (the clarifier)"],
+   ["AGC", "Automatic Gain Control"],
+   ["PTT", "Push To Talk"],
+   ["SDR", "Software Defined Radio"]
+  ]},
+  {"title": "Parts and meters", "items": [
+   ["IC", "Integrated Circuit"],
+   ["LED", "Light-Emitting Diode"],
+   ["FET", "Field-Effect Transistor"],
+   ["SPDT", "Single-Pole Double-Throw (switch)"],
+   ["VTVM", "Vacuum Tube Voltmeter"]
+  ]},
+  {"title": "Antennas, coax and connectors", "items": [
+   ["SWR", "Standing Wave Ratio"],
+   ["RG-58", "Radio Guide 58 (thinner coax)"],
+   ["RG-213", "Radio Guide 213 (thicker coax, less loss)"],
+   ["PL-259", "Plug 259 (the common UHF connector)", "Also written PL259."],
+   ["BNC", "Bayonet Neill-Concelman (a bayonet connector)"],
+   ["DB-25", "D-shaped 25-pin computer connector"]
+  ]},
+  {"title": "Rules and licensing", "items": [
+   ["FCC", "Federal Communications Commission"],
+   ["ULS", "Universal Licensing System (the FCC license database)"],
+   ["OET", "Office of Engineering and Technology (at the FCC)"],
+   ["NCVEC", "National Conference of Volunteer Examiner Coordinators"],
+   ["CSCE", "Certificate of Successful Completion of Examination"],
+   ["ITU", "International Telecommunication Union"],
+   ["IARU", "International Amateur Radio Union"],
+   ["ARRL", "American Radio Relay League"],
+   ["FAA", "Federal Aviation Administration"],
+   ["UL", "Underwriters Laboratories"],
+   ["USPS", "United States Postal Service"]
+  ]},
+  {"title": "Emergency service", "items": [
+   ["RACES", "Radio Amateur Civil Emergency Service"],
+   ["ARES", "Amateur Radio Emergency Service"],
+   ["MARS", "Military Auxiliary Radio System"],
+   ["SKYWARN", "National Weather Service storm spotters", "A program name, not short for anything."],
+   ["FEMA", "Federal Emergency Management Agency"]
+  ]},
+  {"title": "Everyday", "items": [
+   ["U.S.", "United States", "Also written US."],
+   ["ID", "Identification"],
+   ["km", "Kilometer"],
+   ["a.m., p.m.", "Before noon, after noon"],
+   ["DNA", "The genetic material in living cells"]
+  ]}
+ ],
+ "skip": {
+  "A": "the word a",
+  "C": "a letter a diode might be marked with (wrong answer in T6B06)",
+  "K": "a letter a diode might be marked with (wrong answer in T6B06)",
+  "D": "the D region of the ionosphere, and call sign Group D",
+  "F": "the F region of the ionosphere",
+  "F2": "the F2 region of the ionosphere",
+  "J": "J pole antenna (named for its shape)",
+  "N": "Type N connector (a name)",
+  "Q": "Q signal, Q meter",
+  "NOT": "emphasis, not an abbreviation",
+  "RPT": "a made-up indicator in a wrong answer (T1F05)",
+  "RS-213": "a made-up connector in a wrong answer (T9B06)",
+  "T-1": "figure label", "T-2": "figure label", "T-3": "figure label",
+  "KA1X": "call sign", "W1XX": "call sign", "KF1XXX": "call sign", "KL7CC": "call sign", "W3": "call sign",
+  "KHz": "wrong spelling in T5C06", "khz": "wrong spelling in T5C06", "KHZ": "wrong spelling in T5C06",
+  "mHz": "wrong spelling in T5C07", "mHZ": "wrong spelling in T5C07", "Mhz": "wrong spelling in T5C07",
+  "dc": "listed under DC", "US": "listed under U.S.", "PL259": "listed under PL-259",
+  "EchoLink": "a product name", "FT8converter.com": "a made-up website in a wrong answer (T4A04)"
+ }
+}

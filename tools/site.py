@@ -5,11 +5,12 @@ Usage (run from the repo root):
   python3 tools/site.py build <exam>   write exams/<exam>/site/index.html from app/template.html + exams/<exam>/exam.json,
                                        and copy finished family pages into exams/<exam>/site/families/
   python3 tools/site.py check <exam>   check the exam's family files against its pool (SPEC.md check 3, the parts code can do)
+                                       and its reference pages (references/<exam>/<id>.json)
 
 Never hand-edit exams/<exam>/site/index.html: edit app/template.html (shared) or exam.json (per exam), then build.
 Never change an exam's "ls" key once it is live, or saved progress is lost.
 """
-import glob, json, os, shutil, sys
+import glob, json, os, re, shutil, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 REQUIRED = ["title", "heading", "element", "source", "letter", "ex", "pass", "ls", "callSize", "callWidth"]
@@ -24,6 +25,72 @@ def family_files(exam):
     """Finished family pages: every families/<exam>/<id>.json except the index."""
     d = os.path.join(ROOT, "families", exam)
     return sorted(p for p in glob.glob(os.path.join(d, "*.json")) if not os.path.basename(p).startswith("_"))
+
+
+def reference_files(exam):
+    """Reference pages (glossaries and other look-up pages that are not tied to questions): references/<exam>/<id>.json."""
+    d = os.path.join(ROOT, "references", exam)
+    return sorted(p for p in glob.glob(os.path.join(d, "*.json")) if not os.path.basename(p).startswith("_"))
+
+
+REF_KINDS = ("glossary",)  # page kinds the template can show (REFS in app/template.html)
+# lowercase or one-capital abbreviations the token scan below can't spot by their capitals
+LOWER_ABBR = {"Hz", "dc", "km", "a.m", "p.m", "khz"}
+
+
+def abbreviations(texts):
+    """Every token in the texts that looks like an abbreviation: two or more capitals (FCC, kHz, VoIP), a lone capital
+    (E, I, R), or a known lowercase one (km). Leading digits are dropped (120V -> V); trailing periods too (U.S. -> U.S)."""
+    found = set()
+    for t in texts:
+        for tok in re.findall(r"[A-Za-z0-9][A-Za-z0-9.\-/]*", t):
+            tok = re.sub(r"^[\d.]+(?=[A-Za-z])", "", tok.rstrip(".,"))
+            if re.search(r"[A-Z]", tok[1:]) or re.fullmatch(r"[A-Z]", tok) or tok in LOWER_ABBR:
+                found.add(tok)
+    return found
+
+
+def check_refs(exam, BY):
+    bad = []
+    texts = [t for q in BY.values() for t in [q["q"]] + q["a"]]
+    words = set(re.findall(r"[A-Za-z0-9][A-Za-z0-9.\-/]*", " ".join(texts)))
+    words |= {w.rstrip(".,") for w in words}
+    for p in reference_files(exam):
+        ref = load(p)
+        rid = os.path.basename(p)[:-5]
+        for k in ["id", "exam", "kind", "title"]:
+            if k not in ref:
+                bad.append(f"reference {rid}: missing '{k}'")
+        if ref.get("id") != rid:
+            bad.append(f"reference {rid}: id '{ref.get('id')}' does not match the file name")
+        if ref.get("exam") != exam:
+            bad.append(f"reference {rid}: exam '{ref.get('exam')}' should be '{exam}'")
+        if ref.get("kind") not in REF_KINDS:
+            bad.append(f"reference {rid}: kind '{ref.get('kind')}' is not one of {', '.join(REF_KINDS)}")
+        if ref.get("kind") == "glossary":
+            # scope rule: every listed abbreviation is in this exam's pool; completeness: every one in the pool is listed
+            # (or in "skip", with the reason it isn't an abbreviation)
+            terms = set()
+            for g in ref.get("groups", []):
+                for it in g.get("items", []):
+                    if not (isinstance(it, list) and 2 <= len(it) <= 3):
+                        bad.append(f"reference {rid}: item {it!r} should be [term, meaning] or [term, meaning, note]")
+                        continue
+                    for v in it[0].split(", "):
+                        v = v.rstrip(".")
+                        if v in terms:
+                            bad.append(f"reference {rid}: {v} is listed twice")
+                        terms.add(v)
+                        if v not in words and not any(v in w.replace("-", " ").replace("/", " ").split() for w in words):
+                            bad.append(f"reference {rid}: {v} does not appear in the {exam} pool")
+            skip = {k.rstrip(".") for k in ref.get("skip", {})}
+            for tok in sorted(abbreviations(texts)):
+                if tok in terms or tok in skip:
+                    continue
+                parts = [x for x in re.split(r"[-/]", tok) if x and (re.search(r"[A-Z]", x[1:]) or re.fullmatch(r"[A-Z]", x) or x in LOWER_ABBR)]
+                if any(x not in terms and x not in skip for x in parts):
+                    bad.append(f"reference {rid}: {tok} is in the pool but not listed (add it, or put it in 'skip' with why)")
+    return bad
 
 
 def check(exam):
@@ -129,7 +196,7 @@ def check(exam):
                 B = c["bands"][pr.get("b", 0)] if pr.get("b", 0) < len(c["bands"]) else None
                 if B is None or ("i" in pr and not 0 <= pr["i"] < len(B.get("segs", [])) + len(B.get("marks", []))):
                     bad.append(f"{fid}: preset {pr.get('q')}: band or item out of range")
-    return bad
+    return bad + check_refs(exam, BY)
 
 
 # band edges in kHz for band-tuner presets (the full plan is USPLAN in app/template.html)
@@ -174,7 +241,20 @@ def build(exam):
         fams.append({"id": fam["id"], "title": fam["title"], "questions": fam["questions"]})
     with open(os.path.join(out, "_index.json"), "w", encoding="utf-8") as f:
         json.dump({"exam": exam, "families": fams}, f, ensure_ascii=False, indent=1)
-    print(f"Built exams/{exam}/site/index.html; {len(fams)} family page(s) published.")
+    # reference pages: same idea, in site/references/, not linked to any question
+    rout = os.path.join(site, "references")
+    if os.path.isdir(rout):
+        shutil.rmtree(rout)
+    refs = []
+    for p in reference_files(exam):
+        ref = load(p)
+        os.makedirs(rout, exist_ok=True)
+        shutil.copy(p, os.path.join(rout, os.path.basename(p)))
+        refs.append({"id": ref["id"], "title": ref["title"], "kind": ref["kind"], "idea": ref.get("idea", "")})
+    if refs:
+        with open(os.path.join(rout, "_index.json"), "w", encoding="utf-8") as f:
+            json.dump({"exam": exam, "references": refs}, f, ensure_ascii=False, indent=1)
+    print(f"Built exams/{exam}/site/index.html; {len(fams)} family page(s), {len(refs)} reference page(s) published.")
     return not problems
 
 
