@@ -52,6 +52,12 @@ Status: `todo`, `doing`, `done`. Update this file at the end of every session, t
 | 33 | Grounding and lightning (`grounding-lightning`) | Safety | 8 | done |
 | 34 | RF exposure (`rf-exposure`) | Safety | 13 | done |
 
+## Reference pages
+
+| # | Exam | Page | Status |
+|---|---|---|---|
+| R1 | Technician | Abbreviations glossary (`references/technician/abbreviations.json`), plus the reusable reference-page type | done |
+
 ## General
 
 | # | Task | Status |
@@ -134,6 +140,9 @@ plain scenario only where nothing can be varied, and the reason is recorded (CW 
 ## Log
 
 - 2026-11-19 (General batch 6, PR general-batch6): The waterfall and FT8, RTTY and FSK, PSK31/QPSK/Varicode, ARQ and FEC, Winlink and mesh. New widgets: `waterfall` (canvas waterfall with an SVG overlay, sped up 2x, starts paused when the device asks for reduced motion; even/odd slots, your own slot mutes the receiver, clock error, SNR, 8-tone close-up, overdrive), `rtty` (real ITA2 Baudot: reversed mark/space flips every bit, so C prints as Z; Listen plays the tones), `psk` (phase wheel, wrong-sideband mirror, Varicode table from G3PLX's list), `arq` (seeded packet ladder, ARQ or FEC), `net-map` (Winlink gateway connect, AREDN mesh rerouting, digital voice groups). Shared helpers `seeded` and `reduceMotion`; `.wg [hidden]` now always hides. Every preset clicked headless in light and dark; each shows the pool's correct answer. After PR #15 merged: General v5, Technician v14, Extra v9 republished. Next batch: families 31-35 (CW procedures, on-air etiquette, rectifiers, schematic symbols, amplifier classes).
+- 2026-11-24: R1 Technician abbreviations glossary (Brooke's ask): new reference-page type (`references/<exam>/`,
+  `REFS` in the template, `#ref-<id>`), 104 entries in 14 concept groups; `site.py check` proves every pool
+  abbreviation is listed or skipped. Not added to General (Brooke said not to) or Extra.
 - 2026-11-18 (General batch 5, PR general-batch5): Beacons, signal width, mic gain/ALC/processor, AM/FM/PM, receiver tools. New widgets: `beacon` (NCDXF network schedule and Listen; your-own-beacon rule check), `bw-scope` (widths side by side, neighbour gap, filter, overmodulation with waterfall lines, symbol rate), `voice-scope` (SSB envelope with mic gain, processor, ALC, flat-topping; AFSK data mode), `mod-scope` (AM/FM/PM/FSK on a scope), `rx-panel` (receiver problems and the control that clears each, with sound). Audio helpers generalised (`playCW` text and beacon tail, `rxPlay`). After PR #14 merged: General v4, Technician v13, Extra v8 republished from main. Next batch: families 26-30.
 - 2026-11-18 (General batch 4, PR general-batch4): Skip zone and scatter, short vs. long path, sidebands, General privileges, power limits. New widgets: `skip-zone` (ground wave, skip zone, sky wave; scatter toggle with a fluttering meter and a Listen button), `great-circle` (azimuthal map centred on Kansas with six cities; beam heading, short/long path, echo delay when both are open; Listen plays the echo), `band-tuner` (US band plan for General/Extra; dial, sideband by mode and band, 16 kHz close-up of the edges, privilege check; used by both sidebands and privileges-map), `power-limit` (PEP output meter against each band's limit; 60 m ERP with antenna gain; spread spectrum 10 W). Shared `playCW` Web Audio helper. After PR #13 merged: General v3, Technician v12, Extra v7 republished from main. Next batch: families 21-25.
 - 2026-11-18 (General batch 3, PR general-batch3): Intermodulation and the two-tone test, Sun to Earth, sunspots/flux/K/A, MUF/LUF, D/E/F regions. New widgets: `two-tone` (two audio tones into SSB with a drive slider; odd-order products grow beside them), `sun-timeline` (flare, CME, coronal hole or rotation on a log time slider, with band-condition tiles at Earth), `sun-indices` (sunspot slider sets solar flux and opens/closes bands 160-10 m; tappable 3-hour K bars give the A index), `ionosphere` (cross-section with frequency, takeoff angle and day/night/flare; simplified model: foF2 8 MHz day / 4 night, foE 3.5, secant law capped at 3.5, D absorption by day, hop distances from spherical geometry; used by both muf-luf and ionosphere-regions). After PR #12 merged: General v2, Technician v11, Extra v6 republished from main. Next batch: families 16-20 (scatter, long path, sidebands, privileges map, power limits).
