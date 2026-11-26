@@ -1,0 +1,156 @@
+{
+ "id": "winlink-mesh",
+ "exam": "general",
+ "title": "Winlink, gateways and mesh networks",
+ "idea": "Winlink is email by radio: connect to a gateway on its published frequency, over VHF packet or HF with PACTOR or VARA. An AREDN mesh carries high-speed data and routes around a failed node.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Term",
+    "Answer"
+   ],
+   [
+    "Winlink",
+    "Radio email, can be packet, VHF and HF: all of these"
+   ],
+   [
+    "Winlink Remote Message Server",
+    "Gateway"
+   ],
+   [
+    "VARA",
+    "A digital protocol used with Winlink"
+   ],
+   [
+    "Reaching a gateway",
+    "Connect message on its published frequency"
+   ],
+   [
+    "AREDN mesh",
+    "High-speed data in an emergency or community event"
+   ],
+   [
+    "A mesh node fails",
+    "Packets can go via an alternate node"
+   ],
+   [
+    "Digital voice",
+    "DMR, D-STAR, System Fusion"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "net-map",
+  "config": {
+   "presets": [
+    {
+     "q": "G2E10",
+     "tab": "winlink",
+     "proto": "packet",
+     "act": "connect",
+     "tuned": true,
+     "focus": "connect"
+    },
+    {
+     "q": "G2E13",
+     "tab": "winlink",
+     "proto": "pactor",
+     "act": "connect",
+     "tuned": true,
+     "focus": "rms"
+    },
+    {
+     "q": "G2E12",
+     "tab": "winlink",
+     "proto": "packet",
+     "act": "connect",
+     "tuned": true,
+     "focus": "what"
+    },
+    {
+     "q": "G2E02",
+     "tab": "winlink",
+     "proto": "vara",
+     "act": "connect",
+     "tuned": true,
+     "focus": "vara"
+    },
+    {
+     "q": "G2E11",
+     "tab": "mesh",
+     "focus": "aredn"
+    },
+    {
+     "q": "G8C09",
+     "tab": "mesh",
+     "down": [
+      "E"
+     ],
+     "focus": "reroute"
+    },
+    {
+     "q": "G8C16",
+     "tab": "modes",
+     "grp": "dv",
+     "focus": "dv"
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Winlink",
+   "how": "Email over radio through a gateway, on VHF or HF."
+  },
+  {
+   "term": "AREDN mesh",
+   "how": "High-speed microwave data network that heals around failures."
+  },
+  {
+   "term": "DMR, D-STAR, Fusion",
+   "how": "Digital voice, not email or data networks."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G2E10",
+   "wrong": "Respond when the station broadcasts its SSID",
+   "why": "Gateways don't call out; you transmit a connect request on their published frequency."
+  },
+  {
+   "q": "G2E13",
+   "wrong": "Terminal Node Controller",
+   "why": "A TNC is the modem at your end; the Remote Message Server is the gateway."
+  },
+  {
+   "q": "G2E02",
+   "wrong": "A low signal-to-noise digital mode used for EME (moonbounce)",
+   "why": "VARA is the protocol Winlink uses, not a moonbounce mode."
+  },
+  {
+   "q": "G2E11",
+   "wrong": "To provide FM repeater coverage in remote areas",
+   "why": "AREDN carries high-speed data, not FM repeater coverage."
+  },
+  {
+   "q": "G8C09",
+   "wrong": "Having more nodes increases signal strengths",
+   "why": "More nodes give more routes, not stronger signals."
+  },
+  {
+   "q": "G8C16",
+   "wrong": "Winlink, PACTOR II, and PACTOR III",
+   "why": "Winlink and PACTOR carry email and files, not voice."
+  }
+ ],
+ "questions": [
+  "G2E02",
+  "G2E10",
+  "G2E11",
+  "G2E12",
+  "G2E13",
+  "G8C09",
+  "G8C16"
+ ]
+}

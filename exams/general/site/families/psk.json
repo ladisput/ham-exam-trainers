@@ -1,0 +1,98 @@
+{
+ "id": "psk",
+ "exam": "general",
+ "title": "PSK31, QPSK and Varicode",
+ "idea": "PSK31 sends data by jumping the phase of one steady tone. QPSK uses four phases, two bits per jump. Characters go out in Varicode, where common lowercase letters are short and capitals are long.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Fact",
+    "Answer"
+   ],
+   [
+    "QPSK",
+    "0, 90, 180 and 270 degree shifts, one per pair of bits"
+   ],
+   [
+    "QPSK31",
+    "Sideband sensitive, error correcting, about the same bandwidth as BPSK31"
+   ],
+   [
+    "PSK31 character code",
+    "Varicode"
+   ],
+   [
+    "Capital letters",
+    "Longer Varicode sequences, slower to send"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "psk",
+  "config": {
+   "presets": [
+    {
+     "q": "G8A12",
+     "m": "qpsk",
+     "focus": "qpsk"
+    },
+    {
+     "q": "G8A06",
+     "m": "qpsk",
+     "wrong": true,
+     "focus": "all"
+    },
+    {
+     "q": "G8C12",
+     "m": "bpsk",
+     "text": "cq de k1abc",
+     "focus": "vari"
+    },
+    {
+     "q": "G8C08",
+     "m": "bpsk",
+     "text": "CQ DE K1ABC",
+     "focus": "case"
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "BPSK31",
+   "how": "Two phases (0 and 180), one bit per symbol."
+  },
+  {
+   "term": "QPSK31",
+   "how": "Four phases, two bits per symbol, same 31.25 baud."
+  },
+  {
+   "term": "Varicode",
+   "how": "Short codes for common letters; capitals take longer."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G8C08",
+   "wrong": "Upper case letters are sent with more power",
+   "why": "Capitals aren't louder; they just have longer codes, so they take longer."
+  },
+  {
+   "q": "G8C12",
+   "wrong": "Viterbi",
+   "why": "Viterbi is a way of decoding error correction, not the character code."
+  },
+  {
+   "q": "G8A12",
+   "wrong": "Modulation using quasi-parallel to serial conversion to reduce bandwidth",
+   "why": "Made-up words. QPSK is four phase shifts for pairs of bits."
+  }
+ ],
+ "questions": [
+  "G8A06",
+  "G8A12",
+  "G8C08",
+  "G8C12"
+ ]
+}

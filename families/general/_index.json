@@ -418,7 +418,7 @@
     "G8C14",
     "G8C15"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "rtty-fsk",
@@ -433,7 +433,7 @@
     "G8C04",
     "G8C11"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "psk",
@@ -446,7 +446,7 @@
     "G8C08",
     "G8C12"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "arq-fec",
@@ -461,7 +461,7 @@
     "G8C06",
     "G8C10"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "winlink-mesh",
@@ -477,7 +477,7 @@
     "G8C09",
     "G8C16"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "cw-procedures",
