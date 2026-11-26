@@ -235,6 +235,12 @@ details summary{cursor:pointer;min-height:44px;display:flex;align-items:center}
 .circ .nmnd.on circle{stroke:var(--ok)}.circ .nmnd.end.on circle{fill:var(--ok)}.circ .nmnd.dead circle{stroke:var(--red);fill:var(--badbg)}.circ .nmnd:focus-visible circle{stroke-width:5}.circ .nmnd circle.nmhit{fill:transparent!important;stroke:none!important}
 .circ .nmscr{fill:#0d1420}.circ .nmic{fill:none;stroke:#7be08f;stroke-width:3;stroke-linecap:round}.circ .nmic.f{fill:#7be08f}
 .nmgl{display:flex;flex-direction:column;gap:6px;margin-top:10px}.nmgl button{display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;padding:8px 12px;line-height:1.2}.nmgl button span{font-size:13px;color:var(--mute)}.nmgl button.on{box-shadow:inset 0 0 0 2px var(--ink)}.nmgl button.on span{color:var(--ink)}
+.cqlog{display:flex;flex-direction:column;gap:6px;margin-top:12px}.cqln{display:grid;grid-template-columns:52px minmax(0,1fr) 44px;gap:6px;align-items:center;background:var(--tint);border-radius:8px;padding:4px 6px}
+.cqwho{font:700 14px "Barlow Condensed",sans-serif;color:var(--blue)}.cqwho.b{color:var(--red)}.cqtx{font:600 16px/1.9 ui-monospace,Menlo,monospace;letter-spacing:.03em;overflow-wrap:anywhere}
+.cqtok{min-height:36px;padding:0 6px;font:inherit;letter-spacing:inherit;border-radius:6px;border:1.5px solid var(--blue);background:var(--card);color:var(--blue);margin:2px 0}.cqtok.on{background:var(--blue);color:#fff}
+.cqln .smb{min-width:40px;padding:0}.cqt,.act{flex-wrap:nowrap}.cqt button,.act button{flex:1 1 0;min-width:0;padding:4px 4px;text-align:center}.cqb button,.rcf button,.rck button,.acc button{flex:1 1 0;min-width:0;padding:4px 3px;text-align:center}.rck,.rcf{flex-wrap:nowrap}.acs{margin-top:6px}
+.circ .rcbx{fill:var(--card);stroke:var(--line);stroke-width:1.5}.circ .rcbx.hot{stroke:var(--red);stroke-width:2.5}.circ .rcw{fill:none;stroke:var(--ink);stroke-width:1.8;stroke-linecap:round}.circ .rcd{fill:var(--ink)}.circ .rcdot{fill:var(--ink)}
+.circ .rcsq{fill:none;stroke:var(--blue);stroke-width:2}.circ .rccore{fill:light-dark(#c9ccc4,#3a3f3c);stroke:var(--ink);stroke-width:1.5}
 </style>
 </head>
 <body style="--call-size:20px;--call-w:8.2em">
@@ -534,7 +540,7 @@ WIDGETS['figure-explorer']=(el,c)=>{
     else res.innerHTML=`<p class="small mute" style="margin:0">The exam asks about parts ${F.parts.map(p=>p.n).join(', ')} of ${esc(F.title)}.</p>`;
   }
   el.querySelectorAll('[data-f]').forEach(b=>b.onclick=()=>{fi=+b.dataset.f;pi=null;unchip(el);draw()});
-  chips(el,c.presets||c.figs.flatMap((F,f)=>F.parts.flatMap((P,p)=>(String(P.q||'').match(/T\d[A-Z]\d\d/g)||[]).map(q=>({q,f,p})))),p=>{fi=p.f;pi=p.p;draw()},el.querySelector('.lead').nextElementSibling);
+  chips(el,c.presets||c.figs.flatMap((F,f)=>F.parts.flatMap((P,p)=>(String(P.q||'').match(/[TGE]\d[A-Z]\d\d/g)||[]).map(q=>({q,f,p})))),p=>{fi=p.f;pi=p.p;draw()},el.querySelector('.lead').nextElementSibling);
   draw();
 };
 
@@ -550,7 +556,7 @@ WIDGETS.scenario=(el,c)=>{
   function draw(){
     const S=c.situations[si];
     el.querySelectorAll('[data-s]').forEach(b=>{const on=+b.dataset.s===si;b.classList.toggle('pri',on);b.setAttribute('aria-pressed',on)});
-    dims.innerHTML=(S.dims||[]).map(d=>{if(!(d.id in pick)||!d.options.includes(pick[d.id]))pick[d.id]=d.options[0];
+    dims.innerHTML=(S.dims||[]).map(d=>{if(!(d.id in pick)||!d.options.includes(pick[d.id]))pick[d.id]=d.blank?null:d.options[0];
       return`<p class="small mute" style="margin:12px 0 0">${esc(d.label)}</p><div class="seg">${d.options.map(o=>`<button data-d="${esc(d.id)}" data-o="${esc(o)}" class="${pick[d.id]===o?'pri':''}" aria-pressed="${pick[d.id]===o}">${esc(o)}</button>`).join('')}</div>`}).join('');
     dims.querySelectorAll('[data-d]').forEach(b=>b.onclick=()=>{pick[b.dataset.d]=b.dataset.o;unchip(el);draw()});
     let r=S;
@@ -2365,6 +2371,300 @@ WIDGETS['net-map']=(el,c)=>{
   el.querySelector('.nmc').onclick=()=>{st.act='connect';unchip(el);draw()};
   el.querySelector('.nmwt').onclick=()=>{st.act='wait';unchip(el);draw()};
   chips(el,c.presets,p=>{st=Object.assign(D(),p);delete st.q;st.down=(p.down||[]).slice();st.f=null;if(p.tuned){st.f=GW[st.proto].f0}draw()},el.querySelector('.nmt'));
+  draw();
+};
+
+/* Morse for CW procedure signs: ? and the prosigns AR (same as +) and KN (same as the open bracket), sent run together. */
+MORSE['?']='..--..';MORSE['+']='.-.-.';MORSE['(']='-.--.';
+const cwKey=w=>w==='AR'?'+':w==='KN'?'(':w;
+/* Play several Morse lines one after another; parts [{text, wpm, hz}]. */
+function playCWParts(parts){
+  const a=audioCtx();if(!a)return false;
+  const out=a.createGain();out.gain.value=.3;out.connect(a.destination);let t=a.currentTime+.05;
+  for(const p of parts){const g=a.createGain();g.gain.setValueAtTime(0,t);const t1=keyMorse(g,t,p.text.split(' ').map(cwKey).join(' '),1.2/(p.wpm||18));
+    const o=a.createOscillator();o.frequency.value=p.hz||650;o.connect(g).connect(out);o.start(t);o.stop(t1+.05);t=t1+.35}
+  return true;
+}
+/* cw-qso: a CW contact with every Q signal and prosign tappable (meaning, and Listen), zero beat (two tones), answering speed, and break-in timing.
+   config {presets:[{q, tab qso|zero|speed|bk, tok, off Hz, cq wpm, me wpm, bk full|semi|manual}]} */
+WIDGETS['cw-qso']=(el,c)=>{
+  const T={
+    'QRL?':['Is this frequency in use?','<b>QRL?</b> means <b>"Are you busy?"</b> or <b>"Is this frequency in use?"</b> Send it, followed by your call sign, before calling CQ on a frequency that sounds clear: you may only be hearing one side of a contact.'],
+    'QRS?':['Send slower','<b>QRS</b> is about speed: send more slowly. If a CW station sends you <b>QRS?</b>, <b>send slower</b>. W7QQ sends it here because K1ABC answered faster than W7QQ can copy.'],
+    '579C':['Chirpy or unstable signal','An RST report: readability 5, strength 7, tone 9. A <b>C</b> added to the report means a <b>chirpy or unstable signal</b>: the note slides in pitch as the key goes down.'],
+    'QRN':['I am troubled by static','<b>QRN</b> means <b>"I am troubled by static"</b>: natural noise, like the crashes from a summer thunderstorm.'],
+    'KN':['Go ahead, only the station I am working','<b>KN</b> at the end of a transmission means the operator is <b>listening only for a specific station or stations</b>: go ahead, but nobody else break in. A plain K invites anyone.'],
+    'QSL':['I have received and understood','<b>QSL</b> means <b>"I have received and understood."</b> It is not "we have already confirmed the contact" or "we have worked before".'],
+    'QRP':['Low power','<b>QRP</b> operation is <b>low-power transmit operation</b> (5 watts here).'],
+    'QRV':['I am ready to receive','<b>QRV</b> means <b>"I am ready to receive."</b> Here W7QQ is ready for the message K1ABC has.'],
+    'AR':['End of a formal message','The prosign <b>AR</b> marks <b>the end of a formal message</b>. It is sent as one character: .-.-. (not as A then R).']};
+  const QSO=[['W7QQ','QRL?'],['W7QQ','CQ CQ DE W7QQ K'],['K1ABC','W7QQ DE K1ABC K',30],['W7QQ','K1ABC DE W7QQ QRS?'],['K1ABC','R UR RST 579C QRN HR KN'],['W7QQ','QSL RIG QRP 5W QRV KN'],['K1ABC','MSG HAPPY BDAY AR'],['W7QQ','QSL TNX 73']];
+  const TABS={qso:'The contact',zero:'Zero beat',speed:'Speed',bk:'Break-in'};
+  const D=()=>({tab:'qso',tok:null,off:300,cq:15,me:25,bk:'full'});let st=D();
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Work a CW contact</h3><p class="small mute lead">Tap any code in the contact to see what it means and hear it. The other tabs cover tuning, speed and break-in.</p>
+  <div class="seg cqt" role="group" aria-label="Part">${Object.entries(TABS).map(([k,v])=>`<button data-t="${k}">${v}</button>`).join('')}</div>
+  <div class="cqp" data-p="qso"><div class="cqlog"></div></div>
+  <div class="cqp" data-p="zero"><svg class="circ cqz" viewBox="0 0 300 120" role="img"></svg>
+    <label for="cq-o">Your transmit frequency: <b class="cqov"></b></label><input id="cq-o" type="range" min="-600" max="600" step="10">
+    <div class="row" style="gap:8px;margin-top:4px"><button class="smb cqzb">Zero beat it</button></div></div>
+  <div class="cqp" data-p="speed"><label for="cq-c">The CQ is sent at: <b class="cqcv"></b></label><input id="cq-c" type="range" min="5" max="35">
+    <label for="cq-m">The fastest you copy comfortably: <b class="cqmv"></b></label><input id="cq-m" type="range" min="5" max="35"><svg class="circ cqs" viewBox="0 0 300 74" role="img"></svg></div>
+  <div class="cqp" data-p="bk"><div class="seg cqb" role="group" aria-label="Switching"><button data-b="full">Full (QSK)</button><button data-b="semi">Semi</button><button data-b="manual">Manual switch</button></div><svg class="circ cqk" viewBox="0 0 300 132" role="img"></svg></div>
+  <div class="row" style="gap:8px;margin-top:10px"><button class="pri cql">Listen</button></div>
+  <div class="wres"></div>`;
+  const res=el.querySelector('.wres'),so=el.querySelector('#cq-o'),sc=el.querySelector('#cq-c'),sm=el.querySelector('#cq-m');
+  const me=()=>Math.min(st.me,st.cq);
+  /* key-down intervals (in dot units) for text */
+  function els(text){const r=[];let t=0;for(const w of text.split(' ')){for(const ch of w){for(const s of MORSE[ch]||''){const d=s==='-'?3:1;r.push([t,t+d]);t+=d+1}t+=2}t+=4}return[r,t-7]}
+  function draw(){
+    segOn(el,'.cqt','t',st.tab);segOn(el,'.cqb','b',st.bk);el.querySelectorAll('.cqp').forEach(p=>p.hidden=p.dataset.p!==st.tab);
+    let eq,say=[],v='';
+    if(st.tab==='qso'){
+      el.querySelector('.cqlog').innerHTML=QSO.map(([who,line],i)=>`<div class="cqln"><span class="cqwho${who==='W7QQ'?'':' b'}">${who}</span><span class="cqtx">${line.split(' ').map(w=>T[w]?`<button class="cqtok${st.tok===w?' on':''}" data-w="${esc(w)}">${esc(w)}</button>`:esc(w)).join(' ')}</span><button class="smb cqpl" data-i="${i}" aria-label="Listen to line ${i+1}">▶</button></div>`).join('');
+      el.querySelectorAll('.cqtok').forEach(b=>b.onclick=()=>{st.tok=b.dataset.w;unchip(el);draw();playCWParts([{text:st.tok,wpm:15}])});
+      el.querySelectorAll('.cqpl').forEach(b=>b.onclick=()=>{const[who,line,w]=QSO[+b.dataset.i];playCWParts([{text:line,wpm:w||18,hz:who==='W7QQ'?650:720}])});
+      if(st.tok){const[m,s]=T[st.tok];eq=`${esc(st.tok)}: <em>${m}</em>`;say.push(s);say.push(`<span class="small mute">In Morse: ${esc(cwKey(st.tok)).split('').map(ch=>MORSE[ch]||'').join(' ').replace(/\./g,'·').replace(/-/g,'–')}${['AR','KN'].includes(st.tok)?' (one character, no gap)':''}</span>`)}
+      else{eq='Tap a code';say.push('W7QQ checks the frequency, calls CQ, and K1ABC answers. Every blue code is one the exam asks about.')}
+    }
+    if(st.tab==='zero'){
+      so.value=st.off;el.querySelector('.cqov').textContent=st.off===0?'same as W7QQ':`${st.off>0?'+':''}${st.off} Hz from W7QQ`;
+      const X=f=>150+f*0.2;let g=`<line x1="20" y1="70" x2="280" y2="70" class="vsmid"/>`;
+      [-600,-300,0,300,600].forEach(f=>g+=`<line x1="${X(f)}" y1="70" x2="${X(f)}" y2="75" class="vsmid"/><text class="lbl" x="${X(f)}" y="90" style="font-size:10px">${f>0?'+':''}${f}</text>`);
+      g+=`<rect x="${X(0)-3}" y="22" width="6" height="48" class="rtm"/><text class="lbl" x="${X(0)}" y="16" style="font-size:11px;font-weight:700">W7QQ</text>`;
+      g+=`<rect x="${X(st.off)-3}" y="34" width="6" height="36" class="rts"/><text class="lbl" x="${X(st.off)}" y="112" style="font-size:11px;font-weight:700;fill:var(--red)">you</text>`;
+      if(st.off)g+=`<line x1="${X(0)}" y1="52" x2="${X(st.off)}" y2="52" class="rtshift"/><text class="lbl" x="${(X(0)+X(st.off))/2}" y="47" style="font-size:10px">${Math.abs(st.off)} Hz</text>`;
+      el.querySelector('.cqz').innerHTML=g;el.querySelector('.cqz').setAttribute('aria-label',`You are ${Math.abs(st.off)} hertz from W7QQ`);
+      eq=st.off?`${Math.abs(st.off)} Hz off: <em>not zero beat</em>`:'<em>Zero beat</em>';
+      v=st.off?`<div class="verdict no">W7QQ's receiver is tuned to W7QQ's own frequency. You would answer ${Math.abs(st.off)} Hz away, maybe outside a narrow CW filter.</div>`:`<div class="verdict ok">Your transmit frequency matches W7QQ's signal. Listen: the two notes become one, with no beat between them.</div>`;
+      say.push('<b>Zero beat</b> means <b>matching your transmit frequency to the frequency of a received signal</b>. Before you answer, tune until your sidetone and the other station\'s note sound the same.');
+    }
+    if(st.tab==='speed'){
+      sc.value=st.cq;sm.value=st.me;el.querySelector('.cqcv').textContent=st.cq+' wpm';el.querySelector('.cqmv').textContent=st.me+' wpm';
+      const X=w=>20+(w-5)*260/30;let g=`<line x1="20" y1="40" x2="280" y2="40" class="vsmid"/>`;[5,10,15,20,25,30,35].forEach(w=>g+=`<text class="lbl" x="${X(w)}" y="70" style="font-size:10px">${w}</text>`);
+      g+=`<rect x="20" y="30" width="${X(me())-20}" height="20" rx="4" class="rtm" opacity=".35"/>`;
+      g+=`<line x1="${X(st.cq)}" y1="18" x2="${X(st.cq)}" y2="56" class="pllim"/><text class="lbl" x="${X(st.cq)}" y="13" style="font-size:11px;font-weight:700;fill:var(--red)">CQ ${st.cq}</text>`;
+      g+=`<circle cx="${X(me())}" cy="40" r="7" class="psdot on"/>`;
+      el.querySelector('.cqs').innerHTML=g;el.querySelector('.cqs').setAttribute('aria-label',`Answer at ${me()} words per minute`);
+      eq=`Answer at <em>${me()} wpm</em>`;
+      say.push(`Answer a CQ at <b>the fastest speed at which you are comfortable copying, but no faster than the CQ</b>. ${st.me>st.cq?`You could copy ${st.me} wpm, but the CQ came at ${st.cq}, so you slow down to ${st.cq}: the caller may not copy any faster.`:st.me<st.cq?`The CQ came at ${st.cq} wpm, but you copy comfortably only to ${st.me}, so you answer at ${st.me}. The caller will usually slow down to match.`:'Your best speed is the CQ\'s speed: answer at that.'}`);
+      say.push('There is no standard calling speed (not 5 wpm, not 10 wpm). Listen plays the CQ, then your answer.');
+    }
+    if(st.tab==='bk'){
+      const[E,len]=els('CQ CQ'),W=280/len,X=u=>10+u*W,G=E.slice(1).map((e,i)=>[E[i][1],e[0]]),big=G.reduce((m,x)=>x[1]-x[0]>m[1]-m[0]?x:m),pick=[0,3,6,9,13].map(i=>G[Math.min(G.length-1,i)]);if(!pick.includes(big))pick.splice(3,0,big);const H=pick.slice(0,6).sort((a,b)=>a[0]-b[0]);let g='';
+      const rxOpen=u=>{if(st.bk==='manual')return false;if(E.some(([a,b])=>u>=a&&u<b))return false;if(st.bk==='full')return true;
+        const prev=E.filter(([a,b])=>b<=u).pop(),next=E.find(([a])=>a>u);return !next||(prev&&next[0]-prev[1]>=7)};
+      g+=`<text class="lbl" x="10" y="14" style="text-anchor:start;font-size:11px">You send (transmitter on)</text>`;E.forEach(([a,b])=>g+=`<rect x="${X(a)}" y="20" width="${(b-a)*W}" height="16" class="rts"/>`);
+      g+=`<text class="lbl" x="10" y="54" style="text-anchor:start;font-size:11px">Your receiver is listening</text>`;
+      for(let u=0;u<len;u+=.5)if(rxOpen(u+.25))g+=`<rect x="${X(u)}" y="60" width="${W*.5+.3}" height="14" class="plok"/>`;
+      g+=`<text class="lbl" x="10" y="94" style="text-anchor:start;font-size:11px">W7QQ tries to break in</text>`;
+      let heard=0;H.forEach(([a,b])=>{const m=(a+b)/2,ok=rxOpen(m);heard+=ok;g+=`<rect x="${X(m-.45)}" y="100" width="${W*.9}" height="14" class="${ok?'rtm':'bwn'}"/>`});
+      g+=`<text class="lbl" x="150" y="128" style="font-size:11px">You hear ${heard} of W7QQ's ${H.length} dits</text>`;
+      el.querySelector('.cqk').innerHTML=g;el.querySelector('.cqk').setAttribute('aria-label',`${st.bk} break-in: you hear ${heard} of ${H.length}`);
+      eq={full:'Full break-in: <em>QSK</em>',semi:'Semi break-in',manual:'Manual send/receive switch'}[st.bk];
+      say.push({full:'In <b>full break-in (QSK)</b>, <b>transmitting stations can receive between code characters and elements</b>: the receiver comes back in every gap between dots and dashes, so the other station can break in at any moment.',
+        semi:'Semi break-in keys the transmitter when you start sending and only switches back to receive after a pause, such as the gap between words. Not QSK: you miss what is sent while you are keying a word.',
+        manual:'With a manual send/receive switch you flip to transmit before you start and back after you finish. Nothing gets in while you send. That is the opposite of full break-in.'}[st.bk]);
+      say.push('<span class="small mute">Not QSK: sending the prosign BK, or using an automatic keyer instead of a hand key.</span>');
+    }
+    res.innerHTML=`<div class="eq">${eq}</div>${v}${say.map(x=>`<p>${x}</p>`).join('')}`;
+  }
+  el.querySelector('.cql').onclick=()=>{
+    if(st.tab==='qso')playCWParts(QSO.map(([who,line,w])=>({text:line,wpm:w||18,hz:who==='W7QQ'?650:720})));
+    else if(st.tab==='speed')playCWParts([{text:'CQ CQ DE W7QQ K',wpm:st.cq},{text:'W7QQ DE K1ABC K',wpm:me(),hz:720}]);
+    else if(st.tab==='bk')playCWParts([{text:'CQ CQ',wpm:18}]);
+    else{const a=audioCtx();if(!a)return;const t=a.currentTime+.05,out=a.createGain();out.gain.value=.15;out.connect(a.destination);
+      [650,650+st.off].forEach((hz,i)=>{const o=a.createOscillator();o.frequency.value=hz;const g=a.createGain();g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(1,t+.02);g.gain.setValueAtTime(1,t+1.8);g.gain.linearRampToValueAtTime(0,t+1.85);o.connect(g).connect(out);o.start(t+i*.0);o.stop(t+1.9)})}
+  };
+  el.querySelectorAll('.cqt button').forEach(b=>b.onclick=()=>{st.tab=b.dataset.t;unchip(el);draw()});
+  el.querySelectorAll('.cqb button').forEach(b=>b.onclick=()=>{st.bk=b.dataset.b;unchip(el);draw()});
+  so.oninput=()=>{st.off=+so.value;unchip(el);draw()};el.querySelector('.cqzb').onclick=()=>{st.off=0;unchip(el);draw()};
+  sc.oninput=()=>{st.cq=+sc.value;unchip(el);draw()};sm.oninput=()=>{st.me=+sm.value;unchip(el);draw()};
+  chips(el,c.presets,p=>{st=Object.assign(D(),p);delete st.q;draw()},el.querySelector('.cqt'));
+  draw();
+};
+
+/* rectifier: half-wave, full-wave (center tap), bridge or switchmode; a filter (none, capacitor, choke and capacitor), a bleeder,
+   and the plug. The scope shows the AC in and the DC out; unplugged, it shows the filter capacitor draining (or not) over 20 seconds.
+   config {presets:[{q, k half|full|bridge|smps, f none|c|lc, bl, plug, focus}]} */
+WIDGETS['rectifier']=(el,c)=>{
+  const K={half:'Half-wave',full:'Full-wave',bridge:'Bridge',smps:'Switch&shy;mode'},F={none:'No filter',c:'Capacitor',lc:'Choke + capacitor'};
+  const D=()=>({k:'full',f:'none',bl:true,plug:true,focus:null});let st=D();
+  el.classList.add('wg');
+  el.innerHTML=`<h3>Turn AC into DC</h3><p class="small mute lead">Pick a rectifier, add a filter, then pull the plug. The grey trace is the AC in, the blue one the DC out.</p>
+  <div class="seg rck" role="group" aria-label="Rectifier">${Object.entries(K).map(([k,v])=>`<button data-k="${k}">${v}</button>`).join('')}</div>
+  <svg class="circ rcs" viewBox="0 0 300 70" role="img"></svg>
+  <svg class="circ rcg" viewBox="0 0 300 150" role="img"></svg>
+  <div class="rcc"><div class="seg rcf" role="group" aria-label="Filter">${Object.entries(F).map(([k,v])=>`<button data-f="${k}">${v}</button>`).join('')}</div>
+  <div class="row" style="gap:8px;margin-top:8px"><button class="smb rcb" aria-pressed="true">Bleeder resistor</button><button class="smb rcu">Pull the plug</button></div></div>
+  <div class="wres"></div>`;
+  const res=el.querySelector('.wres'),sch=el.querySelector('.rcs'),sg=el.querySelector('.rcg');
+  const nd=()=>({half:1,full:2,bridge:4,smps:4})[st.k];
+  function diode(x,y){return`<path d="M${x} ${y-7} L${x+12} ${y} L${x} ${y+7} Z" class="rcd"/><line x1="${x+12}" y1="${y-7}" x2="${x+12}" y2="${y+7}" class="rcw"/>`}
+  function box(x,w,label,inner,hot){return`<rect x="${x}" y="12" width="${w}" height="40" rx="6" class="rcbx${hot?' hot':''}"/>${inner||''}<text class="lbl" x="${Math.max(x+w/2,label.length*2.7+1)}" y="66" style="font-size:10px">${label}</text>`}
+  function draw(){
+    segOn(el,'.rck','k',st.k);segOn(el,'.rcf','f',st.f);const bb=el.querySelector('.rcb');bb.classList.toggle('pri',st.bl);bb.setAttribute('aria-pressed',st.bl);
+    el.querySelector('.rcu').textContent=st.plug?'Pull the plug':'Plug it back in';el.querySelector('.rcc').hidden=st.k==='smps';
+    const Fh=k=>st.focus===k;
+    /* block strip */
+    let s='';
+    if(st.k==='smps'){
+      s+=box(4,52,'rectify',diode(16,32)+diode(30,32))+`<line x1="56" y1="32" x2="66" y2="32" class="rcw"/>`;
+      s+=box(66,62,'switch 100 kHz',`<path d="M74 40 h8 v-14 h8 v14 h8 v-14 h8 v14 h8" class="rcsq"/>`,true)+`<line x1="128" y1="32" x2="138" y2="32" class="rcw"/>`;
+      s+=box(138,48,'small transformer',`<rect x="152" y="22" width="20" height="20" rx="2" class="rccore"/>`,true)+`<line x1="186" y1="32" x2="196" y2="32" class="rcw"/>`;
+      s+=box(196,48,'rectify + filter',diode(204,32)+`<line x1="226" y1="22" x2="226" y2="42" class="rcw"/><line x1="232" y1="22" x2="232" y2="42" class="rcw"/>`)+`<line x1="244" y1="32" x2="254" y2="32" class="rcw"/>`;
+      s+=box(254,42,'DC out',`<text class="lbl" x="275" y="37" style="font-size:12px;font-weight:700">DC</text>`);
+    }else{
+      const ct=st.k==='full';
+      s+=box(4,50,ct?'center tap':'transformer',`<path d="M18 20 q6 4 0 8 q6 4 0 8 q6 4 0 8" class="rcw"/><line x1="28" y1="18" x2="28" y2="46" class="rcw"/><line x1="32" y1="18" x2="32" y2="46" class="rcw"/><path d="M42 20 q-6 4 0 8 q-6 4 0 8 q-6 4 0 8" class="rcw"/>${ct?'<line x1="42" y1="32" x2="52" y2="32" class="rcw"/><circle cx="42" cy="32" r="2.5" class="rcdot"/>':''}`,Fh('ct'));
+      s+=`<line x1="54" y1="32" x2="60" y2="32" class="rcw"/>`;
+      const n=nd(),w=n===4?76:n===2?52:40;let di='';
+      if(n===4){di=diode(70,24)+diode(104,24)+diode(70,40)+diode(104,40)}else if(n===2){di=diode(70,24)+diode(70,40)}else di=diode(72,32);
+      s+=box(60,w,`${n} diode${n>1?'s':''}`,di,Fh('diodes'));let x=60+w;
+      s+=`<line x1="${x}" y1="32" x2="${x+6}" y2="32" class="rcw"/>`;x+=6;
+      const fw=st.f==='lc'?64:st.f==='c'?40:34;
+      s+=box(x,fw,st.f==='none'?'no filter':st.f==='c'?'capacitor':'choke + cap',st.f==='none'?`<line x1="${x+4}" y1="32" x2="${x+fw-4}" y2="32" class="rcw"/>`:
+        (st.f==='lc'?`<path d="M${x+6} 32 q4 -8 8 0 q4 -8 8 0 q4 -8 8 0" class="rcw"/>`:'')+`<line x1="${x+fw-20}" y1="22" x2="${x+fw-20}" y2="42" class="rcw"/><line x1="${x+fw-14}" y1="22" x2="${x+fw-14}" y2="42" class="rcw"/>`,Fh('filter'));x+=fw;
+      s+=`<line x1="${x}" y1="32" x2="${x+6}" y2="32" class="rcw"/>`;x+=6;
+      if(st.bl){s+=box(x,34,'bleeder',`<path d="M${x+5} 32 l3 -6 l5 12 l5 -12 l5 12 l5 -12 l3 6" class="rcw"/>`,Fh('bleed'));x+=34;s+=`<line x1="${x}" y1="32" x2="${x+6}" y2="32" class="rcw"/>`;x+=6}
+      s+=box(x,296-x,'load',`<text class="lbl" x="${x+(296-x)/2}" y="37" style="font-size:12px;font-weight:700">DC</text>`);
+    }
+    sch.innerHTML=s;sch.setAttribute('aria-label',`${K[st.k]} power supply`);
+    /* scope */
+    let g=`<rect x="4" y="4" width="292" height="122" rx="8" class="msscr"/>`;const Y0=110,A=88,N=600;
+    if(st.k==='smps'){
+      const lin=`<rect x="40" y="${Y0-80}" width="80" height="80" rx="4" class="rccore"/><text class="lbl" x="80" y="${Y0+30}" style="font-size:11px">60 Hz transformer</text>`;
+      g=`<rect x="4" y="4" width="292" height="122" rx="8" class="plbg"/>${lin}<rect x="200" y="${Y0-22}" width="22" height="22" rx="2" class="rccore"/><text class="lbl" x="211" y="${Y0+30}" style="font-size:11px">100 kHz transformer</text><text class="lbl" x="150" y="22" style="font-size:11px">Same power, drawn to the same scale</text>`;
+      sg.innerHTML=g;sg.setAttribute('aria-label','Transformer size at 60 Hz and 100 kHz');
+    }else if(!st.plug){
+      const tau=st.bl?3:400,X=s=>14+s*272/20,Yv=v=>Y0-A*v,V=st.f==='none'?null:1;
+      g+=`<line x1="14" y1="${Yv(.3)}" x2="286" y2="${Yv(.3)}" class="msenv"/><text class="lbl" x="284" y="${Yv(.3)-4}" style="text-anchor:end;font-size:10px;fill:#f2b33d">shock hazard above this</text>`;
+      if(V){let p='';for(let i=0;i<=N;i++){const s=20*i/N;p+=(i?' L':'M')+X(s).toFixed(1)+' '+Yv(Math.exp(-s/tau)).toFixed(1)}g+=`<path d="${p}" class="msrf" style="stroke:#6fb3ff;stroke-width:2.5"/>`}
+      else g+=`<line x1="14" y1="${Y0}" x2="286" y2="${Y0}" class="msrf" style="stroke:#6fb3ff;stroke-width:2.5"/>`;
+      [0,5,10,15,20].forEach(s=>g+=`<text class="lbl" x="${X(s)}" y="${Y0+12}" style="font-size:10px;fill:#9ba49f">${s} s</text>`);
+      g+=`<text class="lbl" x="150" y="20" style="font-size:11px;fill:#cfd8e3">Unplugged: the filter capacitor's voltage</text>`;
+      sg.innerHTML=g;sg.setAttribute('aria-label',st.bl?'The bleeder drains the capacitor in seconds':'The capacitor stays charged');
+    }else{
+      const X=i=>14+272*i/N,cyc=3,rect=ph=>{const v=Math.sin(ph);return st.k==='half'?Math.max(0,v):Math.abs(v)};
+      let pin='',pout='',vc=0,raw=[];
+      const Yz=66,Am=48;for(let i=0;i<=N;i++){const ph=2*Math.PI*cyc*i/N,r=rect(ph);raw.push(r);pin+=(i?' L':'M')+X(i).toFixed(1)+' '+(Yz-Am*Math.sin(ph)).toFixed(1)}
+      const out=raw.map(r=>{if(st.f==='none')return r;vc=Math.max(r*.97,vc*(1-(st.k==='half'?.0016:.0016)));return vc});
+      let o2=out;if(st.f==='lc'){const m=out.slice(N/3).reduce((a,b)=>a+b,0)/(N-N/3);o2=out.map((v,i)=>i<N/6?v:m+(v-m)*.25)}
+      o2.forEach((v,i)=>pout+=(i?' L':'M')+X(i).toFixed(1)+' '+(Yz-Am*v).toFixed(1));
+      g+=`<line x1="14" y1="${Yz}" x2="286" y2="${Yz}" class="vsmid"/><text class="wfst" x="16" y="${Yz+12}">0 V</text><path d="${pin}" class="msrf" style="stroke:#9ba49f;stroke-width:1.2;stroke-dasharray:3 3"/><path d="${pout}" class="msrf" style="stroke:#6fb3ff;stroke-width:2.5"/>`;
+      if(st.f==='none'){/* one AC cycle and its pulses */const x0=X(N/cyc),x1=X(2*N/cyc);g+=`<line x1="${x0}" y1="12" x2="${x0}" y2="120" class="wfsl"/><line x1="${x1}" y1="12" x2="${x1}" y2="120" class="wfsl"/><text class="wfst" x="${x0+4}" y="18">one AC cycle: ${st.k==='half'?'1 pulse':'2 pulses'}</text>`}
+      sg.innerHTML=g;sg.setAttribute('aria-label',`${K[st.k]} output, ${F[st.f]}`);
+    }
+    /* words */
+    const H=k=>st.focus===k?' class="hl"':'';let eq,say=[],v='';
+    if(st.k==='smps'){eq='Switchmode: <em>small parts</em>';say=[`<span${H('smps')}>A <b>switchmode</b> supply rectifies the mains, then switches it on and off tens of thousands of times a second. <b>High-frequency operation allows the use of smaller components</b>: a transformer and filter for 100 kHz are a fraction of the size of ones for 60 Hz.</span>`,'It is not simpler (it has more parts than a linear supply), not inherently more stable, and its fast switching does not raise the output voltage.']}
+    else if(!st.plug){eq=st.f==='none'?'Nothing stored':st.bl?'Bleeder: <em>drained in seconds</em>':'<em>Still charged</em>';
+      if(st.f!=='none')v=st.bl?'<div class="verdict ok">Safe to work on after a short wait.</div>':'<div class="verdict no">The capacitor holds its charge long after the plug is out. Touch it and it bites.</div>';
+      say=[`<span${H('bleed')}>A <b>bleeder resistor</b> sits across the filter capacitors and <b>discharges them when power is removed</b>.</span>`,st.f==='none'?'With no filter capacitor there is nothing to hold a charge. Add a capacitor and pull the plug again.':'It is not a fuse, does not remove shock hazards from coils, and has nothing to do with ground loops.']}
+    else{const n=nd(),deg=st.k==='half'?180:360;
+      eq=`${K[st.k]}: <em>${deg}°</em> of each cycle`;
+      if(st.k==='half')say.push(`<span${H('diodes')}><b>Only one diode is required.</b></span> <span${H('deg')}>It passes only the positive half of each cycle: <b>180 degrees</b> of the AC is converted to DC; the other half is thrown away.</span>`);
+      if(st.k==='full')say.push(`<span${H('ct')}>A <b>full-wave</b> rectifier with <b>two diodes and a center-tapped transformer</b>: each diode takes one half of the secondary.</span> <span${H('deg')}>Both halves become DC: <b>360 degrees</b> of each cycle.</span>`);
+      if(st.k==='bridge')say.push(`<span${H('deg')}>A <b>full-wave bridge</b> uses four diodes and no center tap. It also converts <b>360 degrees</b> of each cycle.</span>`);
+      say.push(`<span${H('ripple')}>${st.f==='none'?(st.k==='half'?'Unfiltered, the output is one DC pulse per AC cycle (60 a second).':'Unfiltered into a resistor, the output is <b>a series of DC pulses at twice the frequency of the AC input</b> (120 a second from 60 Hz mains).'):(st.k==='half'?'The capacitor refills only once a cycle, so it sags further between pulses: half-wave ripple is at the AC frequency, half the full-wave ripple frequency.':'The capacitor refills twice a cycle, so it only sags a little between pulses.')}</span>`);
+      say.push(`<span${H('filter')}>${st.f==='none'?'Add a filter to smooth the pulses.':'The power supply <b>filter network</b> is <b>capacitors and inductors</b>: the capacitor stores charge between pulses, the inductor (choke) resists changes in current.'}${st.f==='lc'?' Choke plus capacitor is the smoothest here.':''}</span>`);
+      say.push('<span class="small mute">The output peak is about the AC peak, not twice it.</span>');
+    }
+    res.innerHTML=`<div class="eq">${eq}</div>${v}${say.map(x=>`<p>${x}</p>`).join('')}`;
+  }
+  el.querySelectorAll('.rck button').forEach(b=>b.onclick=()=>{st.k=b.dataset.k;st.focus=null;unchip(el);draw()});
+  el.querySelectorAll('.rcf button').forEach(b=>b.onclick=()=>{st.f=b.dataset.f;st.focus=null;unchip(el);draw()});
+  el.querySelector('.rcb').onclick=()=>{st.bl=!st.bl;unchip(el);draw()};
+  el.querySelector('.rcu').onclick=()=>{st.plug=!st.plug;if(!st.plug&&st.f==='none')st.f='c';unchip(el);draw()};
+  chips(el,c.presets,p=>{st=Object.assign(D(),p);delete st.q;draw()},el.querySelector('.rck'));
+  draw();
+};
+
+/* amp-class: Class A, AB, B or C on a scope (input with the bias line, device current, output after the tank or push-pull pair) with an FM,
+   AM or SSB signal; an efficiency calculator (RF out / DC in); and a tube amplifier tune-up (TUNE dips the plate current, LOAD sets the output
+   within the plate current limit, neutralization stops self-oscillation).
+   config {presets:[{q, tab cls|eff|tune, cls A|AB|B|C, sig fm|am|ssb, v, ma, out, tune, load, neut, focus}]} */
+WIDGETS['amp-class']=(el,c)=>{
+  const CL={A:[360,'100%'],AB:[240,'more than 50% but less than 100%'],B:[180,'50%'],C:[120,'less than 50%']},EFF={A:30,AB:55,B:65,C:75};
+  const TABS={cls:'Classes',eff:'Efficiency',tune:'Tube tune-up'};
+  const D=()=>({tab:'cls',cls:'A',sig:'ssb',v:2000,ma:500,out:600,tune:20,load:30,neut:true,focus:null});let st=D();
+  el.classList.add('wg');
+  el.innerHTML=`<h3>How much of the wave conducts?</h3><p class="small mute lead">Pick a class and a signal. The bias line sets how much of each cycle the device conducts.</p>
+  <div class="seg act" role="group" aria-label="Part">${Object.entries(TABS).map(([k,v])=>`<button data-t="${k}">${v}</button>`).join('')}</div>
+  <div class="acp" data-p="cls"><div class="seg acc" role="group" aria-label="Class">${Object.keys(CL).map(k=>`<button data-c="${k}">Class ${k}</button>`).join('')}</div>
+    <div class="seg acs" role="group" aria-label="Signal"><button data-s="fm">FM</button><button data-s="am">AM</button><button data-s="ssb">SSB</button></div>
+    <svg class="circ acg" viewBox="0 0 300 236" role="img"></svg><div class="acb"></div></div>
+  <div class="acp" data-p="eff"><label for="ac-v">Plate voltage: <b class="acvv"></b></label><input id="ac-v" type="range" min="500" max="3000" step="100">
+    <label for="ac-i">Plate current: <b class="aciv"></b></label><input id="ac-i" type="range" min="100" max="1000" step="10">
+    <label for="ac-o">RF output: <b class="acov"></b></label><input id="ac-o" type="range" min="0" max="1500" step="10"></div>
+  <div class="acp" data-p="tune"><div class="acm"></div><svg class="circ act2" viewBox="0 0 300 70" role="img"></svg>
+    <label for="ac-t">TUNE (plate) <b class="actv"></b></label><input id="ac-t" type="range" min="0" max="100">
+    <label for="ac-l">LOAD (coupling) <b class="aclv"></b></label><input id="ac-l" type="range" min="0" max="100">
+    <div class="row" style="gap:8px;margin-top:6px"><button class="smb acn" aria-pressed="true">Neutralized</button></div></div>
+  <div class="wres"></div>`;
+  const res=el.querySelector('.wres'),sv=el.querySelector('#ac-v'),si=el.querySelector('#ac-i'),so=el.querySelector('#ac-o'),stn=el.querySelector('#ac-t'),sl=el.querySelector('#ac-l');
+  const IMAX=450,WANT=500;
+  const tuneM=()=>{const g=Math.exp(-(((st.tune-62)/9)**2)),ires=120+3.6*st.load,ip=ires+(620-ires)*(1-g),po=st.neut?WANT*st.load/70*g:WANT*st.load/70*g*.55;return{g,ip,po}};
+  function draw(){
+    segOn(el,'.act','t',st.tab);segOn(el,'.acc','c',st.cls);segOn(el,'.acs','s',st.sig);el.querySelectorAll('.acp').forEach(p=>p.hidden=p.dataset.p!==st.tab);
+    const H=k=>st.focus===k?' class="hl"':'';let eq,say=[],v='';
+    if(st.tab==='cls'){
+      const[deg,pct]=CL[st.cls],x0=Math.cos(deg/2*Math.PI/180),N=480,X=i=>10+280*i/N,cyc=6;
+      const env=t=>st.sig==='fm'?1:st.sig==='am'?.55+.4*Math.sin(2*Math.PI*t):Math.abs(Math.sin(Math.PI*1.5*t))*.95+.05;
+      const lin=st.cls!=='C',gain=A=>lin?A:Math.max(0,A-x0)/(1-x0);
+      let pin='',pdev='',pout='',penv='',pide='';const Y1=46,Y2=124,Y3=200,R=30;
+      for(let i=0;i<=N;i++){const t=i/N,A=env(t),s=Math.sin(2*Math.PI*cyc*t),x=A*s;
+        pin+=(i?' L':'M')+X(i).toFixed(1)+' '+(Y1-R*x).toFixed(1);
+        const cur=Math.max(0,x-x0)/(1-x0);pdev+=(i?' L':'M')+X(i).toFixed(1)+' '+(Y2+R*.8-R*1.6*cur).toFixed(1);
+        pout+=(i?' L':'M')+X(i).toFixed(1)+' '+(Y3-R*gain(A)*s).toFixed(1);
+        penv+=(i?' L':'M')+X(i).toFixed(1)+' '+(Y3-R*gain(A)).toFixed(1);pide+=(i?' L':'M')+X(i).toFixed(1)+' '+(Y3-R*A).toFixed(1)}
+      let g=`<text class="lbl" x="10" y="12" style="text-anchor:start;font-size:11px">${st.sig.toUpperCase()} signal in, and the bias line</text><path d="${pin}" class="msau"/>`;
+      g+=`<line x1="10" y1="${Y1-R*x0}" x2="290" y2="${Y1-R*x0}" class="pllim"/><text class="lbl" x="290" y="${Y1-R*x0-3}" style="text-anchor:end;font-size:10px;fill:var(--red)">${st.cls==='A'?'conducts all the time':'conducts above this'}</text>`;
+      g+=`<text class="lbl" x="10" y="${Y2-R+4}" style="text-anchor:start;font-size:11px">Device current: conducts ${deg}° of each cycle</text><path d="${pdev}" class="psrf"/>`;
+      g+=`<text class="lbl" x="10" y="${Y3-R-6}" style="text-anchor:start;font-size:11px">${st.cls==='C'?'Out of the tank circuit':st.cls==='A'?'Out':'Out (tank circuit or push-pull pair)'}</text><path d="${pout}" class="msau" style="stroke:var(--blue)"/>`;
+      if(st.sig!=='fm'){g+=`<path d="${pide}" class="msenv" style="stroke:var(--mute)"/>`;if(!lin)g+=`<path d="${penv}" class="msenv" style="stroke:var(--red);stroke-dasharray:none"/>`}
+      const sv2=el.querySelector('.acg');sv2.innerHTML=g;sv2.setAttribute('aria-label',`Class ${st.cls} conducts ${deg} degrees with ${st.sig}`);
+      const bad=!lin&&st.sig!=='fm';
+      el.querySelector('.acb').innerHTML=`<div class="psbar">${Object.keys(EFF).map(k=>`<span${k===st.cls?' style="color:var(--ink);font-weight:700"':''}>Class ${k}</span><div class="meterbar"><i style="width:${EFF[k]}%;${k===st.cls?'':'opacity:.45'}"></i></div><b>about ${EFF[k]}%</b>`).join('')}</div><p class="small mute" style="margin:4px 0 0">Typical efficiency</p>`;
+      eq=`Class ${st.cls}: conducts <em>${pct}</em> of the time`;
+      v=st.sig==='fm'?'<div class="verdict ok">FM keeps a constant amplitude, so every class amplifies it cleanly.</div>':bad?`<div class="verdict no">${st.sig.toUpperCase()} through Class C: the output envelope (red) no longer matches the input's (grey). Distorted.</div>`:`<div class="verdict ok">The output envelope matches the input's: ${st.sig.toUpperCase()} comes through clean.</div>`;
+      say.push(`<span${H('cond')}>${st.cls==='A'?'In <b>Class A</b> the device conducts <b>100% of the time</b>: the bias keeps it on through the whole cycle, so it wastes the most power as heat.':st.cls==='AB'?'Class AB conducts for more than half the cycle but not all of it.':st.cls==='B'?'Class B conducts for half the cycle; a push-pull pair puts the halves back together.':'Class C conducts for less than half the cycle: short pulses that ring a tuned (tank) circuit back into a sine wave.'}</span>`);
+      say.push(`<span${H('eff')}>The less of each cycle the device conducts, the less power it burns: <b>Class C has the highest efficiency</b>.</span>`);
+      say.push(`<span${H('linear')}>A <b>linear amplifier</b> is one in which <b>the output preserves the input waveform</b>, envelope and all. Classes A, AB and B (push-pull) are linear; Class C is not.</span>`);
+      say.push(`<span${H('fm')}>So a <b>Class C</b> power stage is appropriate only for constant-amplitude modes like <b>FM</b> (and CW), never SSB or AM.</span>`);
+    }
+    if(st.tab==='eff'){
+      sv.value=st.v;si.value=st.ma;so.value=st.out;el.querySelector('.acvv').textContent=st.v+' V';el.querySelector('.aciv').textContent=st.ma+' mA';el.querySelector('.acov').textContent=st.out+' W';
+      const pin=st.v*st.ma/1000,e=st.out/pin*100,ok=st.out<=pin;
+      eq=`Efficiency = <em>${ok?fmt(e,3)+'%':'impossible'}</em>`;
+      say.push(`<span${H('eff')}><b>Efficiency = RF output power / DC input power.</b></span>`);
+      say.push(`DC input = plate voltage x plate current = ${fmt(st.v)} V x ${fmt(st.ma/1000,3)} A = <b>${fmt(pin)} W</b>.`);
+      say.push(ok?`${fmt(st.out)} W / ${fmt(pin)} W = <b>${fmt(e,3)}%</b>. The other ${fmt(pin-st.out)} W becomes heat in the amplifier.`:'More RF out than DC in: no amplifier can do that. Lower the RF output.');
+    }
+    if(st.tab==='tune'){
+      stn.value=st.tune;sl.value=st.load;el.querySelector('.actv').textContent='';el.querySelector('.aclv').textContent='';
+      const nb=el.querySelector('.acn');nb.classList.toggle('pri',st.neut);nb.setAttribute('aria-pressed',st.neut);nb.textContent=st.neut?'Neutralized':'Not neutralized';
+      const{g,ip,po}=tuneM(),over=ip>IMAX,at=g>.95,done=at&&!over&&po>=WANT*.95&&st.neut;
+      el.querySelector('.acm').innerHTML=`<div class="psbar"><span>Plate current</span><div class="meterbar" style="position:relative"><i style="width:${Math.min(100,ip/700*100)}%;${over?'background:var(--red)':''}"></i><b style="position:absolute;left:${IMAX/700*100}%;top:0;bottom:0;width:2px;background:var(--red)"></b></div><b>${Math.round(ip)} mA</b>
+        <span>RF output</span><div class="meterbar" style="position:relative"><i style="width:${Math.min(100,po/800*100)}%"></i><b style="position:absolute;left:${WANT/800*100}%;top:0;bottom:0;width:2px;background:var(--ok)"></b></div><b>${Math.round(po)} W</b></div>
+        <p class="small mute" style="margin:4px 0 0">Red mark: maximum allowable plate current (${IMAX} mA). Green mark: the output you want (${WANT} W).</p>`;
+      let p='';for(let i=0;i<=300;i++){const t=i/300,y=35-20*(po/800+.15)*Math.sin(2*Math.PI*8*t)-(st.neut?0:9*Math.sin(2*Math.PI*37*t)*(.6+.4*Math.sin(9*t)));p+=(i?' L':'M')+(10+280*t).toFixed(1)+' '+y.toFixed(1)}
+      const s2=el.querySelector('.act2');s2.innerHTML=`<rect x="4" y="2" width="292" height="66" rx="8" class="msscr"/><path d="${p}" class="msrf"/>`;s2.setAttribute('aria-label',st.neut?'Clean output':'Output with self-oscillation');
+      eq=!st.neut?'<em>Self-oscillating</em>':done?'<em>Tuned and loaded</em>':over?'<em>Over the plate current limit</em>':at?'TUNE at the dip':'Off resonance';
+      v=!st.neut?'<div class="verdict no">Without neutralization, feedback inside the tube makes the amplifier oscillate on its own (the fuzz on the scope).</div>':done?'<div class="verdict ok">Plate current dipped at resonance, and LOAD set for the desired output within the limit.</div>':over?'<div class="verdict no">Too much LOAD: the plate current is past its maximum. Back it off.</div>':'';
+      say.push(`<span${H('dip')}>Turn <b>TUNE</b> through resonance: the plate current shows <b>a pronounced dip</b>. Set TUNE at the bottom of the dip.</span>`);
+      say.push(`<span${H('load')}>Then turn <b>LOAD</b> (coupling) up: the output rises and so does the plate current. The correct setting gives the <b>desired power output without exceeding maximum allowable plate current</b>. Re-dip TUNE as you go.</span>`);
+      say.push(`<span${H('neut')}><b>Neutralizing</b> an amplifier cancels the feedback inside it <b>to eliminate self-oscillations</b>.</span>`);
+    }
+    res.innerHTML=`<div class="eq">${eq}</div>${v}${say.map(x=>`<p>${x}</p>`).join('')}`;
+  }
+  el.querySelectorAll('.act button').forEach(b=>b.onclick=()=>{st.tab=b.dataset.t;st.focus=null;unchip(el);draw()});
+  el.querySelectorAll('.acc button').forEach(b=>b.onclick=()=>{st.cls=b.dataset.c;st.focus=null;unchip(el);draw()});
+  el.querySelectorAll('.acs button').forEach(b=>b.onclick=()=>{st.sig=b.dataset.s;unchip(el);draw()});
+  sv.oninput=()=>{st.v=+sv.value;unchip(el);draw()};si.oninput=()=>{st.ma=+si.value;unchip(el);draw()};so.oninput=()=>{st.out=+so.value;unchip(el);draw()};
+  stn.oninput=()=>{st.tune=+stn.value;unchip(el);draw()};sl.oninput=()=>{st.load=+sl.value;unchip(el);draw()};
+  el.querySelector('.acn').onclick=()=>{st.neut=!st.neut;unchip(el);draw()};
+  chips(el,c.presets,p=>{st=Object.assign(D(),p);delete st.q;draw()},el.querySelector('.act'));
   draw();
 };
 function coreHtml(c){

@@ -8,7 +8,7 @@ Status: `todo`, `doing`, `done`. Update this file at the end of every session, t
 |---|---|---|
 | S1 | Merge the Technician and Extra `index.html` into one template plus per-exam config; keep each live `LS` key and db path; retest both and republish | done |
 | S2 | Add family support to the app: `#family-<id>` route, "Still confused?" button, family page renderer, "Drill these N" | done |
-| S3 | Build the reusable widgets listed in SPEC.md as they're first needed | doing (built: `formula-triangle`, `ladder`, `calculator` with `db` and `wavelength`, `circuit-toggle`, `sort-bins`, `match`, `figure-explorer`, `scenario`, calc `multipath`, `band-chart`, `power-wheel`, `sine-wave`, `s-meter`, `combiner`, `transformer`, `reactance-graph`, `antenna-ruler`, `fm-spectrum`, `link-budget`, `mixer`, `two-tone`, `sun-timeline`, `sun-indices`, `ionosphere`, `skip-zone`, `great-circle`, `band-tuner`, `power-limit`, `beacon`, `bw-scope`, `voice-scope`, `mod-scope`, `rx-panel`, `waterfall`, `rtty`, `psk`, `arq`, `net-map`) |
+| S3 | Build the reusable widgets listed in SPEC.md as they're first needed | doing (built: `formula-triangle`, `ladder`, `calculator` with `db` and `wavelength`, `circuit-toggle`, `sort-bins`, `match`, `figure-explorer`, `scenario`, calc `multipath`, `band-chart`, `power-wheel`, `sine-wave`, `s-meter`, `combiner`, `transformer`, `reactance-graph`, `antenna-ruler`, `fm-spectrum`, `link-budget`, `mixer`, `two-tone`, `sun-timeline`, `sun-indices`, `ionosphere`, `skip-zone`, `great-circle`, `band-tuner`, `power-limit`, `beacon`, `bw-scope`, `voice-scope`, `mod-scope`, `rx-panel`, `waterfall`, `rtty`, `psk`, `arq`, `net-map`, `cw-qso`, `rectifier`, `amp-class`) |
 | S4 | Public website: Technician as an installable offline web app (PWA) on Cloudflare Pages, progress saved on each device; General and Extra added later via `WEB_EXAMS` | doing (built and tested; waiting on Brooke to connect Cloudflare) |
 
 ## Technician families (34)
@@ -106,11 +106,11 @@ plain scenario only where nothing can be varied, and the reason is recorded (CW 
 | 28 | PSK31, QPSK and Varicode (`psk`) | Digital modes | 4 | Phase wheel | done |
 | 29 | ARQ, NAK and error correction (`arq-fec`) | Digital modes | 6 | Packet exchange | done |
 | 30 | Winlink, gateways and mesh networks (`winlink-mesh`) | Digital modes | 7 | Network map | done |
-| 31 | CW: Q signals and prosigns (`cw-procedures`) | Operating | 12 | Match (pure vocabulary; nothing to calculate or move) | todo |
-| 32 | On-air etiquette (`on-air`) | Operating | 9 | Scenario | todo |
-| 33 | Rectifiers and power supplies (`rectifiers`) | Circuits | 8 | Rectifier scope | todo |
-| 34 | Schematic symbols (Figure G7-1) (`schematic-symbols`) | Circuits | 5 | Figure explorer (built for Technician) on Figure G7-1 | todo |
-| 35 | Amplifier classes and efficiency (`amp-classes`) | Circuits | 8 | Conduction viewer | todo |
+| 31 | CW: Q signals and prosigns (`cw-procedures`) | Operating | 12 | Match (pure vocabulary; nothing to calculate or move) | done |
+| 32 | On-air etiquette (`on-air`) | Operating | 9 | Scenario | done |
+| 33 | Rectifiers and power supplies (`rectifiers`) | Circuits | 8 | Rectifier scope | done |
+| 34 | Schematic symbols (Figure G7-1) (`schematic-symbols`) | Circuits | 5 | Figure explorer (built for Technician) on Figure G7-1 | done |
+| 35 | Amplifier classes and efficiency (`amp-classes`) | Circuits | 8 | Conduction viewer | done |
 | 36 | Digital logic: gates, counters, shift registers (`logic`) | Circuits | 5 | Logic bench | todo |
 | 37 | Filter words: passband, cutoff, rejection (`filters`) | Circuits | 6 | Filter response curve | todo |
 | 38 | SDR, I/Q and DDS (`sdr-iq`) | Circuits | 4 | Rotating I/Q phasor | todo |
@@ -139,6 +139,7 @@ plain scenario only where nothing can be varied, and the reason is recorded (CW 
 
 ## Log
 
+- 2026-11-26 (General batch 7, PR general-batch7, built on general-batch6): CW Q signals and prosigns, on-air etiquette, rectifiers and power supplies, schematic symbols (Figure G7-1), amplifier classes. New widgets: `cw-qso` (a CW contact with tappable codes and Listen; zero beat, answering speed, break-in timeline), `rectifier` (parts strip and scope; filter, bleeder and pull the plug; switchmode transformer to scale), `amp-class` (conduction angle on a scope with FM/AM/SSB, efficiency calculator, tube tune-up with plate current dip, LOAD limit and neutralization). CW procedures got a real interaction instead of the planned match, since speed, tuning and break-in can be varied. On-air etiquette uses `scenario` as a "what would you do" choice (new `blank` dim); schematic symbols use `figure-explorer` (now accepts General question ids). Every preset clicked headless in light and dark at 390 px; each shows the pool's correct answer. PR #16 (batch 6) had a conflict with #17 (TRACKER log, web sw.js); main was merged into general-batch6 and the sites rebuilt. After #16 and this PR merge: republish General (35 pages), Technician and Extra. Next batch: families 36-40 (logic, filters, SDR/I-Q, semiconductors, part types).
 - 2026-11-19 (General batch 6, PR general-batch6): The waterfall and FT8, RTTY and FSK, PSK31/QPSK/Varicode, ARQ and FEC, Winlink and mesh. New widgets: `waterfall` (canvas waterfall with an SVG overlay, sped up 2x, starts paused when the device asks for reduced motion; even/odd slots, your own slot mutes the receiver, clock error, SNR, 8-tone close-up, overdrive), `rtty` (real ITA2 Baudot: reversed mark/space flips every bit, so C prints as Z; Listen plays the tones), `psk` (phase wheel, wrong-sideband mirror, Varicode table from G3PLX's list), `arq` (seeded packet ladder, ARQ or FEC), `net-map` (Winlink gateway connect, AREDN mesh rerouting, digital voice groups). Shared helpers `seeded` and `reduceMotion`; `.wg [hidden]` now always hides. Every preset clicked headless in light and dark; each shows the pool's correct answer. After PR #15 merged: General v5, Technician v14, Extra v9 republished. Next batch: families 31-35 (CW procedures, on-air etiquette, rectifiers, schematic symbols, amplifier classes).
 - 2026-11-24: R1 Technician abbreviations glossary (Brooke's ask): new reference-page type (`references/<exam>/`,
   `REFS` in the template, `#ref-<id>`), 104 entries in 14 concept groups; `site.py check` proves every pool

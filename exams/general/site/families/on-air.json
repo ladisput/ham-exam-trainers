@@ -1,0 +1,662 @@
+{
+ "id": "on-air",
+ "exam": "general",
+ "title": "On-air etiquette",
+ "idea": "Nobody owns a frequency. Ask before you call, break in with just your call sign, answer distress first, and work out conflicts politely.",
+ "core": {
+  "type": "list",
+  "items": [
+   [
+    "Break into a phone contact",
+    "Say your call sign once"
+   ],
+   [
+    "Before calling CQ",
+    "CW: QRL? and your call. Phone: ask if it is in use, and your call"
+   ],
+   [
+    "Where to call",
+    "Follow the voluntary band plan"
+   ],
+   [
+    "Priority",
+    "No one has it, except in emergencies"
+   ],
+   [
+    "Distress breaks in",
+    "Acknowledge, find out what help is needed"
+   ],
+   [
+    "Interference after propagation changes",
+    "Work it out with the other stations"
+   ],
+   [
+    "CQ DX from the lower 48",
+    "Only stations outside the lower 48 answer"
+   ],
+   [
+    "Signal reports first",
+    "So each station can operate according to conditions"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "scenario",
+  "config": {
+   "heading": "You are on the air",
+   "lead": "Pick a situation, then what you would do.",
+   "situations": [
+    {
+     "label": "Breaking into a phone contact",
+     "title": "Breaking into a phone contact",
+     "text": "Pick what you would do.",
+     "dims": [
+      {
+       "id": "do",
+       "label": "You...",
+       "options": [
+        "Say Breaker Breaker",
+        "Say your call sign once",
+        "Say QRZ several times, then your call sign",
+        "Say CQ and one station's call sign"
+       ],
+       "blank": true
+      }
+     ],
+     "rules": [
+      {
+       "when": {
+        "do": [
+         "Say your call sign once"
+        ]
+       },
+       "title": "Good practice",
+       "text": "Wait for a pause and say your call sign once. The stations will acknowledge you."
+      },
+      {
+       "when": {
+        "do": [
+         "Say Breaker Breaker"
+        ]
+       },
+       "title": "Not this one",
+       "text": "Breaker Breaker is CB talk, not amateur practice."
+      },
+      {
+       "when": {
+        "do": [
+         "Say QRZ several times, then your call sign"
+        ]
+       },
+       "title": "Not this one",
+       "text": "QRZ asks who is calling me; it does not get you in."
+      },
+      {
+       "when": {
+        "do": [
+         "Say CQ and one station's call sign"
+        ]
+       },
+       "title": "Not this one",
+       "text": "CQ is a general call, not a way into an existing contact."
+      }
+     ]
+    },
+    {
+     "label": "Someone in Ohio calls CQ DX",
+     "title": "Someone in Ohio calls CQ DX",
+     "text": "Pick what you would do.",
+     "dims": [
+      {
+       "id": "do",
+       "label": "You...",
+       "options": [
+        "Anyone answers",
+        "Only contest stations answer",
+        "Only stations outside the lower 48 answer"
+       ],
+       "blank": true
+      }
+     ],
+     "rules": [
+      {
+       "when": {
+        "do": [
+         "Only stations outside the lower 48 answer"
+        ]
+       },
+       "title": "Good practice",
+       "text": "CQ DX from the lower 48 means the caller wants distant stations: anyone outside the contiguous 48 states."
+      },
+      {
+       "when": {
+        "do": [
+         "Anyone answers"
+        ]
+       },
+       "title": "Not this one",
+       "text": "Not anyone: the caller asked for DX."
+      },
+      {
+       "when": {
+        "do": [
+         "Only contest stations answer"
+        ]
+       },
+       "title": "Not this one",
+       "text": "DX is about distance, not contests."
+      }
+     ]
+    },
+    {
+     "label": "A net says it needs your frequency",
+     "title": "A net says it needs your frequency",
+     "text": "Pick what you would do.",
+     "dims": [
+      {
+       "id": "do",
+       "label": "You...",
+       "options": [
+        "Nets have priority, so you must move",
+        "No one has priority except in emergencies",
+        "Contacts in progress have priority, so stay"
+       ],
+       "blank": true
+      }
+     ],
+     "rules": [
+      {
+       "when": {
+        "do": [
+         "No one has priority except in emergencies"
+        ]
+       },
+       "title": "Good practice",
+       "text": "Except during emergencies, no amateur station has priority access to any frequency. Moving to help out is courteous, but nobody owns it."
+      },
+      {
+       "when": {
+        "do": [
+         "Nets have priority, so you must move"
+        ]
+       },
+       "title": "Not this one",
+       "text": "Nets have no special priority."
+      },
+      {
+       "when": {
+        "do": [
+         "Contacts in progress have priority, so stay"
+        ]
+       },
+       "title": "Not this one",
+       "text": "Being there first gives no priority either."
+      }
+     ]
+    },
+    {
+     "label": "A station in distress breaks in",
+     "title": "A station in distress breaks in",
+     "text": "Pick what you would do.",
+     "dims": [
+      {
+       "id": "do",
+       "label": "You...",
+       "options": [
+        "Stop transmitting",
+        "Call your emergency coordinator",
+        "Turn your power down",
+        "Acknowledge them and find out what help is needed"
+       ],
+       "blank": true
+      }
+     ],
+     "rules": [
+      {
+       "when": {
+        "do": [
+         "Acknowledge them and find out what help is needed"
+        ]
+       },
+       "title": "Good practice",
+       "text": "Acknowledge the station in distress first and determine what assistance may be needed. Everything else comes after."
+      },
+      {
+       "when": {
+        "do": [
+         "Stop transmitting"
+        ]
+       },
+       "title": "Not this one",
+       "text": "Going silent leaves them with nobody."
+      },
+      {
+       "when": {
+        "do": [
+         "Call your emergency coordinator"
+        ]
+       },
+       "title": "Not this one",
+       "text": "That may come later; acknowledge them first."
+      },
+      {
+       "when": {
+        "do": [
+         "Turn your power down"
+        ]
+       },
+       "title": "Not this one",
+       "text": "Turning down does not help them."
+      }
+     ]
+    },
+    {
+     "label": "Propagation shifts and others now share your frequency",
+     "title": "Propagation shifts and others now share your frequency",
+     "text": "Pick what you would do.",
+     "dims": [
+      {
+       "id": "do",
+       "label": "You...",
+       "options": [
+        "Tell them you have priority",
+        "Switch to the opposite sideband",
+        "Work it out with them in a mutually acceptable way",
+        "Turn power down and keep going"
+       ],
+       "blank": true
+      }
+     ],
+     "rules": [
+      {
+       "when": {
+        "do": [
+         "Work it out with them in a mutually acceptable way"
+        ]
+       },
+       "title": "Good practice",
+       "text": "Attempt to resolve the interference with the other stations in a mutually acceptable manner. Neither of you has priority."
+      },
+      {
+       "when": {
+        "do": [
+         "Tell them you have priority"
+        ]
+       },
+       "title": "Not this one",
+       "text": "Nobody has priority."
+      },
+      {
+       "when": {
+        "do": [
+         "Switch to the opposite sideband"
+        ]
+       },
+       "title": "Not this one",
+       "text": "That just puts you on top of someone else."
+      },
+      {
+       "when": {
+        "do": [
+         "Turn power down and keep going"
+        ]
+       },
+       "title": "Not this one",
+       "text": "Continuing on top of them doesn't resolve anything."
+      }
+     ]
+    },
+    {
+     "label": "The frequency sounds clear and you want to call CQ",
+     "title": "The frequency sounds clear and you want to call CQ",
+     "text": "Pick what you would do.",
+     "dims": [
+      {
+       "id": "m",
+       "label": "Mode",
+       "options": [
+        "CW",
+        "Phone"
+       ]
+      },
+      {
+       "id": "do",
+       "label": "You...",
+       "options": [
+        "Listen 2 minutes, then call",
+        "Ask if it is in use, with your call sign",
+        "Send V or say test several times",
+        "Send QSY or announce it is in use"
+       ],
+       "blank": true
+      }
+     ],
+     "rules": [
+      {
+       "when": {
+        "do": [
+         "Ask if it is in use, with your call sign"
+        ],
+        "m": [
+         "CW"
+        ]
+       },
+       "title": "Good practice",
+       "text": "On CW, send QRL? followed by your call sign. You may only be hearing one side of a contact."
+      },
+      {
+       "when": {
+        "do": [
+         "Ask if it is in use, with your call sign"
+        ],
+        "m": [
+         "Phone"
+        ]
+       },
+       "title": "Good practice",
+       "text": "On phone, ask if the frequency is in use, followed by your call sign."
+      },
+      {
+       "when": {
+        "do": [
+         "Listen 2 minutes, then call"
+        ]
+       },
+       "title": "Not this one",
+       "text": "Listening first is good, but only asking tells you about the side you cannot hear."
+      },
+      {
+       "when": {
+        "do": [
+         "Send V or say test several times"
+        ]
+       },
+       "title": "Not this one",
+       "text": "Test transmissions on a busy band are just interference."
+      },
+      {
+       "when": {
+        "do": [
+         "Send QSY or announce it is in use"
+        ]
+       },
+       "title": "Not this one",
+       "text": "QSY means change frequency, and it is not your frequency to announce."
+      }
+     ]
+    },
+    {
+     "label": "Choosing where to call",
+     "title": "Choosing where to call",
+     "text": "Pick what you would do.",
+     "dims": [
+      {
+       "id": "do",
+       "label": "You...",
+       "options": [
+        "Follow the voluntary band plan",
+        "Send your call sign 3 times first",
+        "Listen at least two minutes"
+       ],
+       "blank": true
+      }
+     ],
+     "rules": [
+      {
+       "when": {
+        "do": [
+         "Follow the voluntary band plan"
+        ]
+       },
+       "title": "Good practice",
+       "text": "Follow the voluntary band plan: put your mode where others expect it."
+      },
+      {
+       "when": {
+        "do": [
+         "Send your call sign 3 times first"
+        ]
+       },
+       "title": "Not this one",
+       "text": "Identification rules don't pick a frequency."
+      },
+      {
+       "when": {
+        "do": [
+         "Listen at least two minutes"
+        ]
+       },
+       "title": "Not this one",
+       "text": "Not a rule, and not what picks the frequency."
+      }
+     ]
+    },
+    {
+     "label": "Calling CQ on HF",
+     "title": "Calling CQ on HF",
+     "text": "Pick what you would do.",
+     "dims": [
+      {
+       "id": "do",
+       "label": "You...",
+       "options": [
+        "CQ a few times, this is, your call a few times, then listen",
+        "Your call once and listening for a call",
+        "QTC, this is, your call",
+        "An unmodulated carrier for 10 seconds, then your call"
+       ],
+       "blank": true
+      }
+     ],
+     "rules": [
+      {
+       "when": {
+        "do": [
+         "CQ a few times, this is, your call a few times, then listen"
+        ]
+       },
+       "title": "Good practice",
+       "text": "Repeat CQ a few times, then this is and your call sign a few times, then pause to listen. Repeat as needed."
+      },
+      {
+       "when": {
+        "do": [
+         "Your call once and listening for a call"
+        ]
+       },
+       "title": "Not this one",
+       "text": "Too short: nobody tuning by will catch it."
+      },
+      {
+       "when": {
+        "do": [
+         "QTC, this is, your call"
+        ]
+       },
+       "title": "Not this one",
+       "text": "QTC is about traffic (messages), not a general call."
+      },
+      {
+       "when": {
+        "do": [
+         "An unmodulated carrier for 10 seconds, then your call"
+        ]
+       },
+       "title": "Not this one",
+       "text": "A plain carrier is interference."
+      }
+     ]
+    },
+    {
+     "label": "Starting an HF contact",
+     "title": "Starting an HF contact",
+     "text": "Pick what you would do.",
+     "dims": [
+      {
+       "id": "do",
+       "label": "You...",
+       "options": [
+        "Exchange reports so each can adjust",
+        "Exchange reports so it counts for awards",
+        "Exchange reports to calibrate the dial"
+       ],
+       "blank": true
+      }
+     ],
+     "rules": [
+      {
+       "when": {
+        "do": [
+         "Exchange reports so each can adjust"
+        ]
+       },
+       "title": "Good practice",
+       "text": "Signal reports at the start let each station operate according to conditions: slow down, repeat, change power or move."
+      },
+      {
+       "when": {
+        "do": [
+         "Exchange reports so it counts for awards"
+        ]
+       },
+       "title": "Not this one",
+       "text": "Awards need confirmations, not reports."
+      },
+      {
+       "when": {
+        "do": [
+         "Exchange reports to calibrate the dial"
+        ]
+       },
+       "title": "Not this one",
+       "text": "Reports say nothing about frequency."
+      }
+     ]
+    }
+   ],
+   "presets": [
+    {
+     "q": "G2A08",
+     "s": 0,
+     "dims": {
+      "do": "Say your call sign once"
+     }
+    },
+    {
+     "q": "G2A11",
+     "s": 1,
+     "dims": {
+      "do": "Only stations outside the lower 48 answer"
+     }
+    },
+    {
+     "q": "G2B01",
+     "s": 2,
+     "dims": {
+      "do": "No one has priority except in emergencies"
+     }
+    },
+    {
+     "q": "G2B02",
+     "s": 3,
+     "dims": {
+      "do": "Acknowledge them and find out what help is needed"
+     }
+    },
+    {
+     "q": "G2B03",
+     "s": 4,
+     "dims": {
+      "do": "Work it out with them in a mutually acceptable way"
+     }
+    },
+    {
+     "q": "G2B06",
+     "s": 5,
+     "dims": {
+      "do": "Ask if it is in use, with your call sign"
+     }
+    },
+    {
+     "q": "G2B07",
+     "s": 6,
+     "dims": {
+      "do": "Follow the voluntary band plan"
+     }
+    },
+    {
+     "q": "G2D05",
+     "s": 7,
+     "dims": {
+      "do": "CQ a few times, this is, your call a few times, then listen"
+     }
+    },
+    {
+     "q": "G2D11",
+     "s": 8,
+     "dims": {
+      "do": "Exchange reports so each can adjust"
+     }
+    }
+   ]
+  }
+ },
+ "traps": [
+  {
+   "q": "G2A08",
+   "wrong": "Say “Breaker Breaker”",
+   "why": "CB habit. On amateur bands you say your call sign once."
+  },
+  {
+   "q": "G2A11",
+   "wrong": "Any caller is welcome to respond",
+   "why": "CQ DX asks for distant stations only."
+  },
+  {
+   "q": "G2B01",
+   "wrong": "Nets have priority",
+   "why": "Nets don't get priority. Only emergencies do."
+  },
+  {
+   "q": "G2B02",
+   "wrong": "Immediately cease all transmissions",
+   "why": "Going silent abandons the station in distress. Acknowledge them first."
+  },
+  {
+   "q": "G2B03",
+   "wrong": "Advise the interfering stations that you are on the frequency and that you have priority",
+   "why": "Nobody has priority, so you can't claim it."
+  },
+  {
+   "q": "G2B06",
+   "wrong": "Listen for 2 minutes before calling CQ",
+   "why": "Listening is good, but you may only hear one side. Ask."
+  },
+  {
+   "q": "G2B07",
+   "wrong": "All these choices are correct",
+   "why": "Only the band plan picks the frequency."
+  },
+  {
+   "q": "G2D05",
+   "wrong": "Transmit an unmodulated carried for approximately 10 seconds, followed by “this is” and your call sign, and pause to listen -- repeat as necessary",
+   "why": "A plain carrier is just interference."
+  },
+  {
+   "q": "G2D11",
+   "wrong": "To be sure the contact will count for award programs",
+   "why": "Reports are about operating to conditions, not awards."
+  }
+ ],
+ "questions": [
+  "G2A08",
+  "G2A11",
+  "G2B01",
+  "G2B02",
+  "G2B03",
+  "G2B06",
+  "G2B07",
+  "G2D05",
+  "G2D11"
+ ]
+}

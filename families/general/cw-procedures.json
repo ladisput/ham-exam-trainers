@@ -1,0 +1,220 @@
+{
+ "id": "cw-procedures",
+ "exam": "general",
+ "title": "CW: Q signals and prosigns",
+ "idea": "A CW contact runs on short codes. Know what each one asks or says, how to match the other station's frequency and speed, and what full break-in means.",
+ "core": {
+  "type": "list",
+  "items": [
+   [
+    "QRL?",
+    "Is this frequency in use? (Are you busy?)"
+   ],
+   [
+    "QRS",
+    "Send slower"
+   ],
+   [
+    "QRN",
+    "I am troubled by static"
+   ],
+   [
+    "QSL",
+    "I have received and understood"
+   ],
+   [
+    "QRV",
+    "I am ready to receive"
+   ],
+   [
+    "QRP",
+    "Low-power operation"
+   ],
+   [
+    "KN",
+    "Go ahead, only the station I am working"
+   ],
+   [
+    "AR",
+    "End of a formal message"
+   ],
+   [
+    "C after RST",
+    "Chirpy or unstable signal"
+   ],
+   [
+    "QSK",
+    "Full break-in: receive between dots and dashes"
+   ],
+   [
+    "Zero beat",
+    "Match your transmit frequency to the received signal"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "cw-qso",
+  "config": {
+   "presets": [
+    {
+     "q": "G2C04",
+     "tab": "qso",
+     "tok": "QRL?"
+    },
+    {
+     "q": "G2C02",
+     "tab": "qso",
+     "tok": "QRS?"
+    },
+    {
+     "q": "G2C07",
+     "tab": "qso",
+     "tok": "579C"
+    },
+    {
+     "q": "G2C10",
+     "tab": "qso",
+     "tok": "QRN"
+    },
+    {
+     "q": "G2C03",
+     "tab": "qso",
+     "tok": "KN"
+    },
+    {
+     "q": "G2C09",
+     "tab": "qso",
+     "tok": "QSL"
+    },
+    {
+     "q": "G2D10",
+     "tab": "qso",
+     "tok": "QRP"
+    },
+    {
+     "q": "G2C11",
+     "tab": "qso",
+     "tok": "QRV"
+    },
+    {
+     "q": "G2C08",
+     "tab": "qso",
+     "tok": "AR"
+    },
+    {
+     "q": "G2C06",
+     "tab": "zero",
+     "off": 0
+    },
+    {
+     "q": "G2C05",
+     "tab": "speed",
+     "cq": 15,
+     "me": 25
+    },
+    {
+     "q": "G2C01",
+     "tab": "bk",
+     "bk": "full"
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "KN",
+   "how": "Go ahead, only the station I am working."
+  },
+  {
+   "term": "K",
+   "how": "Go ahead, anyone."
+  },
+  {
+   "term": "AR",
+   "how": "End of a formal message."
+  },
+  {
+   "term": "SK",
+   "how": "End of the contact."
+  },
+  {
+   "term": "QRN",
+   "how": "Static (natural noise)."
+  },
+  {
+   "term": "QSL",
+   "how": "Received and understood."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G2C01",
+   "wrong": "Breaking stations send the Morse code prosign “BK”",
+   "why": "BK is just a prosign for breaking in. QSK is the radio receiving between your dots and dashes."
+  },
+  {
+   "q": "G2C02",
+   "wrong": "Change frequency",
+   "why": "QRS is about speed, not frequency."
+  },
+  {
+   "q": "G2C03",
+   "wrong": "Closing station now",
+   "why": "Closing down is SK (or CL). KN means only the station I am working, go ahead."
+  },
+  {
+   "q": "G2C05",
+   "wrong": "The fastest speed at which you are comfortable copying, but no slower than the CQ",
+   "why": "Backwards: never answer faster than the CQ. Slower is fine."
+  },
+  {
+   "q": "G2C06",
+   "wrong": "Matching the speed of the transmitting station",
+   "why": "Zero beat is about frequency, not speed."
+  },
+  {
+   "q": "G2C07",
+   "wrong": "Key clicks",
+   "why": "Key clicks are a K. C is chirp."
+  },
+  {
+   "q": "G2C08",
+   "wrong": "SK",
+   "why": "SK ends the contact. AR ends a formal message."
+  },
+  {
+   "q": "G2C09",
+   "wrong": "We have already confirmed the contact",
+   "why": "QSL means received and understood, though QSL cards confirm contacts."
+  },
+  {
+   "q": "G2C10",
+   "wrong": "Send more slowly",
+   "why": "Send more slowly is QRS. QRN is static."
+  },
+  {
+   "q": "G2C11",
+   "wrong": "You are sending too fast",
+   "why": "QRV is I am ready to receive."
+  },
+  {
+   "q": "G2D10",
+   "wrong": "Remote piloted model control",
+   "why": "QRP is low power."
+  }
+ ],
+ "questions": [
+  "G2C01",
+  "G2C02",
+  "G2C03",
+  "G2C04",
+  "G2C05",
+  "G2C06",
+  "G2C07",
+  "G2C08",
+  "G2C09",
+  "G2C10",
+  "G2C11",
+  "G2D10"
+ ]
+}

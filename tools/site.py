@@ -202,6 +202,12 @@ def check(exam):
                 bad.append(f"{fid}: preset {pr.get('q')}: needs mode arq/fec, noise 0-100, part hdr/data/crc")
             if t == "net-map" and not (pr.get("tab") in ("winlink", "mesh", "modes") and pr.get("proto", "packet") in ("packet", "pactor", "vara") and set(pr.get("down", [])) <= set("ABCEF") and pr.get("grp", "dv") in ("dv", "ft", "ws", "wl")):
                 bad.append(f"{fid}: preset {pr.get('q')}: needs tab winlink/mesh/modes, proto, relay nodes A-F in down, grp dv/ft/ws/wl")
+            if t == "cw-qso" and not (pr.get("tab") in ("qso", "zero", "speed", "bk") and (pr["tab"] != "qso" or pr.get("tok") in ("QRL?", "QRS?", "579C", "QRN", "KN", "QSL", "QRP", "QRV", "AR")) and pr.get("bk", "full") in ("full", "semi", "manual")):
+                bad.append(f"{fid}: preset {pr.get('q')}: needs tab qso/zero/speed/bk, a known tok on qso, bk full/semi/manual")
+            if t == "rectifier" and not (pr.get("k") in ("half", "full", "bridge", "smps") and pr.get("f", "none") in ("none", "c", "lc")):
+                bad.append(f"{fid}: preset {pr.get('q')}: needs k half/full/bridge/smps and f none/c/lc")
+            if t == "amp-class" and not (pr.get("tab") in ("cls", "eff", "tune") and pr.get("cls", "A") in ("A", "AB", "B", "C") and pr.get("sig", "ssb") in ("fm", "am", "ssb")):
+                bad.append(f"{fid}: preset {pr.get('q')}: needs tab cls/eff/tune, cls A/AB/B/C, sig fm/am/ssb")
             if w.get("type") == "band-chart":
                 B = c["bands"][pr.get("b", 0)] if pr.get("b", 0) < len(c["bands"]) else None
                 if B is None or ("i" in pr and not 0 <= pr["i"] < len(B.get("segs", [])) + len(B.get("marks", []))):
