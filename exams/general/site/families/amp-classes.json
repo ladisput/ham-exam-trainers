@@ -1,0 +1,172 @@
+{
+ "id": "amp-classes",
+ "exam": "general",
+ "title": "Amplifier classes and efficiency",
+ "idea": "The less of each cycle an amplifier conducts, the more efficient it is, and the less it can keep the input's shape. Class C wins on efficiency but only suits constant-amplitude signals like FM.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Class",
+    "Conducts",
+    "Efficiency",
+    "Linear?"
+   ],
+   [
+    "A",
+    "100% of the time",
+    "Lowest",
+    "Yes"
+   ],
+   [
+    "AB",
+    "More than 50%, less than 100%",
+    "Better",
+    "Yes"
+   ],
+   [
+    "B",
+    "50% (push-pull pair)",
+    "Better",
+    "Yes"
+   ],
+   [
+    "C",
+    "Less than 50%",
+    "Highest",
+    "No: FM only"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "amp-class",
+  "config": {
+   "presets": [
+    {
+     "q": "G7B04",
+     "tab": "cls",
+     "cls": "A",
+     "sig": "ssb",
+     "focus": "cond"
+    },
+    {
+     "q": "G7B02",
+     "tab": "cls",
+     "cls": "C",
+     "sig": "fm",
+     "focus": "eff"
+    },
+    {
+     "q": "G7B10",
+     "tab": "cls",
+     "cls": "AB",
+     "sig": "ssb",
+     "focus": "linear"
+    },
+    {
+     "q": "G7B11",
+     "tab": "cls",
+     "cls": "C",
+     "sig": "fm",
+     "focus": "fm"
+    },
+    {
+     "q": "G7B08",
+     "tab": "eff",
+     "v": 2000,
+     "ma": 500,
+     "out": 600,
+     "focus": "eff"
+    },
+    {
+     "q": "G4A04",
+     "tab": "tune",
+     "tune": 62,
+     "load": 30,
+     "focus": "dip"
+    },
+    {
+     "q": "G4A08",
+     "tab": "tune",
+     "tune": 62,
+     "load": 70,
+     "focus": "load"
+    },
+    {
+     "q": "G7B01",
+     "tab": "tune",
+     "tune": 62,
+     "load": 70,
+     "neut": false,
+     "focus": "neut"
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "TUNE",
+   "how": "Set at the plate current dip."
+  },
+  {
+   "term": "LOAD",
+   "how": "Desired output without exceeding maximum plate current."
+  },
+  {
+   "term": "Neutralizing",
+   "how": "Stops self-oscillation."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G4A04",
+   "wrong": "A pronounced peak",
+   "why": "Plate current dips at resonance; it doesn't peak."
+  },
+  {
+   "q": "G4A08",
+   "wrong": "Minimum SWR on the antenna",
+   "why": "LOAD is set by output power and plate current, not SWR."
+  },
+  {
+   "q": "G7B01",
+   "wrong": "To keep the carrier on frequency",
+   "why": "Neutralizing stops self-oscillation."
+  },
+  {
+   "q": "G7B02",
+   "wrong": "Class A",
+   "why": "Class A conducts all the time: the least efficient."
+  },
+  {
+   "q": "G7B04",
+   "wrong": "50%",
+   "why": "50% is Class B. Class A is 100%."
+  },
+  {
+   "q": "G7B08",
+   "wrong": "Divide the DC input power by the DC output power",
+   "why": "Efficiency is RF out divided by DC in."
+  },
+  {
+   "q": "G7B10",
+   "wrong": "A Class C high efficiency amplifier",
+   "why": "Class C is not linear: it distorts the waveform."
+  },
+  {
+   "q": "G7B11",
+   "wrong": "SSB",
+   "why": "SSB needs a linear amplifier. Class C distorts its envelope."
+  }
+ ],
+ "questions": [
+  "G4A04",
+  "G4A08",
+  "G7B01",
+  "G7B02",
+  "G7B04",
+  "G7B08",
+  "G7B10",
+  "G7B11"
+ ]
+}

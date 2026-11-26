@@ -2,6 +2,20 @@
  "exam": "general",
  "families": [
   {
+   "id": "amp-classes",
+   "title": "Amplifier classes and efficiency",
+   "questions": [
+    "G4A04",
+    "G4A08",
+    "G7B01",
+    "G7B02",
+    "G7B04",
+    "G7B08",
+    "G7B10",
+    "G7B11"
+   ]
+  },
+  {
    "id": "antenna-length",
    "title": "Antenna length (468 / f)",
    "questions": [
@@ -50,6 +64,24 @@
     "G5C12",
     "G5C13",
     "G5C14"
+   ]
+  },
+  {
+   "id": "cw-procedures",
+   "title": "CW: Q signals and prosigns",
+   "questions": [
+    "G2C01",
+    "G2C02",
+    "G2C03",
+    "G2C04",
+    "G2C05",
+    "G2C06",
+    "G2C07",
+    "G2C08",
+    "G2C09",
+    "G2C10",
+    "G2C11",
+    "G2D10"
    ]
   },
   {
@@ -158,6 +190,21 @@
    ]
   },
   {
+   "id": "on-air",
+   "title": "On-air etiquette",
+   "questions": [
+    "G2A08",
+    "G2A11",
+    "G2B01",
+    "G2B02",
+    "G2B03",
+    "G2B06",
+    "G2B07",
+    "G2D05",
+    "G2D11"
+   ]
+  },
+  {
    "id": "power-formulas",
    "title": "Power from any two values (P, E, I, R)",
    "questions": [
@@ -241,6 +288,20 @@
    ]
   },
   {
+   "id": "rectifiers",
+   "title": "Rectifiers and power supplies",
+   "questions": [
+    "G7A01",
+    "G7A02",
+    "G7A03",
+    "G7A04",
+    "G7A05",
+    "G7A06",
+    "G7A07",
+    "G7A08"
+   ]
+  },
+  {
    "id": "rms-peak-pep",
    "title": "RMS, peak, peak-to-peak and PEP",
    "questions": [
@@ -275,6 +336,17 @@
     "G3C07",
     "G3C08",
     "G3C09"
+   ]
+  },
+  {
+   "id": "schematic-symbols",
+   "title": "Schematic symbols (Figure G7-1)",
+   "questions": [
+    "G7A09",
+    "G7A10",
+    "G7A11",
+    "G7A12",
+    "G7A13"
    ]
   },
   {

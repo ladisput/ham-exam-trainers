@@ -1,0 +1,157 @@
+{
+ "id": "rectifiers",
+ "exam": "general",
+ "title": "Rectifiers and power supplies",
+ "idea": "Diodes turn AC into DC pulses; capacitors and inductors smooth them; a bleeder drains the capacitors when the power is off. Switchmode supplies work at high frequency, so their parts are small.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Rectifier",
+    "Diodes",
+    "Of each AC cycle",
+    "Unfiltered output"
+   ],
+   [
+    "Half-wave",
+    "1",
+    "180°",
+    "One pulse per cycle"
+   ],
+   [
+    "Full-wave (center tap)",
+    "2",
+    "360°",
+    "Pulses at twice the AC frequency"
+   ],
+   [
+    "Full-wave bridge",
+    "4",
+    "360°",
+    "Pulses at twice the AC frequency"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "rectifier",
+  "config": {
+   "presets": [
+    {
+     "q": "G7A01",
+     "k": "full",
+     "f": "c",
+     "bl": true,
+     "plug": false,
+     "focus": "bleed"
+    },
+    {
+     "q": "G7A02",
+     "k": "full",
+     "f": "lc",
+     "focus": "filter"
+    },
+    {
+     "q": "G7A03",
+     "k": "full",
+     "focus": "ct"
+    },
+    {
+     "q": "G7A04",
+     "k": "half",
+     "focus": "diodes"
+    },
+    {
+     "q": "G7A05",
+     "k": "half",
+     "focus": "deg"
+    },
+    {
+     "q": "G7A06",
+     "k": "full",
+     "focus": "deg"
+    },
+    {
+     "q": "G7A07",
+     "k": "full",
+     "f": "none",
+     "focus": "ripple"
+    },
+    {
+     "q": "G7A08",
+     "k": "smps",
+     "focus": "smps"
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Full-wave",
+   "how": "Two diodes and a center-tapped transformer."
+  },
+  {
+   "term": "Full-wave bridge",
+   "how": "Four diodes, no center tap."
+  },
+  {
+   "term": "Linear supply",
+   "how": "60 Hz transformer and filter: big and heavy."
+  },
+  {
+   "term": "Switchmode supply",
+   "how": "High-frequency switching: smaller components."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G7A01",
+   "wrong": "It acts as a fuse for excess voltage",
+   "why": "A bleeder drains the filter capacitors; it doesn't protect anything."
+  },
+  {
+   "q": "G7A02",
+   "wrong": "Diodes",
+   "why": "Diodes rectify. The filter is capacitors and inductors."
+  },
+  {
+   "q": "G7A03",
+   "wrong": "Full-wave bridge",
+   "why": "A bridge uses four diodes and no center tap."
+  },
+  {
+   "q": "G7A04",
+   "wrong": "The ripple frequency is twice that of a full-wave rectifier",
+   "why": "Backwards: full-wave ripple is twice half-wave's."
+  },
+  {
+   "q": "G7A05",
+   "wrong": "360 degrees",
+   "why": "360 degrees is full-wave. Half-wave keeps only one half."
+  },
+  {
+   "q": "G7A06",
+   "wrong": "180 degrees",
+   "why": "180 degrees is half-wave."
+  },
+  {
+   "q": "G7A07",
+   "wrong": "A series of DC pulses at the same frequency as the AC input",
+   "why": "That's half-wave. Full-wave gives two pulses per cycle."
+  },
+  {
+   "q": "G7A08",
+   "wrong": "Fewer circuit components are required",
+   "why": "Switchmode supplies have more parts, but smaller ones."
+  }
+ ],
+ "questions": [
+  "G7A01",
+  "G7A02",
+  "G7A03",
+  "G7A04",
+  "G7A05",
+  "G7A06",
+  "G7A07",
+  "G7A08"
+ ]
+}

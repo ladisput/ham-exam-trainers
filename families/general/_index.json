@@ -498,7 +498,7 @@
     "G2C11",
     "G2D10"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "on-air",
@@ -516,7 +516,7 @@
     "G2D05",
     "G2D11"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "rectifiers",
@@ -533,7 +533,7 @@
     "G7A07",
     "G7A08"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "schematic-symbols",
@@ -547,7 +547,7 @@
     "G7A12",
     "G7A13"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "amp-classes",
@@ -564,7 +564,7 @@
     "G7B10",
     "G7B11"
    ],
-   "status": "todo"
+   "status": "done"
   },
   {
    "id": "logic",

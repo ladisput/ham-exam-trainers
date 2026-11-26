@@ -1,0 +1,160 @@
+{
+ "id": "schematic-symbols",
+ "exam": "general",
+ "title": "Schematic symbols (Figure G7-1)",
+ "idea": "Figure G7-1 is one circuit with 11 numbered symbols. The exam asks about five of them; the wrong answers point at the look-alikes.",
+ "core": {
+  "type": "rule-table",
+  "rows": [
+   [
+    "Symbol",
+    "Part",
+    "How to spot it"
+   ],
+   [
+    "1",
+    "Field effect transistor",
+    "Circle with a bar and an arrow on the gate lead"
+   ],
+   [
+    "2",
+    "NPN junction transistor",
+    "Circle, arrow on the emitter pointing out"
+   ],
+   [
+    "5",
+    "Zener diode",
+    "Diode with a bent (Z-shaped) bar"
+   ],
+   [
+    "6",
+    "Solid core transformer",
+    "Two coils with straight lines between them"
+   ],
+   [
+    "7",
+    "Tapped inductor",
+    "One coil with a wire from its middle"
+   ]
+  ]
+ },
+ "widget": {
+  "type": "figure-explorer",
+  "config": {
+   "figs": [
+    {
+     "f": "g7-1.png",
+     "title": "Figure G7-1",
+     "parts": [
+      {
+       "n": 1,
+       "x": 40.1,
+       "y": 50.7,
+       "name": "Field effect transistor (FET)",
+       "look": "A circle with a straight bar inside and an arrow pointing in on the gate lead.",
+       "q": "G7A09"
+      },
+      {
+       "n": 2,
+       "x": 72.0,
+       "y": 49.8,
+       "name": "NPN junction transistor",
+       "look": "A circle with the base bar and an arrow on the emitter pointing out. Not Pointing iN = NPN.",
+       "q": "G7A11"
+      },
+      {
+       "n": 4,
+       "x": 13.8,
+       "y": 38.5,
+       "name": "Varactor (variable capacitance) diode",
+       "look": "A diode with a capacitor's curved plate beside the bar. A look-alike for the Zener."
+      },
+      {
+       "n": 5,
+       "x": 51.5,
+       "y": 28.2,
+       "name": "Zener diode",
+       "look": "A diode whose bar is bent at both ends, like a Z.",
+       "q": "G7A10"
+      },
+      {
+       "n": 6,
+       "x": 74.5,
+       "y": 37.8,
+       "name": "Solid core transformer",
+       "look": "Two coils side by side with straight lines (the solid core) between them.",
+       "q": "G7A12"
+      },
+      {
+       "n": 7,
+       "x": 19.0,
+       "y": 68.7,
+       "name": "Tapped inductor",
+       "look": "A single coil with a wire coming off partway along it: the tap.",
+       "q": "G7A13"
+      },
+      {
+       "n": 11,
+       "x": 29.3,
+       "y": 29.2,
+       "name": "Potentiometer",
+       "look": "A resistor zigzag with an arrow touching its side. Not an inductor."
+      }
+     ]
+    }
+   ]
+  }
+ },
+ "compare": [
+  {
+   "term": "Symbol 5 (Zener)",
+   "how": "Bent, Z-shaped bar."
+  },
+  {
+   "term": "Symbol 4 (varactor)",
+   "how": "Diode with a capacitor plate."
+  },
+  {
+   "term": "Symbol 6 (transformer)",
+   "how": "Two coils and a core."
+  },
+  {
+   "term": "Symbol 7 (tapped inductor)",
+   "how": "One coil with a tap."
+  }
+ ],
+ "traps": [
+  {
+   "q": "G7A09",
+   "wrong": "Symbol 2",
+   "why": "Symbol 2 has an arrow on an emitter: a junction (bipolar) transistor."
+  },
+  {
+   "q": "G7A10",
+   "wrong": "Symbol 4",
+   "why": "Symbol 4 has a capacitor plate: a varactor. The Zener's bar is bent."
+  },
+  {
+   "q": "G7A11",
+   "wrong": "Symbol 1",
+   "why": "Symbol 1 is the FET."
+  },
+  {
+   "q": "G7A12",
+   "wrong": "Symbol 7",
+   "why": "Symbol 7 is one coil with a tap. A transformer has two coils."
+  },
+  {
+   "q": "G7A13",
+   "wrong": "Symbol 6",
+   "why": "Symbol 6 has two windings and a core: the transformer."
+  }
+ ],
+ "questions": [
+  "G7A09",
+  "G7A10",
+  "G7A11",
+  "G7A12",
+  "G7A13"
+ ]
+}
